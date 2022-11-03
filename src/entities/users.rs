@@ -12,7 +12,7 @@ use crate::db::pool::Db;
 use crate::utils;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "user")]
+#[sea_orm(table_name = "users")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
@@ -22,7 +22,48 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+    #[sea_orm(has_many = "super::parties::Entity")]
+    Parties,
+    #[sea_orm(has_many = "super::party_memberships::Entity")]
+    PartyMemberships,
+    #[sea_orm(has_many = "super::wishlists::Entity")]
+    Wishlists,
+    #[sea_orm(has_many = "super::wishlist_items::Entity")]
+    WishlistItems,
+    #[sea_orm(has_many = "super::wishlist_item_user_fulfillments::Entity")]
+    WishlistItemUserFulfillments,
+}
+
+impl Related<super::parties::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Parties.def()
+    }
+}
+
+impl Related<super::party_memberships::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::PartyMemberships.def()
+    }
+}
+
+impl Related<super::wishlists::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Wishlists.def()
+    }
+}
+
+impl Related<super::wishlist_items::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::WishlistItems.def()
+    }
+}
+
+impl Related<super::wishlist_item_user_fulfillments::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::WishlistItemUserFulfillments.def()
+    }
+}
 
 impl ActiveModelBehavior for ActiveModel {}
 

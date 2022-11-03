@@ -18,7 +18,7 @@ mod db;
 use db::pool::Db;
 
 mod entities;
-use entities::user;
+use entities::users;
 
 mod utils;
 
@@ -49,8 +49,8 @@ async fn post_register(
     db: Connection<Db>,
     credentials: Form<Credentials<'_>>,
 ) -> Result<Redirect, String> {
-    let result = user::Entity::find()
-        .filter(user::Column::Email.contains(credentials.email))
+    let result = users::Entity::find()
+        .filter(users::Column::Email.contains(credentials.email))
         .one(&*db)
         .await;
 
@@ -66,14 +66,14 @@ async fn post_register(
         Err(e) => return Err(e.to_string()),
     };
 
-    let new = user::ActiveModel {
+    let new = users::ActiveModel {
         name: sea_orm::ActiveValue::Set(credentials.email.to_string()),
         email: sea_orm::ActiveValue::Set(credentials.email.to_string()),
         password: sea_orm::ActiveValue::Set(hash),
         ..Default::default()
     };
 
-    let new: user::Model = match new.insert(&*db).await {
+    let new: users::Model = match new.insert(&*db).await {
         Ok(model) => model,
         Err(e) => return Err(e.to_string()),
     };
@@ -83,7 +83,7 @@ async fn post_register(
 }
 
 #[get("/login")]
-async fn authed_login(_user: user::Model) -> Redirect {
+async fn authed_login(_user: users::Model) -> Redirect {
     Redirect::to("home")
 }
 
@@ -94,7 +94,7 @@ fn login() -> Template {
 
 #[get("/logout")]
 fn logout(cookies: &CookieJar<'_>) -> Redirect {
-    cookies.remove_private(Cookie::named(user::Model::COOKIE_ID));
+    cookies.remove_private(Cookie::named(users::Model::COOKIE_ID));
     Redirect::to("/")
 }
 
@@ -104,8 +104,8 @@ async fn post_login(
     cookies: &CookieJar<'_>,
     credentials: Form<Credentials<'_>>,
 ) -> Result<Redirect, String> {
-    let result = user::Entity::find()
-        .filter(user::Column::Email.contains(credentials.email))
+    let result = users::Entity::find()
+        .filter(users::Column::Email.contains(credentials.email))
         .one(&*db)
         .await;
 
@@ -116,7 +116,7 @@ async fn post_login(
     };
 
     if user.verify_password(credentials.password) {
-        cookies.add_private(Cookie::new(user::Model::COOKIE_ID, user.id.to_string()));
+        cookies.add_private(Cookie::new(users::Model::COOKIE_ID, user.id.to_string()));
         return Ok(Redirect::to("/home"));
     } else {
         return Ok(Redirect::to("/login"));
@@ -124,7 +124,7 @@ async fn post_login(
 }
 
 #[get("/home")]
-fn home(user: user::Model) -> Template {
+fn home(user: users::Model) -> Template {
     Template::render("home", context! { name: user.name })
 }
 
