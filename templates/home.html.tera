@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <style>
+      main {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .modal {
+        border-radius: 0.3rem;
+        border: 1px solid #333;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+        <div id="modal">Welcome, {{ name }}!</div>
+    </main>
+  </body>
+</html>
