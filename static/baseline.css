@@ -1,0 +1,44 @@
+html {
+  font-family: sans-serif;
+}
+
+body {
+  background-color: #222;
+  color: #ddd;
+}
+
+.paper {
+  border-radius: 0.3rem;
+  background-color: #333;
+  padding: 1rem;
+}
+
+#centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flex-column,
+.flex-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column > * {
+  margin-bottom: 0.5rem;
+  flex-grow: 1;
+}
+
+.flex-column > :last-child {
+  margin-bottom: 0;
+}

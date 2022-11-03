@@ -5,6 +5,7 @@ use migration::MigratorTrait;
 use rocket::{
     fairing::{self, AdHoc},
     form::Form,
+    fs::{relative, FileServer},
     http::{Cookie, CookieJar},
     response::Redirect,
     Build, Rocket,
@@ -91,6 +92,12 @@ fn login() -> Template {
     Template::render("login", context! {})
 }
 
+#[get("/logout")]
+fn logout(cookies: &CookieJar<'_>) -> Redirect {
+    cookies.remove_private(Cookie::named(user::Model::COOKIE_ID));
+    Redirect::to("/")
+}
+
 #[post("/login", data = "<credentials>")]
 async fn post_login(
     db: Connection<Db>,
@@ -132,6 +139,7 @@ fn rocket() -> _ {
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
         .attach(Template::fairing())
+        .mount("/public", FileServer::from(relative!("static")))
         .mount(
             "/",
             routes![
@@ -139,6 +147,7 @@ fn rocket() -> _ {
                 register,
                 post_register,
                 login,
+                logout,
                 authed_login,
                 post_login,
                 home,

@@ -6,71 +6,32 @@
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
     />
+    <link rel="stylesheet" type="text/css" href="public/baseline.css">
     <style>
-        html {
-            font-family: sans-serif;
-        }
-
-        body {
-            background-color: #222;
-            color: #ddd;
-        }
-
-        main {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-        }
-
-        main > * {
-            flex-grow: 1;
-        }
-
-        .modal {
-            border-radius: 0.3rem;
-            border: 1px solid #333;
-            padding: 1rem;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        form > * {
-            margin-bottom: 0.5rem;
-            display: flex;
-            flex-grow: 1;
-            justify-content: space-between;
-        }
-
         #title {
             font-size: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             display: flex;
             justify-content: center;
         }
     </style>
   </head>
 <body>
-    <main>
-        <div >
+    <main id="centered" class="flex-column">
+        <div>
             <span id="title">Big<span style="color: red">Red</span>Guy</span>
         </div>
-        <div id="modal">
-            <form method="post">
-                <div>
+        <div class="paper">
+            <form method="post" class="flex-column">
+                <div class="flex-row">
                     <label for="email">Email:&nbsp;&nbsp;&nbsp;</label>
                     <input name="email" />
                 </div>
-                <div>
+                <div class="flex-row">
                     <label>Password:&nbsp;&nbsp;&nbsp;</label>
                     <input type="password" name="password" />
                 </div>
-                <div>
+                <div class="flex-row">
                     <div></div>
                     <input type="submit" value="Login" />
                 </div>

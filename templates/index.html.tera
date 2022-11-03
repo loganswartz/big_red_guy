@@ -6,24 +6,30 @@
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
     />
+    <link rel="stylesheet" type="text/css" href="public/baseline.css">
     <style>
-      main {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-
-      .modal {
-        border-radius: 0.3rem;
-        border: 1px solid #333;
-        padding: 1rem;
-      }
+        #title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+        }
     </style>
   </head>
-  <body>
-    <main>
-      <div id="modal">Welcome to Big Red Guy!</div>
+<body>
+    <main id="centered" class="flex-column">
+        <div>
+            <span id="title">Big<span style="color: red">Red</span>Guy</span>
+        </div>
+        <div class="paper flex-column">
+            <div>A "Secret Santa" manager written in Rust.</div>
+            <div class="flex-row">
+                <div></div>
+                <button onClick="javascript:window.location.href = '/register';">Register</button>
+                <button onClick="javascript:window.location.href = '/login';">Login</button>
+                <div></div>
+            </div>
+        </div>
     </main>
-  </body>
+</body>
 </html>
