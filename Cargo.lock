@@ -317,6 +317,7 @@ dependencies = [
  "rust-argon2",
  "sea-orm",
  "sea-orm-rocket",
+ "serde",
  "tokio",
 ]
 
@@ -2219,6 +2220,7 @@ dependencies = [
  "rocket_codegen",
  "rocket_http",
  "serde",
+ "serde_json",
  "state",
  "tempfile",
  "time",

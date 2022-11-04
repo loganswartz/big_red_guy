@@ -12,13 +12,13 @@ use rocket::{
 };
 use rocket_db_pools::{Connection, Database};
 use rocket_dyn_templates::{context, Template};
-use sea_orm::entity::prelude::*;
+use sea_orm::{entity::prelude::*, Set};
 
 mod db;
 use db::pool::Db;
 
 mod entities;
-use entities::users;
+use entities::{users, wishlists};
 
 mod utils;
 
@@ -26,6 +26,11 @@ mod utils;
 struct Credentials<'r> {
     email: &'r str,
     password: &'r str,
+}
+
+#[derive(FromForm, Debug)]
+struct AddWishlist<'r> {
+    name: &'r str,
 }
 
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
@@ -128,6 +133,64 @@ fn home(user: users::Model) -> Template {
     Template::render("home", context! { name: user.name })
 }
 
+#[get("/wishlists")]
+async fn wishlist_index(user: users::Model, db: Connection<Db>) -> Result<Template, String> {
+    let wishlists = match user.find_related(wishlists::Entity).all(&*db).await {
+        Ok(lists) => lists,
+        Err(e) => return Err(e.to_string()),
+    };
+
+    Ok(Template::render(
+        "wishlist_index",
+        context! { name: user.name, lists: wishlists },
+    ))
+}
+
+#[get("/wishlists/add")]
+async fn add_wishlist(_user: users::Model) -> Result<Template, String> {
+    Ok(Template::render("add_wishlist", context! {}))
+}
+
+#[post("/wishlists/add", data = "<form>")]
+async fn add_wishlist_post(
+    user: users::Model,
+    db: Connection<Db>,
+    form: Form<AddWishlist<'_>>,
+) -> Result<Redirect, String> {
+    let new = wishlists::ActiveModel {
+        name: Set(form.name.to_owned()),
+        owner_id: Set(user.id),
+        ..Default::default()
+    };
+
+    if let Err(e) = new.insert(&*db).await {
+        return Err(e.to_string());
+    }
+
+    Ok(Redirect::to("/wishlists"))
+}
+
+#[get("/wishlists/<list_id>")]
+async fn view_wishlist(user: users::Model, db: Connection<Db>, list_id: &str) -> Option<Template> {
+    let id: i32 = match list_id.parse() {
+        Ok(value) => value,
+        Err(_) => return None,
+    };
+
+    let list = match wishlists::Entity::find_by_id(id).one(&*db).await {
+        Ok(list) => list,
+        Err(_) => return None,
+    };
+
+    match list {
+        Some(found) => Some(Template::render(
+            "view_wishlist",
+            context! { name: user.name, list: found },
+        )),
+        None => None,
+    }
+}
+
 #[get("/<_..>", rank = 12)]
 fn no_auth() -> Redirect {
     Redirect::to("/login")
@@ -151,6 +214,10 @@ fn rocket() -> _ {
                 authed_login,
                 post_login,
                 home,
+                wishlist_index,
+                view_wishlist,
+                add_wishlist,
+                add_wishlist_post,
                 no_auth
             ],
         )

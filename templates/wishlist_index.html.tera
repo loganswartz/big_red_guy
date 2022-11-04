@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    >
+    <link rel="stylesheet" type="text/css" href="/public/baseline.css">
+    <style>
+    </style>
+  </head>
+  <body>
+    <main id="centered" class="flex-column paper">
+        <h2>Your Wishlists</h2>
+        <ul style="margin: 1rem 0 1rem 0">
+            {% if lists | length %}
+                {% for list in lists %}
+                <li>{{ list.name }}&nbsp;-&nbsp;
+                    <button onClick="javascript:window.location.href = '/wishlists/{{ list.id }}';">
+                        View
+                    </button>
+                </li>
+                {% endfor %}
+            {% else %}
+                <div>You don't have any lists yet.</div>
+            {% endif %}
+        </ul>
+        <div class="flex-row" style="justify-content: center;">
+            Add a list&nbsp;<button onClick="javascript:window.location.href = '/wishlists/add';">+</button>
+        </div>
+    </main>
+    <div id="top-right">
+        <button onClick="javascript:window.location.href = '/logout';">Log Out</button>
+    </div>
+  </body>
+</html>

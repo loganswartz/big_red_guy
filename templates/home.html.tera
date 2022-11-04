@@ -5,8 +5,8 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
-    />
-    <link rel="stylesheet" type="text/css" href="public/baseline.css">
+    >
+    <link rel="stylesheet" type="text/css" href="/public/baseline.css">
     <style>
         #logout {
             position: absolute;
@@ -16,10 +16,11 @@
     </style>
   </head>
   <body>
-    <main id="centered" class="paper">
-        <div id="modal">Welcome, {{ name }}!</div>
+    <main id="centered" class="flex-column paper">
+        <div>Welcome, {{ name }}!</div>
+        <button onClick="javascript: window.location.href = '/wishlists';">Go to Wishlists</button>
     </main>
-    <div id="logout">
+    <div id="top-right">
         <button onClick="javascript:window.location.href = '/logout';">Log Out</button>
     </div>
   </body>

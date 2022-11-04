@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    >
+    <link rel="stylesheet" type="text/css" href="/public/baseline.css">
+    <style>
+    </style>
+  </head>
+  <body>
+    <main id="centered" class="paper">
+        <form method="post" class="flex-column">
+            <div class="flex-row" style="justify-content: center;">
+                <div style="font-size: 1.5rem; font-weight: bold;">Create a Wishlist:</div>
+            </div>
+            <div style="margin: 1rem 0 1rem 0">
+                <div class="flex-row">
+                    <label for="name">Name:&nbsp;&nbsp;&nbsp;</label>
+                    <input name="name">
+                </div>
+            </div>
+            <div class="flex-row" style="justify-content: center;">
+                <input type="submit" value="Create">
+            </div>
+        </form>
+    </main>
+    <div id="top-left">
+        <button onClick="javascript:history.back();">Back</button>
+    </div>
+    <div id="top-right">
+        <button onClick="javascript:window.location.href = '/logout';">Log Out</button>
+    </div>
+  </body>
+</html>

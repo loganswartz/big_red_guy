@@ -104,7 +104,7 @@ impl MigrationTrait for Migration {
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
-                    .col(ColumnDef::new(Wishlists::PartyId).big_unsigned().not_null())
+                    .col(ColumnDef::new(Wishlists::PartyId).big_unsigned())
                     .foreign_key(
                         sea_query::ForeignKey::create()
                             .name(&keys.wishlist_party)

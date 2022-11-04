@@ -5,39 +5,31 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
-    />
-    <link rel="stylesheet" type="text/css" href="public/baseline.css">
+    >
+    <link rel="stylesheet" type="text/css" href="/public/baseline.css">
     <style>
-        #title {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: center;
-        }
     </style>
   </head>
 <body>
     <main id="centered" class="flex-column">
-        <div id="title" class="flex-row">
-            <span>Big<span style="color: red">Red</span>Guy</span>
-        </div>
+        <h1>Big<span style="color: red">Red</span>Guy</h1>
         <div class="paper">
             <form method="post" class="flex-column">
                 <div class="flex-row">
                     <label for="email">Email:&nbsp;&nbsp;&nbsp;</label>
-                    <input name="email" />
+                    <input name="email">
                 </div>
                 <div class="flex-row">
                     <label>Password:&nbsp;&nbsp;&nbsp;</label>
-                    <input type="password" name="password" />
+                    <input type="password" name="password">
                 </div>
                 <div class="flex-row">
                     <label>Confirm Password:&nbsp;&nbsp;&nbsp;</label>
-                    <input type="password" name="password" />
+                    <input type="password" name="password">
                 </div>
                 <div class="flex-row">
                     <div></div>
-                    <input type="submit" value="Register" />
+                    <input type="submit" value="Register">
                 </div>
             </form>
         </div>
