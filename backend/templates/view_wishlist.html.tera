@@ -16,7 +16,7 @@
         {% if list.items | length %}
             <ul style="margin: 1rem 0 1rem 0">
                 {% for item in list.items %}
-                <li>{{ list.name }}&nbsp;-&nbsp;
+                <li>{{ item.name }}&nbsp;-&nbsp;
                     <button onClick="javascript:window.location.href = '/wishlists/{{ list.id }}';">
                         View
                     </button>
