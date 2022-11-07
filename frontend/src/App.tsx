@@ -6,6 +6,11 @@ import Login from "./Public/Login";
 import Main from "./Public/Main";
 import Register from "./Public/Register";
 import Theme from "./Global/Theme";
+import Home from "./App/Home";
+import AuthRequired from "./App/AuthRequired";
+import WishlistsIndex from "./App/Wishlists/WishlistsIndex";
+import CreateWishlist from "./App/Wishlists/CreateWishlist";
+import ViewWishlist from "./App/Wishlists/ViewWishlist";
 
 function App() {
   const router = createBrowserRouter([
@@ -20,6 +25,33 @@ function App() {
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/app/*",
+      element: <AuthRequired />,
+      children: [
+        {
+          index: true,
+          element: <Home />,
+        },
+        {
+          path: "wishlists/*",
+          children: [
+            {
+              index: true,
+              element: <WishlistsIndex />,
+            },
+            {
+              path: "add",
+              element: <CreateWishlist />,
+            },
+            {
+              path: ":id",
+              element: <ViewWishlist />,
+            },
+          ],
+        },
+      ],
     },
   ]);
 

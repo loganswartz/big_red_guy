@@ -5,18 +5,41 @@ import {
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
+import { redirect } from "react-router-dom";
+import { useLocalStorage } from "usehooks-ts";
+
+const AUTH_TOKEN_LOCAL_STORAGE_KEY = "auth_token";
+
+export function isAuthenticated() {
+  return window.localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY) !== null;
+}
+
+/* export function useAuthentication() { */
+/*   return useLocalStorage<string | null>(AUTH_TOKEN_LOCAL_STORAGE_KEY, null); */
+/* } */
 
 function formatURL(path: string) {
-  const url = new URL(path, process.env.REACT_APP_HOST);
-  return url.href;
+  // collapse any duplicate slashes
+  const namespaced = `/api/${path}`.replace(/\/{2,}/, "/");
+
+  if (process.env.REACT_APP_HOST) {
+    return new URL(namespaced, process.env.REACT_APP_HOST).href;
+  } else {
+    return namespaced;
+  }
 }
 
 async function apiFetch(path: string, options: RequestInit) {
   const response = await fetch(formatURL(path), options);
-  if (!response.ok) {
+
+  if (response.status === 401) {
+    /* window.localStorage.removeItem(AUTH_TOKEN_LOCAL_STORAGE_KEY); */
+    window.location.href = "/login";
+  } else if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  return response;
+
+  return await response.json();
 }
 
 type FetchKey = readonly [string, RequestInit];
@@ -25,7 +48,7 @@ const queryApi: QueryFunction<unknown, FetchKey> = async (args) => {
   const {
     queryKey: [path, options],
   } = args;
-  return apiFetch(formatURL(path), options);
+  return apiFetch(path, options);
 };
 
 interface MutationVariables {
@@ -37,7 +60,7 @@ const mutateApi: MutationFunction<unknown, MutationVariables> = async (
   args
 ) => {
   const { path, options } = args;
-  return apiFetch(formatURL(path), { method: "POST", ...options });
+  return apiFetch(path, { method: "POST", ...options });
 };
 
 export const client = new QueryClient({
@@ -92,16 +115,22 @@ function makeOptions<T extends ApiOptions>(options: T): RequestInit {
   return {};
 }
 
-export function useApiQuery(path: string, options: ApiOptions) {
-  const fetchOptions = makeOptions(options);
+export function useApiQuery<TData = unknown>(
+  path: string,
+  options?: ApiOptions
+) {
+  const fetchOptions = options ? makeOptions(options) : {};
 
-  const query = useQuery({ queryKey: [path, fetchOptions] });
+  const query = useQuery<ApiOptions, unknown, TData>({
+    queryKey: [path, fetchOptions],
+  });
 
   return query;
 }
 
-export function useApiMutation(path: string) {
-  const mutation = useMutation({
+export function useApiMutation<TData = unknown>(path: string) {
+  const mutation = useMutation<TData, unknown, ApiOptions, unknown>({
+    // @ts-expect-error
     mutationFn: (input: ApiOptions) =>
       mutateApi({ path, options: makeOptions(input) }),
   });

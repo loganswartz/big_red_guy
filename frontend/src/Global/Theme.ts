@@ -17,6 +17,11 @@ const components: Record<string, StyleConfig> = {
       borderColor: colorMode === "dark" ? "gray.600" : "gray.200",
     }),
   },
+  Button: {
+    defaultProps: {
+      size: "sm",
+    },
+  },
 };
 
 const styles: Record<string, SystemStyleInterpolation> = {

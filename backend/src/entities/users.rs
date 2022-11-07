@@ -96,37 +96,46 @@ impl<'r> FromRequest<'r> for Model {
     type Error = String;
 
     async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
-        println!("Start");
-        let cookie = req
+        let denied = Outcome::Failure((
+            Status::Unauthorized,
+            "No valid credentials found.".to_string(),
+        ));
+
+        let header = req
             .cookies()
             .get_private(Model::COOKIE_ID)
             .and_then(|cookie| Some(cookie.value().to_owned()));
 
-        let value = match cookie {
+        let value = match header {
             Some(id) => id,
-            None => return Outcome::Forward(()),
+            None => return denied,
         };
 
         let id: i32 = match value.parse() {
             Ok(id) => id,
-            Err(e) => return Outcome::Failure((Status::InternalServerError, e.to_string())),
+            Err(_) => return denied,
         };
 
         let db = match req.rocket().state::<Db>() {
             Some(conn) => conn,
-            _ => return Outcome::Forward(()),
+            _ => {
+                return Outcome::Failure((
+                    Status::InternalServerError,
+                    "Unable to contact DB.".to_string(),
+                ))
+            }
         };
 
         let result = Entity::find_by_id(id).one(&db.conn).await;
         let found = match result {
             Ok(option) => option,
-            Err(e) => return Outcome::Failure((Status::InternalServerError, e.to_string())),
+            Err(_) => return denied,
         };
 
         if let Some(user) = found {
             Outcome::Success(user)
         } else {
-            Outcome::Forward(())
+            denied
         }
     }
 }

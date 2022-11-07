@@ -53,4 +53,17 @@ impl Related<super::wishlist_item_list_assignments::Entity> for Entity {
     }
 }
 
+impl Related<super::wishlist_items::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::wishlist_item_list_assignments::Relation::WishlistItems.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(
+            super::wishlist_item_list_assignments::Relation::Wishlists
+                .def()
+                .rev(),
+        )
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}

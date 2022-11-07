@@ -23,7 +23,7 @@ pub enum Relation {
     WishlistItems,
     #[sea_orm(
         belongs_to = "super::wishlists::Entity",
-        from = "Column::WishlistItemId",
+        from = "Column::WishlistId",
         to = "super::wishlists::Column::Id",
         on_update = "Cascade",
         on_delete = "Cascade"
