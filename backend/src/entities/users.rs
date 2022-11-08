@@ -93,7 +93,7 @@ impl Model {
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for Model {
-    type Error = String;
+    type Error = rocket_anyhow::Error;
 
     async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
         let denied = Outcome::Failure((
@@ -106,14 +106,9 @@ impl<'r> FromRequest<'r> for Model {
             .get_private(Model::COOKIE_ID)
             .and_then(|cookie| Some(cookie.value().to_owned()));
 
-        let value = match header {
-            Some(id) => id,
-            None => return denied,
-        };
-
-        let id: i32 = match value.parse() {
-            Ok(id) => id,
-            Err(_) => return denied,
+        let value: i32 = match header.map(|value| value.parse()) {
+            Ok(Some(id)) => id,
+            _ => return denied,
         };
 
         let db = match req.rocket().state::<Db>() {
@@ -127,15 +122,10 @@ impl<'r> FromRequest<'r> for Model {
         };
 
         let result = Entity::find_by_id(id).one(&db.conn).await;
-        let found = match result {
-            Ok(option) => option,
-            Err(_) => return denied,
-        };
 
-        if let Some(user) = found {
-            Outcome::Success(user)
-        } else {
-            denied
-        }
+        match result {
+            Some(Ok(option)) => Outcome::Success(option),
+            _ => denied,
+        };
     }
 }

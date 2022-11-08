@@ -39,6 +39,7 @@ struct AddWishlist<'r> {
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
     let conn = &Db::fetch(&rocket).unwrap().conn;
     let _ = migration::Migrator::up(conn, None).await;
+
     Ok(rocket)
 }
 
@@ -46,22 +47,17 @@ async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
 async fn register(
     db: Connection<Db>,
     credentials: Form<Credentials<'_>>,
-) -> Result<Json<Me>, String> {
+) -> rocket_anyhow::Result<Json<Me>> {
     let result = users::Entity::find()
         .filter(users::Column::Email.contains(credentials.email))
         .one(&*db)
-        .await;
+        .await?;
 
-    match result {
-        Ok(Some(_)) => return Err("That email is already in use.".to_string()),
-        Err(e) => return Err(e.to_string()),
-        _ => (),
-    };
+    if let Some(_) = result {
+        return Err("That email is already in use.".to_string());
+    }
 
-    let hash = match utils::make_password_hash(credentials.password) {
-        Ok(value) => value,
-        Err(e) => return Err(e.to_string()),
-    };
+    let hash = utils::make_password_hash(credentials.password)?;
 
     let new = users::ActiveModel {
         name: sea_orm::ActiveValue::Set(credentials.email.to_string()),
@@ -70,10 +66,7 @@ async fn register(
         ..Default::default()
     };
 
-    let new: users::Model = match new.insert(&*db).await {
-        Ok(model) => model,
-        Err(e) => return Err(e.to_string()),
-    };
+    let new = new.insert(&*db).await?;
 
     Ok(Json(Me {
         name: new.name,
@@ -98,16 +91,15 @@ async fn login(
     db: Connection<Db>,
     cookies: &CookieJar<'_>,
     credentials: Form<Credentials<'_>>,
-) -> Result<status::Custom<Json<LoginResponse>>, String> {
-    let result = users::Entity::find()
+) -> rocket_anyhow::Result<status::Custom<Json<LoginResponse>>> {
+    let found = users::Entity::find()
         .filter(users::Column::Email.contains(credentials.email))
         .one(&*db)
-        .await;
+        .await?;
 
-    let user = match result {
-        Ok(Some(user)) => user,
-        Ok(None) => return Err("User not found.".to_string()),
-        Err(e) => return Err(e.to_string()),
+    let user = match found {
+        Some(user) => user,
+        None => return Err("User not found.".to_string()),
     };
 
     if user.verify_password(credentials.password) {
@@ -143,11 +135,10 @@ async fn me(user: users::Model) -> Json<Me> {
 async fn all_wishlists(
     user: users::Model,
     db: Connection<Db>,
-) -> Result<Json<Vec<wishlists::Model>>, String> {
-    match user.find_related(wishlists::Entity).all(&*db).await {
-        Ok(lists) => Ok(Json(lists)),
-        Err(e) => return Err(e.to_string()),
-    }
+) -> rocket_anyhow::Result<Json<Vec<wishlists::Model>>> {
+    let lists = user.find_related(wishlists::Entity).all(&*db).await?;
+
+    Ok(Json(lists))
 }
 
 #[post("/wishlists/add", data = "<form>")]
@@ -155,17 +146,14 @@ async fn add_wishlist(
     user: users::Model,
     db: Connection<Db>,
     form: Form<AddWishlist<'_>>,
-) -> Result<Json<wishlists::Model>, String> {
+) -> rocket_anyhow::Result<Json<wishlists::Model>> {
     let new = wishlists::ActiveModel {
         name: Set(form.name.to_owned()),
         owner_id: Set(user.id),
         ..Default::default()
     };
 
-    let model = match new.insert(&*db).await {
-        Ok(model) => model,
-        Err(e) => return Err(e.to_string()),
-    };
+    let model = new.insert(&*db).await?;
 
     Ok(Json(model))
 }
@@ -187,7 +175,7 @@ async fn find_wishlist(
         Err(_) => return None,
     };
 
-    let list = match wishlists::Entity::find_by_id(id)
+    match wishlists::Entity::find_by_id(id)
         .filter(wishlists::Column::OwnerId.eq(user.id))
         .one(db)
         .await
@@ -195,8 +183,6 @@ async fn find_wishlist(
         Ok(Some(list)) => Some(list),
         _ => return None,
     };
-
-    list
 }
 
 #[get("/wishlists/<list_id>")]
@@ -238,7 +224,7 @@ async fn add_wishlist_item(
     db: Connection<Db>,
     form: Form<AddWishlistItem<'_>>,
     id: i32,
-) -> Result<Json<wishlist_items::Model>, String> {
+) -> rocket_anyhow::Result<Json<wishlist_items::Model>> {
     // make the new item
     let item = wishlist_items::ActiveModel {
         name: Set(form.name.to_owned()),
@@ -248,10 +234,7 @@ async fn add_wishlist_item(
         ..Default::default()
     };
 
-    let item = match item.insert(&*db).await {
-        Ok(model) => model,
-        Err(e) => return Err(e.to_string()),
-    };
+    let item = item.insert(&*db).await?;
 
     // assign it to the list
     let assignment = wishlist_item_list_assignments::ActiveModel {
@@ -260,9 +243,41 @@ async fn add_wishlist_item(
         ..Default::default()
     };
 
-    if let Err(e) = assignment.insert(&*db).await {
-        return Err(e.to_string());
+    assignment.insert(&*db).await?;
+
+    Ok(Json(item))
+}
+
+#[patch("/wishlist_items/<id>", data = "<form>")]
+async fn modify_wishlist_item(
+    user: users::Model,
+    db: Connection<Db>,
+    form: Form<AddWishlistItem<'_>>,
+    id: i32,
+) -> rocket_anyhow::Result<Json<wishlist_items::Model>> {
+    let item = wishlist_items::Entity::find_by_id(id).one(&*db).await?;
+
+    // Into ActiveModel
+    let mut item: wishlist_items::ActiveModel = pear.unwrap().into();
+    // make the new item
+    let item = wishlist_items::ActiveModel {
+        name: Set(form.name.to_owned()),
+        url: Set(form.url.map_or(None, |val| Some(val.to_owned()))),
+        quantity: Set(form.quantity.to_owned()),
+        owner_id: Set(user.id),
+        ..Default::default()
     };
+
+    let item = item.insert(&*db).await?;
+
+    // assign it to the list
+    let assignment = wishlist_item_list_assignments::ActiveModel {
+        wishlist_id: Set(id),
+        wishlist_item_id: Set(item.id),
+        ..Default::default()
+    };
+
+    assignment.insert(&*db).await?;
 
     Ok(Json(item))
 }
@@ -271,6 +286,7 @@ async fn add_wishlist_item(
 async fn default() -> io::Result<NamedFile> {
     let page_directory_path = format!("{}/../frontend/build", env!("CARGO_MANIFEST_DIR"));
     let absolute = Path::new(&page_directory_path).join("index.html");
+
     NamedFile::open(absolute).await
 }
 
