@@ -1,12 +1,11 @@
-import { Box, Button, HStack, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Button, HStack, VStack } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
 import Card from "../Components/Card";
-import ContentInMiddle from "../Components/ContentInMiddle";
 
-export default function Main() {
+export default function FrontPage() {
   return (
-    <ContentInMiddle>
+    <AbsoluteCenter>
       <Card>
         <VStack spacing={4}>
           <BigRedGuy />
@@ -25,6 +24,6 @@ export default function Main() {
           </Box>
         </VStack>
       </Card>
-    </ContentInMiddle>
+    </AbsoluteCenter>
   );
 }

@@ -1,10 +1,9 @@
-import { CircularProgress } from "@chakra-ui/react";
-import ContentInMiddle from "./ContentInMiddle";
+import { AbsoluteCenter, CircularProgress } from "@chakra-ui/react";
 
 export default function Loading() {
   return (
-    <ContentInMiddle>
+    <AbsoluteCenter>
       <CircularProgress isIndeterminate />
-    </ContentInMiddle>
+    </AbsoluteCenter>
   );
 }

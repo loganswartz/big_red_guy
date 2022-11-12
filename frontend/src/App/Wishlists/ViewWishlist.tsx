@@ -1,34 +1,34 @@
 import {
-  Button,
   Center,
-  Container,
+  Divider,
   Heading,
+  HStack,
   List,
   ListItem,
-  useToast,
   VStack,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import Card from "../../Components/Card";
 import { useParams } from "react-router-dom";
 import useWishlist from "../../Global/Api/Queries/useWishlist";
 import useWishlistItems from "../../Global/Api/Queries/useWishlistItems";
-import useDialogState from "../../Global/Helpers/DialogHelper";
-import AddWishlistItemModal, {
-  AddWishlistItemFormValues,
-} from "./AddWishlistItemModal";
 import Loading from "../../Components/Loading";
-import useAddWishlistItem from "../../Global/Api/Mutations/useAddWishlistItem";
+import WishlistListItem from "./WishlistListItem";
+import EditWishlistButton from "../../Components/EditWishlistButton";
+import AddWishlistItemButton from "../../Components/AddWishlistItemButton";
 
 export default function ViewWishlist() {
   const { id = "" } = useParams<{ id: string }>();
-  const [open, dialog] = useDialogState();
-  const toast = useToast();
 
-  const { data: wishlist, isInitialLoading: wishlistLoading } = useWishlist(id);
-  const { data: items, isInitialLoading: wishlistItemsLoading } =
-    useWishlistItems(id);
-  const { mutateAsync } = useAddWishlistItem(id);
+  const {
+    data: wishlist,
+    isInitialLoading: wishlistLoading,
+    refetch: refetchList,
+  } = useWishlist(id);
+  const {
+    data: items,
+    isInitialLoading: wishlistItemsLoading,
+    refetch: refetchItems,
+  } = useWishlistItems(id);
 
   if (wishlistLoading || wishlistItemsLoading) {
     return <Loading />;
@@ -36,52 +36,37 @@ export default function ViewWishlist() {
     return <>Wishlist not found.</>;
   }
 
-  async function addItem(data: AddWishlistItemFormValues) {
-    try {
-      const result = await mutateAsync({ data });
-      toast({
-        title: `Added "${result.name}"!`,
-        status: "success",
-      });
-    } catch (e: any) {
-      toast({
-        title: "Unable to save item",
-        description: e.toString(),
-        status: "error",
-      });
-    }
-  }
-
   return (
-    <Container maxWidth="md">
-      <Card>
-        <VStack>
-          <Center>
+    <Card>
+      <VStack spacing={4}>
+        <Center>
+          <HStack spacing={2}>
             <Heading>{wishlist.name}</Heading>
-          </Center>
-          <List spacing={2}>
-            {items.length === 0 ? (
-              <ListItem>
-                <i>You don't have any items in this list yet.</i>
-              </ListItem>
-            ) : (
-              items.map((item) => <ListItem>{item.name}</ListItem>)
-            )}
+            <EditWishlistButton
+              list={wishlist}
+              refetch={refetchList}
+              variant="icon"
+            />
+          </HStack>
+        </Center>
+        <Divider />
+        <List spacing={2}>
+          {items.length === 0 ? (
             <ListItem>
-              <Center>
-                <Button onClick={dialog.open} rightIcon={<AddIcon />}>
-                  Add an item
-                </Button>
-              </Center>
+              <i>You don't have any items in this list yet.</i>
             </ListItem>
-          </List>
-        </VStack>
-      </Card>
-      <AddWishlistItemModal
-        open={open}
-        setOpen={dialog.set}
-        onSubmit={addItem}
-      />
-    </Container>
+          ) : (
+            items.map((item) => (
+              <ListItem>
+                <WishlistListItem item={item} refetch={refetchItems} />
+              </ListItem>
+            ))
+          )}
+        </List>
+        <Center>
+          <AddWishlistItemButton listId={wishlist.id} refetch={refetchItems} />
+        </Center>
+      </VStack>
+    </Card>
   );
 }

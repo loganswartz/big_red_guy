@@ -1,4 +1,5 @@
 import {
+  AbsoluteCenter,
   Box,
   Button,
   Heading,
@@ -11,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
 import Card from "../Components/Card";
-import ContentInMiddle from "../Components/ContentInMiddle";
 import useRegister from "../Global/Api/Mutations/useRegister";
 
 export default function Register() {
@@ -42,7 +42,7 @@ export default function Register() {
   }
 
   return (
-    <ContentInMiddle>
+    <AbsoluteCenter>
       <Card>
         <VStack spacing={4}>
           <BigRedGuy />
@@ -71,7 +71,7 @@ export default function Register() {
           </Box>
         </VStack>
       </Card>
-    </ContentInMiddle>
+    </AbsoluteCenter>
   );
 }
 

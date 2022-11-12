@@ -3,6 +3,7 @@ extern crate rocket;
 
 use std::{io, path::Path};
 
+use anyhow::anyhow;
 use migration::MigratorTrait;
 use rocket::{
     fairing::{self, AdHoc},
@@ -14,7 +15,7 @@ use rocket::{
     Build, Rocket,
 };
 use rocket_db_pools::{Connection, Database};
-use sea_orm::{entity::prelude::*, Set};
+use sea_orm::{entity::prelude::*, ActiveValue::NotSet, Set, TryIntoModel, Unchanged};
 use serde::Serialize;
 
 mod db;
@@ -23,6 +24,8 @@ use db::pool::Db;
 mod entities;
 use entities::{users, wishlist_item_list_assignments, wishlist_items, wishlists};
 
+mod rocket_anyhow;
+use rocket_anyhow::Result as RocketResult;
 mod utils;
 
 #[derive(FromForm, Debug)]
@@ -36,6 +39,12 @@ struct AddWishlist<'r> {
     name: &'r str,
 }
 
+macro_rules! bail_msg {
+    ($msg:literal) => {
+        return Err(rocket_anyhow::Error { 0: anyhow!($msg) })
+    };
+}
+
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
     let conn = &Db::fetch(&rocket).unwrap().conn;
     let _ = migration::Migrator::up(conn, None).await;
@@ -47,14 +56,14 @@ async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
 async fn register(
     db: Connection<Db>,
     credentials: Form<Credentials<'_>>,
-) -> rocket_anyhow::Result<Json<Me>> {
+) -> RocketResult<Json<Me>> {
     let result = users::Entity::find()
         .filter(users::Column::Email.contains(credentials.email))
         .one(&*db)
         .await?;
 
     if let Some(_) = result {
-        return Err("That email is already in use.".to_string());
+        bail_msg!("That email is already in use.");
     }
 
     let hash = utils::make_password_hash(credentials.password)?;
@@ -75,14 +84,14 @@ async fn register(
 }
 
 #[post("/logout")]
-fn logout(cookies: &CookieJar<'_>) -> Redirect {
+fn logout(cookies: &CookieJar<'_>) -> Json<AuthResponse> {
     cookies.remove_private(Cookie::named(users::Model::COOKIE_ID));
-    Redirect::to("/")
+    Json(AuthResponse { success: true })
 }
 
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
-struct LoginResponse {
+struct AuthResponse {
     success: bool,
 }
 
@@ -91,7 +100,7 @@ async fn login(
     db: Connection<Db>,
     cookies: &CookieJar<'_>,
     credentials: Form<Credentials<'_>>,
-) -> rocket_anyhow::Result<status::Custom<Json<LoginResponse>>> {
+) -> RocketResult<status::Custom<Json<AuthResponse>>> {
     let found = users::Entity::find()
         .filter(users::Column::Email.contains(credentials.email))
         .one(&*db)
@@ -99,19 +108,21 @@ async fn login(
 
     let user = match found {
         Some(user) => user,
-        None => return Err("User not found.".to_string()),
+        None => {
+            bail_msg!("User not found.");
+        }
     };
 
     if user.verify_password(credentials.password) {
         cookies.add_private(Cookie::new(users::Model::COOKIE_ID, user.id.to_string()));
         return Ok(status::Custom(
             Status::Ok,
-            Json(LoginResponse { success: true }),
+            Json(AuthResponse { success: true }),
         ));
     } else {
         return Ok(status::Custom(
             Status::Unauthorized,
-            Json(LoginResponse { success: false }),
+            Json(AuthResponse { success: false }),
         ));
     }
 }
@@ -135,7 +146,7 @@ async fn me(user: users::Model) -> Json<Me> {
 async fn all_wishlists(
     user: users::Model,
     db: Connection<Db>,
-) -> rocket_anyhow::Result<Json<Vec<wishlists::Model>>> {
+) -> RocketResult<Json<Vec<wishlists::Model>>> {
     let lists = user.find_related(wishlists::Entity).all(&*db).await?;
 
     Ok(Json(lists))
@@ -146,7 +157,7 @@ async fn add_wishlist(
     user: users::Model,
     db: Connection<Db>,
     form: Form<AddWishlist<'_>>,
-) -> rocket_anyhow::Result<Json<wishlists::Model>> {
+) -> RocketResult<Json<wishlists::Model>> {
     let new = wishlists::ActiveModel {
         name: Set(form.name.to_owned()),
         owner_id: Set(user.id),
@@ -182,21 +193,53 @@ async fn find_wishlist(
     {
         Ok(Some(list)) => Some(list),
         _ => return None,
-    };
+    }
 }
 
-#[get("/wishlists/<list_id>")]
+#[get("/wishlists/<id>")]
 async fn get_wishlist(
     user: users::Model,
     db: Connection<Db>,
-    list_id: &str,
+    id: &str,
 ) -> Option<Json<wishlists::Model>> {
-    let wishlist = find_wishlist(list_id, &*db, user).await;
+    let wishlist = find_wishlist(id, &*db, user).await;
 
     match wishlist {
         Some(model) => Some(Json(model)),
         None => None,
     }
+}
+
+#[put("/wishlists/<id>", data = "<form>")]
+async fn put_wishlist(
+    user: users::Model,
+    db: Connection<Db>,
+    form: Form<AddWishlist<'_>>,
+    id: i32,
+) -> RocketResult<Json<wishlists::Model>> {
+    let list = wishlists::Entity::find_by_id(id).one(&*db).await?;
+
+    if let Some(row) = &list {
+        if row.owner_id != user.id {
+            bail_msg!("Not allowed to modify this list.");
+        }
+    }
+    let id = match list {
+        Some(model) => Set(model.id),
+        None => NotSet,
+    };
+
+    let list = wishlists::ActiveModel {
+        id,
+        name: Set(form.name.to_owned()),
+        owner_id: Unchanged(user.id),
+        ..Default::default()
+    };
+
+    let list = list.save(&*db).await?;
+    let model = list.try_into_model()?;
+
+    Ok(Json(model))
 }
 
 #[get("/wishlists/<list_id>/items")]
@@ -224,12 +267,12 @@ async fn add_wishlist_item(
     db: Connection<Db>,
     form: Form<AddWishlistItem<'_>>,
     id: i32,
-) -> rocket_anyhow::Result<Json<wishlist_items::Model>> {
+) -> RocketResult<Json<wishlist_items::Model>> {
     // make the new item
     let item = wishlist_items::ActiveModel {
         name: Set(form.name.to_owned()),
         url: Set(form.url.map_or(None, |val| Some(val.to_owned()))),
-        quantity: Set(form.quantity.to_owned()),
+        quantity: Set(form.quantity),
         owner_id: Set(user.id),
         ..Default::default()
     };
@@ -248,38 +291,39 @@ async fn add_wishlist_item(
     Ok(Json(item))
 }
 
-#[patch("/wishlist_items/<id>", data = "<form>")]
-async fn modify_wishlist_item(
+#[put("/wishlist_items/<id>", data = "<form>")]
+async fn put_wishlist_item(
     user: users::Model,
     db: Connection<Db>,
     form: Form<AddWishlistItem<'_>>,
     id: i32,
-) -> rocket_anyhow::Result<Json<wishlist_items::Model>> {
+) -> RocketResult<Json<wishlist_items::Model>> {
     let item = wishlist_items::Entity::find_by_id(id).one(&*db).await?;
 
-    // Into ActiveModel
-    let mut item: wishlist_items::ActiveModel = pear.unwrap().into();
-    // make the new item
+    if let Some(row) = &item {
+        if row.owner_id != user.id {
+            bail_msg!("Not allowed to modify this item.");
+        }
+    }
+
+    let id = match item {
+        Some(model) => Set(model.id),
+        None => NotSet,
+    };
+
     let item = wishlist_items::ActiveModel {
+        id,
         name: Set(form.name.to_owned()),
-        url: Set(form.url.map_or(None, |val| Some(val.to_owned()))),
-        quantity: Set(form.quantity.to_owned()),
+        url: Set(form.url.map(|value| value.to_owned())),
+        quantity: Set(form.quantity),
         owner_id: Set(user.id),
         ..Default::default()
     };
 
-    let item = item.insert(&*db).await?;
+    let item = item.save(&*db).await?;
+    let model = item.try_into_model()?;
 
-    // assign it to the list
-    let assignment = wishlist_item_list_assignments::ActiveModel {
-        wishlist_id: Set(id),
-        wishlist_item_id: Set(item.id),
-        ..Default::default()
-    };
-
-    assignment.insert(&*db).await?;
-
-    Ok(Json(item))
+    Ok(Json(model))
 }
 
 #[get("/<_..>", rank = 12)]
@@ -308,7 +352,9 @@ fn rocket() -> _ {
                 get_wishlist,
                 get_wishlist_items,
                 add_wishlist,
+                put_wishlist,
                 add_wishlist_item,
+                put_wishlist_item,
             ],
         )
 }

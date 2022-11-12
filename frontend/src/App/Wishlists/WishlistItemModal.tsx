@@ -16,11 +16,13 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
-export default function AddWishlistItemModal(props: AddWishlistItemModalProps) {
-  const { open, setOpen, onSubmit: userOnSubmit } = props;
-  const { handleSubmit, register } = useForm<AddWishlistItemFormValues>();
+export default function WishlistItemModal(props: WishlistItemModalProps) {
+  const { open, setOpen, initialValues, onSubmit: userOnSubmit } = props;
+  const { handleSubmit, register } = useForm<WishlistItemFormValues>({
+    defaultValues: initialValues,
+  });
 
-  function onSubmit(values: AddWishlistItemFormValues) {
+  function onSubmit(values: WishlistItemFormValues) {
     setOpen(false);
     userOnSubmit(values);
   }
@@ -33,7 +35,7 @@ export default function AddWishlistItemModal(props: AddWishlistItemModalProps) {
         <ModalBody>
           <VStack>
             <Input placeholder="Name" {...register("name")} />
-            <Input placeholder="Link" {...register("link")} />
+            <Input placeholder="Link" {...register("url")} />
             <NumberInput>
               <NumberInputField
                 placeholder="How many?"
@@ -59,14 +61,15 @@ export default function AddWishlistItemModal(props: AddWishlistItemModalProps) {
   );
 }
 
-interface AddWishlistItemModalProps {
+interface WishlistItemModalProps {
   open: boolean;
   setOpen: (state: boolean) => void;
-  onSubmit: (values: AddWishlistItemFormValues) => void;
+  initialValues?: WishlistItemFormValues;
+  onSubmit: (values: WishlistItemFormValues) => void;
 }
 
-export interface AddWishlistItemFormValues {
+export interface WishlistItemFormValues {
   name: string;
-  link?: string;
+  url?: string;
   quantity?: number;
 }

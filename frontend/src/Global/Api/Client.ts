@@ -3,20 +3,9 @@ import {
   QueryClient,
   QueryFunction,
   useMutation,
+  UseMutationOptions,
   useQuery,
 } from "@tanstack/react-query";
-import { redirect } from "react-router-dom";
-import { useLocalStorage } from "usehooks-ts";
-
-const AUTH_TOKEN_LOCAL_STORAGE_KEY = "auth_token";
-
-export function isAuthenticated() {
-  return window.localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY) !== null;
-}
-
-/* export function useAuthentication() { */
-/*   return useLocalStorage<string | null>(AUTH_TOKEN_LOCAL_STORAGE_KEY, null); */
-/* } */
 
 function formatURL(path: string) {
   // collapse any duplicate slashes
@@ -33,7 +22,6 @@ async function apiFetch(path: string, options: RequestInit) {
   const response = await fetch(formatURL(path), options);
 
   if (response.status === 401) {
-    /* window.localStorage.removeItem(AUTH_TOKEN_LOCAL_STORAGE_KEY); */
     window.location.href = "/login";
   } else if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -128,11 +116,22 @@ export function useApiQuery<TData = unknown>(
   return query;
 }
 
-export function useApiMutation<TData = unknown>(path: string) {
+export function useApiMutation<TData = unknown>(
+  path: string,
+  defaultFetchOptions?: ApiOptions["fetchOptions"],
+  useMutationOptions?: Omit<UseMutationOptions<TData>, "mutationFn">
+) {
   const mutation = useMutation<TData, unknown, ApiOptions, unknown>({
     // @ts-expect-error
     mutationFn: (input: ApiOptions) =>
-      mutateApi({ path, options: makeOptions(input) }),
+      mutateApi({
+        path,
+        options: makeOptions({
+          ...input,
+          fetchOptions: { ...defaultFetchOptions, ...input.fetchOptions },
+        }),
+      }),
+    ...useMutationOptions,
   });
 
   return mutation;

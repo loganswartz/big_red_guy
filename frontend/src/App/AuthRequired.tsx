@@ -1,21 +1,17 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import ContentInMiddle from "../Components/ContentInMiddle";
+import { VStack } from "@chakra-ui/react";
+import { Outlet } from "react-router-dom";
+import Appbar from "../Components/Appbar";
 import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
-/* import { useAuthentication } from "../Global/Api/Client"; */
 
 export default function AuthRequired() {
-  /* const [token, _] = useAuthentication(); */
-  /* const navigate = useNavigate(); */
-  /**/
-  /* if (!token) { */
-  /*   navigate("/login"); */
-  /* } */
-
-  const _ = useCurrentUser();
+  useCurrentUser();
 
   return (
-    <ContentInMiddle>
-      <Outlet />
-    </ContentInMiddle>
+    <>
+      <Appbar />
+      <VStack sx={{ width: "100vw", flexGrow: 1 }} justifyContent="center">
+        <Outlet />
+      </VStack>
+    </>
   );
 }

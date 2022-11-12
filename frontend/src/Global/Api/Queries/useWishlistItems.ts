@@ -3,7 +3,7 @@ import { useApiQuery } from "../Client";
 export type WishlistItem = {
   id: number;
   name: string;
-  link?: string;
+  url?: string;
   quantity?: number;
 };
 

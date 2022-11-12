@@ -1,15 +1,15 @@
 import { Dispatch, SetStateAction, useState } from "react";
 
-interface DialogStateHelpers {
+interface ModalStateHelpers {
   set: Dispatch<SetStateAction<boolean>>;
   close: () => void;
   open: () => void;
   toggle: () => void;
 }
 
-export default function useDialogState(
+export default function useModalState(
   initial: boolean = false
-): [boolean, DialogStateHelpers] {
+): [boolean, ModalStateHelpers] {
   const [open, setOpen] = useState(initial);
 
   return [

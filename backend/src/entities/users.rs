@@ -93,7 +93,7 @@ impl Model {
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for Model {
-    type Error = rocket_anyhow::Error;
+    type Error = String;
 
     async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
         let denied = Outcome::Failure((
@@ -106,8 +106,8 @@ impl<'r> FromRequest<'r> for Model {
             .get_private(Model::COOKIE_ID)
             .and_then(|cookie| Some(cookie.value().to_owned()));
 
-        let value: i32 = match header.map(|value| value.parse()) {
-            Ok(Some(id)) => id,
+        let id: i32 = match header.and_then(|value| Some(value.parse())) {
+            Some(Ok(id)) => id,
             _ => return denied,
         };
 
@@ -124,8 +124,8 @@ impl<'r> FromRequest<'r> for Model {
         let result = Entity::find_by_id(id).one(&db.conn).await;
 
         match result {
-            Some(Ok(option)) => Outcome::Success(option),
+            Ok(Some(option)) => Outcome::Success(option),
             _ => denied,
-        };
+        }
     }
 }

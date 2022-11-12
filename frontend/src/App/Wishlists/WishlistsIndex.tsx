@@ -1,13 +1,16 @@
 import {
   Button,
   Center,
+  Divider,
   Heading,
   HStack,
   List,
   ListItem,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
+import AddWishlistButton from "../../Components/AddWishlistButton";
 import Card from "../../Components/Card";
 import Loading from "../../Components/Loading";
 import useAllWishlists from "../../Global/Api/Queries/useAllWishlists";
@@ -23,30 +26,35 @@ export default function WishlistsIndex() {
 
   return (
     <Card>
-      <VStack>
+      <VStack spacing={4}>
         <Center>
           <Heading>Your Wishlists</Heading>
         </Center>
+        <Divider />
         <HStack>
-          <List>
+          <List spacing={1}>
             {wishlists.length === 0 ? (
               <ListItem>You don't have any lists yet.</ListItem>
             ) : (
               wishlists.map((list) => (
                 <ListItem>
-                  {list.name}&nbsp;-&nbsp;
-                  <Button as={ReactRouterLink} to={`/app/wishlists/${list.id}`}>
-                    View
-                  </Button>
+                  <HStack justifyContent="space-between">
+                    <Text fontSize="lg">{list.name}</Text>
+                    <Text fontSize="lg">-</Text>
+                    <Button
+                      as={ReactRouterLink}
+                      to={`/app/wishlists/${list.id}`}
+                    >
+                      View
+                    </Button>
+                  </HStack>
                 </ListItem>
               ))
             )}
           </List>
         </HStack>
         <Center>
-          <Button as={ReactRouterLink} to="/app/wishlists/add">
-            Add a list
-          </Button>
+          <AddWishlistButton />
         </Center>
       </VStack>
     </Card>
