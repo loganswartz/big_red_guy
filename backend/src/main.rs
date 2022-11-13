@@ -10,7 +10,7 @@ use rocket::{
     form::Form,
     fs::{relative, FileServer, NamedFile},
     http::{Cookie, CookieJar, Status},
-    response::{status, Redirect},
+    response::status::{self, NoContent},
     serde::json::Json,
     Build, Rocket,
 };
@@ -271,7 +271,7 @@ async fn add_wishlist_item(
     // make the new item
     let item = wishlist_items::ActiveModel {
         name: Set(form.name.to_owned()),
-        url: Set(form.url.map_or(None, |val| Some(val.to_owned()))),
+        url: Set(form.url.map_or(None, |value| Some(value.to_owned()))),
         quantity: Set(form.quantity),
         owner_id: Set(user.id),
         ..Default::default()
@@ -314,7 +314,7 @@ async fn put_wishlist_item(
     let item = wishlist_items::ActiveModel {
         id,
         name: Set(form.name.to_owned()),
-        url: Set(form.url.map(|value| value.to_owned())),
+        url: Set(form.url.map_or(None, |value| Some(value.to_owned()))),
         quantity: Set(form.quantity),
         owner_id: Set(user.id),
         ..Default::default()
@@ -324,6 +324,32 @@ async fn put_wishlist_item(
     let model = item.try_into_model()?;
 
     Ok(Json(model))
+}
+
+#[delete("/wishlist_items/<id>")]
+async fn delete_wishlist_item(
+    user: users::Model,
+    db: Connection<Db>,
+    id: i32,
+) -> RocketResult<NoContent> {
+    let row = wishlist_items::Entity::find_by_id(id).one(&*db).await?;
+
+    let item = match row {
+        Some(model) => model,
+        None => bail_msg!("Item not found."),
+    };
+
+    if item.owner_id != user.id {
+        bail_msg!("Not allowed to modify this item.");
+    }
+
+    let result = item.delete(&*db).await?;
+
+    if result.rows_affected == 0 {
+        bail_msg!("Unable to delete item.")
+    } else {
+        Ok(status::NoContent)
+    }
 }
 
 #[get("/<_..>", rank = 12)]
@@ -355,6 +381,7 @@ fn rocket() -> _ {
                 put_wishlist,
                 add_wishlist_item,
                 put_wishlist_item,
+                delete_wishlist_item,
             ],
         )
 }

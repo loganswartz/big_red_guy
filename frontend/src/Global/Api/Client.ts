@@ -27,7 +27,11 @@ async function apiFetch(path: string, options: RequestInit) {
     throw new Error("Network response was not ok");
   }
 
-  return await response.json();
+  try {
+    return await response.json();
+  } catch (e: any) {
+    return null;
+  }
 }
 
 type FetchKey = readonly [string, RequestInit];
@@ -100,7 +104,10 @@ function makeOptions<T extends ApiOptions>(options: T): RequestInit {
       ...other,
     };
   }
-  return {};
+
+  // if no special case found, return the unchanged fetchOptions
+  const { fetchOptions } = options;
+  return fetchOptions;
 }
 
 export function useApiQuery<TData = unknown>(
@@ -122,15 +129,19 @@ export function useApiMutation<TData = unknown>(
   useMutationOptions?: Omit<UseMutationOptions<TData>, "mutationFn">
 ) {
   const mutation = useMutation<TData, unknown, ApiOptions, unknown>({
-    // @ts-expect-error
-    mutationFn: (input: ApiOptions) =>
-      mutateApi({
+    // @ts-ignore
+    mutationFn: (input?: ApiOptions) => {
+      const combined = {
+        ...input,
+        fetchOptions: { ...defaultFetchOptions, ...input?.fetchOptions },
+      };
+      const options = makeOptions(combined);
+
+      return mutateApi({
         path,
-        options: makeOptions({
-          ...input,
-          fetchOptions: { ...defaultFetchOptions, ...input.fetchOptions },
-        }),
-      }),
+        options,
+      });
+    },
     ...useMutationOptions,
   });
 

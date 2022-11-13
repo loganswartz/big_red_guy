@@ -172,7 +172,7 @@ impl MigrationTrait for Migration {
                             .name(&keys.wishlist_item_list_assignment_wishlist)
                             .from(
                                 WishlistItemListAssignments::Table,
-                                WishlistItemListAssignments::WishlistItemId,
+                                WishlistItemListAssignments::WishlistId,
                             )
                             .to(Wishlists::Table, Wishlists::Id)
                             .on_delete(ForeignKeyAction::Cascade)
