@@ -15,8 +15,9 @@ use rocket::{
 };
 use rocket_db_pools::Database;
 
-use crate::routes::api::{
-    default, login, logout, parties, register, users, wishlist_items, wishlists,
+use crate::routes::{
+    api::{login, logout, me, parties, register, users, wishlist_items, wishlists},
+    default,
 };
 use db::pool::Db;
 use migration::MigratorTrait;
@@ -41,19 +42,37 @@ fn rocket() -> _ {
                 register::post,
                 logout::post,
                 login::post,
-                users::me::get,
-                wishlists::index::get,
-                wishlists::index::post,
-                wishlists::id::get,
-                wishlists::id::put,
-                wishlists::items::index::get,
-                wishlists::items::index::post,
-                wishlist_items::id::put,
-                wishlist_items::id::delete,
-                parties::index::get,
-                parties::index::post,
-                parties::id::get,
-                parties::id::put,
+                // TODO: implement Admin users auth
+                // wishlists::index::get,
+                // wishlists::index::post,
+                // wishlists::id::get,
+                // wishlists::id::put,
+                // wishlists::items::index::get,
+                // wishlists::items::index::post,
+                // wishlist_items::id::put,
+                // wishlist_items::id::delete,
+                // parties::index::get,
+                // parties::index::post,
+                // parties::id::get,
+                // parties::id::put,
+            ],
+        )
+        .mount(
+            "/api/me",
+            routes![
+                me::index::get,
+                me::wishlists::index::get,
+                me::wishlists::index::post,
+                me::wishlists::id::get,
+                me::wishlists::id::put,
+                me::wishlists::items::index::get,
+                me::wishlists::items::index::post,
+                me::wishlist_items::id::put,
+                me::wishlist_items::id::delete,
+                me::parties::index::get,
+                me::parties::index::post,
+                me::parties::id::get,
+                me::parties::id::put,
             ],
         )
 }

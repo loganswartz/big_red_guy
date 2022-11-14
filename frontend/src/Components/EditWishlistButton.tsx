@@ -16,7 +16,7 @@ export default function EditWishlistButton(props: EditWishlistButtonProps) {
   const toast = useToast();
 
   async function onSubmit(data: WishlistFormValues) {
-    await mutateAsync({ data });
+    await mutateAsync({ json: data });
     refetch?.();
     toast({
       description: `Successfully updated list!`,

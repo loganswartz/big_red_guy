@@ -99,7 +99,7 @@ function makeOptions<T extends ApiOptions>(options: T): RequestInit {
     const { headers, ...other } = fetchOptions ?? {};
 
     return {
-      body: json,
+      body: JSON.stringify(json),
       headers: { "Content-Type": "application/json", ...headers },
       ...other,
     };

@@ -17,7 +17,7 @@ export default function WishlistListItem(props: WishlistListItemProps) {
 
   async function onEdit(data: WishlistItemFormValues) {
     try {
-      await editItem({ data });
+      await editItem({ json: data });
       refetch?.();
       toast({
         description: `Successfully updated "${item.name}"!`,

@@ -18,7 +18,7 @@ export default function AddWishlistButton(props: AddWishlistButtonProps) {
 
   async function onSubmit(data: WishlistFormValues) {
     try {
-      const created = await mutateAsync({ data });
+      const created = await mutateAsync({ json: data });
       navigate(`/app/wishlists/${created.id}`);
     } catch (e: any) {
       toast({

@@ -8,5 +8,5 @@ export interface Wishlist {
 }
 
 export default function useAllWishlists() {
-  return useApiQuery<Wishlist[]>("/wishlists");
+  return useApiQuery<Wishlist[]>("/me/wishlists");
 }

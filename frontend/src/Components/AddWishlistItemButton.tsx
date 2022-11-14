@@ -18,7 +18,7 @@ export default function AddWishlistItemButton(
 
   async function onSubmit(data: WishlistItemFormValues) {
     try {
-      const result = await mutateAsync({ data });
+      const result = await mutateAsync({ json: data });
       toast({
         title: `Added "${result.name}"!`,
         status: "success",

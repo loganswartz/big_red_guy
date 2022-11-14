@@ -1,17 +1,18 @@
-use rocket::{form::Form, serde::json::Json};
-use rocket::{post, FromForm};
+use rocket::post;
+use rocket::serde::json::Json;
 use rocket_db_pools::Connection;
 use sea_orm::entity::prelude::*;
 use sea_orm::ActiveValue;
+use serde::Deserialize;
 
 use crate::db::pool::Db;
 use crate::entities::users;
 use crate::rocket_anyhow::Result as RocketResult;
 use crate::{bail_msg, utils};
 
-use super::users::me::Me;
+use super::me::index::Me;
 
-#[derive(FromForm, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct Credentials<'r> {
     pub email: &'r str,
     pub password: &'r str,
@@ -20,7 +21,7 @@ pub struct Credentials<'r> {
 #[post("/register", data = "<credentials>")]
 pub async fn post(
     db: Connection<Db>,
-    credentials: Form<Credentials<'_>>,
+    credentials: Json<Credentials<'_>>,
 ) -> RocketResult<Json<Me>> {
     let result = users::Entity::find()
         .filter(users::Column::Email.contains(credentials.email))

@@ -11,7 +11,7 @@ pub struct Me {
     pub email: String,
 }
 
-#[get("/me")]
+#[get("/")]
 pub async fn get(user: users::Model) -> Json<Me> {
     Json(Me {
         name: user.name,

@@ -36,10 +36,12 @@ export default function WishlistItemModal(props: WishlistItemModalProps) {
           <VStack>
             <Input placeholder="Name" {...register("name")} />
             <Input placeholder="Link" {...register("url")} />
-            <NumberInput>
+            <NumberInput precision={0}>
               <NumberInputField
                 placeholder="How many?"
-                {...register("quantity")}
+                {...register("quantity", {
+                  valueAsNumber: true,
+                })}
               />
               <NumberInputStepper>
                 <NumberIncrementStepper />

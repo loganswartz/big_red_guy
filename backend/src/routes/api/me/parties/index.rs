@@ -22,14 +22,14 @@ pub async fn get(
     Ok(Json(parties))
 }
 
-#[post("/parties", data = "<form>")]
+#[post("/parties", data = "<data>")]
 pub async fn post(
     user: users::Model,
     db: Connection<Db>,
-    form: Json<AddParty<'_>>,
+    data: Json<AddParty<'_>>,
 ) -> RocketResult<Json<parties::Model>> {
     let new = parties::ActiveModel {
-        name: ActiveValue::Set(form.name.to_owned()),
+        name: ActiveValue::Set(data.name.to_owned()),
         owner_id: ActiveValue::Set(user.id),
         ..Default::default()
     };

@@ -1,5 +1,4 @@
 use rocket::{
-    form::Form,
     http::{Cookie, CookieJar, Status},
     post,
     response::status,
@@ -26,7 +25,7 @@ pub struct AuthResponse {
 pub async fn post(
     db: Connection<Db>,
     cookies: &CookieJar<'_>,
-    credentials: Form<Credentials<'_>>,
+    credentials: Json<Credentials<'_>>,
 ) -> RocketResult<status::Custom<Json<AuthResponse>>> {
     let found = users::Entity::find()
         .filter(users::Column::Email.contains(credentials.email))

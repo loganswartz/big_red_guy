@@ -8,5 +8,5 @@ export type WishlistItem = {
 };
 
 export default function useWishlistItems(id: string | number) {
-  return useApiQuery<WishlistItem[]>(`/wishlists/${id}/items`);
+  return useApiQuery<WishlistItem[]>(`/me/wishlists/${id}/items`);
 }
