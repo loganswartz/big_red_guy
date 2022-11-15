@@ -1,10 +1,10 @@
 use rocket::{get, post, serde::json::Json};
 use rocket_db_pools::Connection;
-use sea_orm::{ActiveModelTrait, ActiveValue, ModelTrait};
+use sea_orm::{ActiveModelTrait, ActiveValue::Set, ModelTrait};
 use serde::Deserialize;
 
 use crate::db::pool::Db;
-use crate::entities::{parties, users};
+use crate::entities::{parties, party_memberships, users};
 use crate::rocket_anyhow::Result as RocketResult;
 
 #[derive(Deserialize, Debug)]
@@ -17,7 +17,10 @@ pub async fn get(
     user: users::Model,
     db: Connection<Db>,
 ) -> RocketResult<Json<Vec<parties::Model>>> {
-    let parties = user.find_related(parties::Entity).all(&*db).await?;
+    let parties = user
+        .find_linked(users::UserToParticipatingParties)
+        .all(&*db)
+        .await?;
 
     Ok(Json(parties))
 }
@@ -28,13 +31,22 @@ pub async fn post(
     db: Connection<Db>,
     data: Json<AddParty<'_>>,
 ) -> RocketResult<Json<parties::Model>> {
-    let new = parties::ActiveModel {
-        name: ActiveValue::Set(data.name.to_owned()),
-        owner_id: ActiveValue::Set(user.id),
+    let party = parties::ActiveModel {
+        name: Set(data.name.to_owned()),
+        owner_id: Set(user.id),
         ..Default::default()
     };
 
-    let model = new.insert(&*db).await?;
+    let model = party.insert(&*db).await?;
+
+    // assign user to party
+    let membership = party_memberships::ActiveModel {
+        user_id: Set(user.id),
+        party_id: Set(model.id),
+        ..Default::default()
+    };
+
+    membership.insert(&*db).await?;
 
     Ok(Json(model))
 }

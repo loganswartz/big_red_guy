@@ -16,6 +16,9 @@ export default function Home() {
     <Card>
       <VStack>
         <Box>Welcome, {data.name}!</Box>
+        <Button as={ReactRouterLink} to="/app/parties">
+          Go to Parties
+        </Button>
         <Button as={ReactRouterLink} to="/app/wishlists">
           Go to Wishlists
         </Button>

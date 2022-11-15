@@ -46,4 +46,18 @@ impl Related<super::wishlists::Entity> for Entity {
     }
 }
 
+pub struct PartyToPartyMembers;
+
+impl Linked for PartyToPartyMembers {
+    type FromEntity = Entity;
+    type ToEntity = super::users::Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![
+            super::party_memberships::Relation::Parties.def().rev(),
+            super::party_memberships::Relation::Users.def(),
+        ]
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}

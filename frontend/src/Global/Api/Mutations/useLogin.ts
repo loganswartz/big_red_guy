@@ -1,8 +1,5 @@
 import { useApiMutation } from "../Client";
-
-interface LoginResponse {
-  success: boolean;
-}
+import { LoginResponse } from "../Types";
 
 export default function useLogin() {
   return useApiMutation<LoginResponse>("/login");

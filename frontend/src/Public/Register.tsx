@@ -1,7 +1,11 @@
 import {
   AbsoluteCenter,
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
+  Divider,
   Heading,
   Input,
   useToast,
@@ -19,14 +23,20 @@ export default function Register() {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const { handleSubmit, register, watch } = useForm<FormValues>();
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>();
   const password = useRef({});
   password.current = watch("password", "");
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
     try {
-      mutateAsync({
-        data: {
+      await mutateAsync({
+        json: {
+          name: values.name,
           email: values.email,
           password: values.password,
         },
@@ -41,31 +51,52 @@ export default function Register() {
     }
   }
 
+  const notices = Object.entries(errors);
+  const hasPasswordError = !!errors.confirm_password;
+  const passwordLengthRule = {
+    value: 12,
+    message: "Password must be at least 12 characters",
+  };
+
   return (
     <AbsoluteCenter>
-      <Card>
-        <VStack spacing={4}>
+      <Card minWidth="md">
+        <VStack spacing={3}>
           <BigRedGuy />
+          <Divider />
           <Box>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <VStack>
-                <Heading size="md">Create an account:</Heading>
+              <VStack spacing={2}>
+                <Heading size="md">Create an account</Heading>
+                <Input placeholder="Name" {...register("name")} />
                 <Input placeholder="Email" {...register("email")} />
                 <Input
                   type="password"
                   placeholder="Password"
-                  {...register("password")}
+                  isInvalid={hasPasswordError}
+                  minLength={12}
+                  {...register("password", { minLength: passwordLengthRule })}
                 />
                 <Input
                   type="password"
                   placeholder="Confirm password"
+                  isInvalid={hasPasswordError}
                   {...register("confirm_password", {
+                    minLength: passwordLengthRule,
                     validate: (value) =>
                       value === password.current ||
                       "The passwords do not match",
                   })}
                 />
-                <Button type="submit">Register</Button>
+                {notices.map(([_, error]) => (
+                  <Alert status="error" sx={{ borderRadius: "0.3rem" }}>
+                    <AlertIcon />
+                    <AlertDescription>{error.message}</AlertDescription>
+                  </Alert>
+                ))}
+                <Button disabled={hasPasswordError} type="submit">
+                  Register
+                </Button>
               </VStack>
             </form>
           </Box>
@@ -76,6 +107,7 @@ export default function Register() {
 }
 
 interface FormValues {
+  name: string;
   email: string;
   password: string;
   confirm_password: string;

@@ -1,11 +1,9 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
-import WishlistItemModal, {
-  WishlistItemFormValues,
-} from "../App/Wishlists/WishlistItemModal";
-import useCreateWishlistItem from "../Global/Api/Mutations/useCreateWishlistItem";
-import useModalState from "../Global/Helpers/ModalHelper";
-import FlexButton, { FlexButtonVariant } from "./FlexButton";
+import WishlistItemModal, { WishlistItemFormValues } from "./WishlistItemModal";
+import useCreateWishlistItem from "../../../Global/Api/Mutations/Wishlists/useCreateWishlistItem";
+import useModalState from "../../../Global/Helpers/ModalHelper";
+import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 
 export default function AddWishlistItemButton(
   props: AddWishlistItemButtonProps

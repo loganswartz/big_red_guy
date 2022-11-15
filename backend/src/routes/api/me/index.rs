@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::entities::users;
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 #[serde(crate = "rocket::serde")]
 pub struct Me {
     pub name: String,

@@ -1,5 +1,5 @@
-import { useApiMutation } from "../Client";
-import { WishlistItem } from "../Queries/useWishlistItems";
+import { useApiMutation } from "../../Client";
+import { WishlistItem } from "../../Types";
 
 export default function useCreateWishlistItem(listId?: string | number) {
   const endpoint = listId

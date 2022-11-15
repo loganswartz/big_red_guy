@@ -5,6 +5,7 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   HStack,
@@ -47,19 +48,28 @@ export default function Appbar(props: AppbarProps) {
             </Center>
           </DrawerHeader>
           <DrawerBody>
-            <VStack justifyContent="space-between">
-              <VStack spacing={2}>
-                <Link as={ReactRouterLink} to="/app" onClick={drawer.close}>
-                  Home
-                </Link>
-                <Link
-                  as={ReactRouterLink}
-                  to="/app/wishlists"
-                  onClick={drawer.close}
-                >
-                  Wishlists
-                </Link>
-              </VStack>
+            <VStack spacing={2}>
+              <Link as={ReactRouterLink} to="/app" onClick={drawer.close}>
+                Home
+              </Link>
+              <Link
+                as={ReactRouterLink}
+                to="/app/parties"
+                onClick={drawer.close}
+              >
+                Parties
+              </Link>
+              <Link
+                as={ReactRouterLink}
+                to="/app/wishlists"
+                onClick={drawer.close}
+              >
+                Wishlists
+              </Link>
+            </VStack>
+          </DrawerBody>
+          <DrawerFooter>
+            <VStack sx={{ width: "100%" }}>
               <Button
                 onClick={() => {
                   logout();
@@ -69,7 +79,7 @@ export default function Appbar(props: AppbarProps) {
                 Log Out
               </Button>
             </VStack>
-          </DrawerBody>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </>

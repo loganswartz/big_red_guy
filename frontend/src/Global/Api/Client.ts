@@ -6,6 +6,7 @@ import {
   UseMutationOptions,
   useQuery,
 } from "@tanstack/react-query";
+import { CustomError } from "ts-custom-error";
 
 function formatURL(path: string) {
   // collapse any duplicate slashes
@@ -18,13 +19,29 @@ function formatURL(path: string) {
   }
 }
 
+export class ApiError extends CustomError {
+  public data: Record<string, any>;
+
+  public constructor(public code: number, data: Record<string, any>) {
+    super(data?.message ?? ApiError.FallbackMsg);
+    this.data = data;
+  }
+  static get FallbackMsg() {
+    return "Network response was not OK.";
+  }
+
+  public toString() {
+    return this.data?.message ?? ApiError.FallbackMsg;
+  }
+}
+
 async function apiFetch(path: string, options: RequestInit) {
   const response = await fetch(formatURL(path), options);
 
   if (response.status === 401) {
     window.location.href = "/login";
   } else if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new ApiError(response.status, await response.json());
   }
 
   try {

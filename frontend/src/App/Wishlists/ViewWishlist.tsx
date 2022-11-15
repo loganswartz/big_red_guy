@@ -9,12 +9,12 @@ import {
 } from "@chakra-ui/react";
 import Card from "../../Components/Card";
 import { useParams } from "react-router-dom";
-import useWishlist from "../../Global/Api/Queries/useWishlist";
-import useWishlistItems from "../../Global/Api/Queries/useWishlistItems";
+import useWishlist from "../../Global/Api/Queries/Wishlists/useWishlist";
+import useWishlistItems from "../../Global/Api/Queries/Wishlists/useWishlistItems";
 import Loading from "../../Components/Loading";
 import WishlistListItem from "./WishlistListItem";
-import EditWishlistButton from "../../Components/EditWishlistButton";
-import AddWishlistItemButton from "../../Components/AddWishlistItemButton";
+import EditWishlistButton from "./Components/EditWishlistButton";
+import AddWishlistItemButton from "./Components/AddWishlistItemButton";
 
 export default function ViewWishlist() {
   const { id = "" } = useParams<{ id: string }>();

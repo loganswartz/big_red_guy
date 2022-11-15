@@ -3,34 +3,31 @@ use rocket_db_pools::Connection;
 use sea_orm::{
     ActiveModelTrait,
     ActiveValue::{NotSet, Set, Unchanged},
-    ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, TryIntoModel,
+    ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter, TryIntoModel,
 };
 
-use crate::bail_msg;
 use crate::db::pool::Db;
 use crate::entities::{parties, users};
 use crate::rocket_anyhow::Result as RocketResult;
+use crate::{bail_msg, entities::users::UserToParticipatingParties};
 
 use super::index::AddParty;
 
-pub async fn find_party(
+pub async fn find_participating_party(
     id: i32,
     db: &DatabaseConnection,
     user: users::Model,
 ) -> Option<parties::Model> {
-    match parties::Entity::find_by_id(id)
-        .filter(parties::Column::OwnerId.eq(user.id))
+    user.find_linked(UserToParticipatingParties)
+        .filter(parties::Column::Id.eq(id))
         .one(db)
         .await
-    {
-        Ok(Some(party)) => Some(party),
-        _ => return None,
-    }
+        .ok()?
 }
 
 #[get("/parties/<id>")]
 pub async fn get(user: users::Model, db: Connection<Db>, id: i32) -> Option<Json<parties::Model>> {
-    let wishlist = find_party(id, &*db, user).await?;
+    let wishlist = find_participating_party(id, &*db, user).await?;
 
     Some(Json(wishlist))
 }

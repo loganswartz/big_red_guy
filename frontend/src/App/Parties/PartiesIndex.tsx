@@ -10,40 +10,40 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import AddWishlistButton from "./Components/AddWishlistButton";
+import AddPartyButton from "./Components/AddPartyButton";
 import Card from "../../Components/Card";
 import Loading from "../../Components/Loading";
-import useAllWishlists from "../../Global/Api/Queries/Wishlists/useAllWishlists";
+import useAllParties from "../../Global/Api/Queries/Parties/useAllParties";
 
-export default function WishlistsIndex() {
-  const { data, isInitialLoading } = useAllWishlists();
+export default function PartiesIndex() {
+  const { data, isInitialLoading } = useAllParties();
 
   if (isInitialLoading) {
     return <Loading />;
   }
 
-  const wishlists = data ?? [];
+  const parties = data ?? [];
 
   return (
     <Card>
       <VStack spacing={4}>
         <Center>
-          <Heading>Your Wishlists</Heading>
+          <Heading>Your Parties</Heading>
         </Center>
         <Divider />
         <HStack>
           <List spacing={1}>
-            {wishlists.length === 0 ? (
-              <ListItem>You don't have any lists yet.</ListItem>
+            {parties.length === 0 ? (
+              <ListItem>You don't have any parties yet.</ListItem>
             ) : (
-              wishlists.map((list) => (
+              parties.map((party) => (
                 <ListItem>
                   <HStack justifyContent="space-between">
-                    <Text fontSize="lg">{list.name}</Text>
+                    <Text fontSize="lg">{party.name}</Text>
                     <Text fontSize="lg">-</Text>
                     <Button
                       as={ReactRouterLink}
-                      to={`/app/wishlists/${list.id}`}
+                      to={`/app/parties/${party.id}`}
                     >
                       View
                     </Button>
@@ -54,7 +54,7 @@ export default function WishlistsIndex() {
           </List>
         </HStack>
         <Center>
-          <AddWishlistButton />
+          <AddPartyButton />
         </Center>
       </VStack>
     </Card>

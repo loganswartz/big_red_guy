@@ -1,25 +1,23 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import WishlistModal, {
-  WishlistFormValues,
-} from "../App/Wishlists/WishlistModal";
-import useAddWishlist from "../Global/Api/Mutations/useCreateWishlist";
-import useModalState from "../Global/Helpers/ModalHelper";
-import FlexButton, { FlexButtonVariant } from "./FlexButton";
+import PartyModal, { PartyFormValues } from "./PartyModal";
+import useAddParty from "../../../Global/Api/Mutations/Parties/useAddParty";
+import useModalState from "../../../Global/Helpers/ModalHelper";
+import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 
-export default function AddWishlistButton(props: AddWishlistButtonProps) {
+export default function AddPartyButton(props: AddPartyButtonProps) {
   const { variant } = props;
 
   const [open, modal] = useModalState();
-  const { mutateAsync } = useAddWishlist();
+  const { mutateAsync } = useAddParty();
   const toast = useToast();
   const navigate = useNavigate();
 
-  async function onSubmit(data: WishlistFormValues) {
+  async function onSubmit(data: PartyFormValues) {
     try {
       const created = await mutateAsync({ json: data });
-      navigate(`/app/wishlists/${created.id}`);
+      navigate(`/app/parties/${created.id}`);
     } catch (e: any) {
       toast({
         title: "An error occurred.",
@@ -33,15 +31,15 @@ export default function AddWishlistButton(props: AddWishlistButtonProps) {
     <>
       <FlexButton
         icon={<AddIcon />}
-        title="Add a list"
+        title="Add a party"
         variant={variant}
         onClick={modal.open}
       />
-      <WishlistModal onSubmit={onSubmit} open={open} setOpen={modal.set} />
+      <PartyModal onSubmit={onSubmit} open={open} setOpen={modal.set} />
     </>
   );
 }
 
-interface AddWishlistButtonProps {
+interface AddPartyButtonProps {
   variant?: FlexButtonVariant;
 }

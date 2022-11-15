@@ -11,6 +11,8 @@ import AuthRequired from "./App/AuthRequired";
 import WishlistsIndex from "./App/Wishlists/WishlistsIndex";
 import ViewWishlist from "./App/Wishlists/ViewWishlist";
 import Root from "./Root";
+import ViewParty from "./App/Parties/ViewParty";
+import PartiesIndex from "./App/Parties/PartiesIndex";
 
 function App() {
   const router = createBrowserRouter([
@@ -37,6 +39,19 @@ function App() {
             {
               index: true,
               element: <Home />,
+            },
+            {
+              path: "parties/*",
+              children: [
+                {
+                  index: true,
+                  element: <PartiesIndex />,
+                },
+                {
+                  path: ":id",
+                  element: <ViewParty />,
+                },
+              ],
             },
             {
               path: "wishlists/*",

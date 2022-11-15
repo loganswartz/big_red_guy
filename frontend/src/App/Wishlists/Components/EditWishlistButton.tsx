@@ -1,12 +1,10 @@
 import { EditIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
-import WishlistModal, {
-  WishlistFormValues,
-} from "../App/Wishlists/WishlistModal";
-import useEditWishlist from "../Global/Api/Mutations/useEditWishlist";
-import { Wishlist } from "../Global/Api/Queries/useAllWishlists";
-import useModalState from "../Global/Helpers/ModalHelper";
-import FlexButton, { FlexButtonVariant } from "./FlexButton";
+import WishlistModal, { WishlistFormValues } from "./WishlistModal";
+import useEditWishlist from "../../../Global/Api/Mutations/Wishlists/useEditWishlist";
+import { Wishlist } from "../../../Global/Api/Types";
+import useModalState from "../../../Global/Helpers/ModalHelper";
+import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 
 export default function EditWishlistButton(props: EditWishlistButtonProps) {
   const { list, refetch, variant } = props;

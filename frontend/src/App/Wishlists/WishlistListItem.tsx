@@ -1,11 +1,13 @@
 import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { HStack, Tag, Link, useToast, IconButton } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
-import useDeleteWishlistItem from "../../Global/Api/Mutations/useDeleteWishlistItem";
-import useEditWishlistItem from "../../Global/Api/Mutations/useEditWishlistItem";
-import { WishlistItem } from "../../Global/Api/Queries/useWishlistItems";
+import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
+import useEditWishlistItem from "../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
+import { WishlistItem } from "../../Global/Api/Types";
 import useModalState from "../../Global/Helpers/ModalHelper";
-import WishlistItemModal, { WishlistItemFormValues } from "./WishlistItemModal";
+import WishlistItemModal, {
+  WishlistItemFormValues,
+} from "./Components/WishlistItemModal";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
   const { item, refetch } = props;
