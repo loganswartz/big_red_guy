@@ -15,6 +15,8 @@ struct KeyManager {
     wishlist_item_list_assignment_items: String,
     wishlist_item_user_fulfillment_user: String,
     wishlist_item_user_fulfillment_items: String,
+    wishlist_party_assignment_party: String,
+    wishlist_party_assignment_wishlist: String,
 }
 
 impl KeyManager {
@@ -61,6 +63,18 @@ impl KeyManager {
                 &WishlistItemUserFulfillments::WishlistItemId.to_string(),
                 &WishlistItems::Table.to_string(),
                 &WishlistItems::Id.to_string(),
+            ),
+            wishlist_party_assignment_wishlist: Self::format(
+                &WishlistPartyAssignments::Table.to_string(),
+                &WishlistPartyAssignments::WishlistId.to_string(),
+                &Wishlists::Table.to_string(),
+                &Wishlists::Id.to_string(),
+            ),
+            wishlist_party_assignment_party: Self::format(
+                &WishlistPartyAssignments::Table.to_string(),
+                &WishlistPartyAssignments::PartyId.to_string(),
+                &Parties::Table.to_string(),
+                &Parties::Id.to_string(),
             ),
         }
     }
@@ -251,6 +265,54 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
+        manager
+            .create_table(
+                Table::create()
+                    .table(WishlistPartyAssignments::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(WishlistPartyAssignments::Id)
+                            .big_unsigned()
+                            .not_null()
+                            .auto_increment()
+                            .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(WishlistPartyAssignments::WishlistId)
+                            .big_unsigned()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        sea_query::ForeignKey::create()
+                            .name(&keys.wishlist_party_assignment_wishlist)
+                            .from(
+                                WishlistPartyAssignments::Table,
+                                WishlistPartyAssignments::WishlistId,
+                            )
+                            .to(Wishlists::Table, Wishlists::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .col(
+                        ColumnDef::new(WishlistPartyAssignments::PartyId)
+                            .big_unsigned()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        sea_query::ForeignKey::create()
+                            .name(&keys.wishlist_party_assignment_party)
+                            .from(
+                                WishlistPartyAssignments::Table,
+                                WishlistPartyAssignments::PartyId,
+                            )
+                            .to(Parties::Table, Parties::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
         Ok(())
     }
 
@@ -314,7 +376,51 @@ impl MigrationTrait for Migration {
             .await?;
 
         manager
+            .drop_foreign_key(
+                sea_query::ForeignKey::drop()
+                    .name(&keys.wishlist_party_assignment_wishlist)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_foreign_key(
+                sea_query::ForeignKey::drop()
+                    .name(&keys.wishlist_party_assignment_party)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
             .drop_table(Table::drop().table(Wishlists::Table).to_owned())
+            .await?;
+
+        manager
+            .drop_table(Table::drop().table(WishlistItems::Table).to_owned())
+            .await?;
+
+        manager
+            .drop_table(
+                Table::drop()
+                    .table(WishlistItemListAssignments::Table)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_table(
+                Table::drop()
+                    .table(WishlistItemUserFulfillments::Table)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_table(
+                Table::drop()
+                    .table(WishlistPartyAssignments::Table)
+                    .to_owned(),
+            )
             .await?;
 
         Ok(())
@@ -356,4 +462,12 @@ pub enum WishlistItemUserFulfillments {
     UserId,
     WishlistItemId,
     Quantity,
+}
+
+#[derive(Iden)]
+pub enum WishlistPartyAssignments {
+    Table,
+    Id,
+    WishlistId,
+    PartyId,
 }

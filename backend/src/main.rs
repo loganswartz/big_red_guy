@@ -71,8 +71,8 @@ fn rocket() -> _ {
                 me::wishlist_items::id::delete,
                 me::parties::index::get,
                 me::parties::index::post,
-                me::parties::id::get,
-                me::parties::id::put,
+                me::parties::id::index::get,
+                me::parties::id::index::put,
             ],
         )
 }

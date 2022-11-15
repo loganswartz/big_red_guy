@@ -1,3 +1,4 @@
+use migration::DbErr;
 use rocket::{get, put, serde::json::Json};
 use rocket_db_pools::Connection;
 use sea_orm::{
@@ -11,25 +12,30 @@ use crate::entities::{parties, users};
 use crate::rocket_anyhow::Result as RocketResult;
 use crate::{bail_msg, entities::users::UserToParticipatingParties};
 
-use super::index::AddParty;
+use crate::routes::api::me::parties::index::AddParty;
 
 pub async fn find_participating_party(
     id: i32,
     db: &DatabaseConnection,
-    user: users::Model,
-) -> Option<parties::Model> {
+    user: &users::Model,
+) -> Result<Option<parties::Model>, DbErr> {
     user.find_linked(UserToParticipatingParties)
         .filter(parties::Column::Id.eq(id))
         .one(db)
         .await
-        .ok()?
 }
 
 #[get("/parties/<id>")]
-pub async fn get(user: users::Model, db: Connection<Db>, id: i32) -> Option<Json<parties::Model>> {
-    let wishlist = find_participating_party(id, &*db, user).await?;
+pub async fn get(
+    user: users::Model,
+    db: Connection<Db>,
+    id: i32,
+) -> RocketResult<Option<Json<parties::Model>>> {
+    let wishlist = find_participating_party(id, &*db, &user)
+        .await?
+        .map(|model| Json(model));
 
-    Some(Json(wishlist))
+    Ok(wishlist)
 }
 
 #[put("/parties/<id>", data = "<form>")]
