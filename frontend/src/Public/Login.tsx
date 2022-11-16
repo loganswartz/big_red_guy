@@ -24,8 +24,8 @@ export default function Login() {
   const navigate = useNavigate();
 
   async function onSubmit(data: FormValues) {
-    const response = await mutateAsync({ json: data });
-    if (response.success) {
+    const response = await mutateAsync({ data });
+    if (response?.success) {
       navigate("/app");
     }
   }

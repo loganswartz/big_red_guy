@@ -2,20 +2,19 @@ import { EditIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import WishlistModal, { WishlistFormValues } from "./WishlistModal";
 import useEditWishlist from "../../../Global/Api/Mutations/Wishlists/useEditWishlist";
-import { Wishlist } from "../../../Global/Api/Types";
+import { Wishlist } from "../../../Global/Api/Types/Api";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 
 export default function EditWishlistButton(props: EditWishlistButtonProps) {
-  const { list, refetch, variant } = props;
+  const { list, variant } = props;
 
   const [open, modal] = useModalState();
   const { mutateAsync } = useEditWishlist(list.id);
   const toast = useToast();
 
   async function onSubmit(data: WishlistFormValues) {
-    await mutateAsync({ json: data });
-    refetch?.();
+    await mutateAsync({ data });
     toast({
       description: `Successfully updated list!`,
     });
@@ -42,6 +41,5 @@ export default function EditWishlistButton(props: EditWishlistButtonProps) {
 
 interface EditWishlistButtonProps {
   list: Wishlist;
-  refetch?: () => void;
   variant?: FlexButtonVariant;
 }

@@ -9,20 +9,11 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub owner_id: i32,
-    pub party_id: Option<i32>,
     pub name: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::parties::Entity",
-        from = "Column::PartyId",
-        to = "super::parties::Column::Id",
-        on_update = "Cascade",
-        on_delete = "Cascade"
-    )]
-    Parties,
     #[sea_orm(
         belongs_to = "super::users::Entity",
         from = "Column::OwnerId",
@@ -33,12 +24,8 @@ pub enum Relation {
     Users,
     #[sea_orm(has_many = "super::wishlist_item_list_assignments::Entity")]
     WishlistItemListAssignments,
-}
-
-impl Related<super::parties::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Parties.def()
-    }
+    #[sea_orm(has_many = "super::wishlist_party_assignments::Entity")]
+    WishlistPartyAssignments,
 }
 
 impl Related<super::users::Entity> for Entity {
@@ -60,6 +47,25 @@ impl Related<super::wishlist_items::Entity> for Entity {
     fn via() -> Option<RelationDef> {
         Some(
             super::wishlist_item_list_assignments::Relation::Wishlists
+                .def()
+                .rev(),
+        )
+    }
+}
+
+impl Related<super::wishlist_party_assignments::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::WishlistPartyAssignments.def()
+    }
+}
+
+impl Related<super::parties::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::wishlist_party_assignments::Relation::Parties.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(
+            super::wishlist_party_assignments::Relation::Wishlists
                 .def()
                 .rev(),
         )

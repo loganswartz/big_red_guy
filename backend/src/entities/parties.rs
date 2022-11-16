@@ -26,6 +26,8 @@ pub enum Relation {
     PartyMemberships,
     #[sea_orm(has_many = "super::wishlists::Entity")]
     Wishlists,
+    #[sea_orm(has_many = "super::wishlist_party_assignments::Entity")]
+    WishlistPartyAssignments,
 }
 
 impl Related<super::users::Entity> for Entity {
@@ -40,12 +42,6 @@ impl Related<super::party_memberships::Entity> for Entity {
     }
 }
 
-impl Related<super::wishlists::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Wishlists.def()
-    }
-}
-
 pub struct PartyToPartyMembers;
 
 impl Linked for PartyToPartyMembers {
@@ -57,6 +53,25 @@ impl Linked for PartyToPartyMembers {
             super::party_memberships::Relation::Parties.def().rev(),
             super::party_memberships::Relation::Users.def(),
         ]
+    }
+}
+
+impl Related<super::wishlist_party_assignments::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::WishlistPartyAssignments.def()
+    }
+}
+
+impl Related<super::wishlists::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::wishlist_party_assignments::Relation::Wishlists.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(
+            super::wishlist_party_assignments::Relation::Parties
+                .def()
+                .rev(),
+        )
     }
 }
 

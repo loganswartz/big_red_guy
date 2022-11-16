@@ -3,7 +3,7 @@ import { HStack, Tag, Link, useToast, IconButton } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
 import useEditWishlistItem from "../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
-import { WishlistItem } from "../../Global/Api/Types";
+import { WishlistItem } from "../../Global/Api/Types/Api";
 import useModalState from "../../Global/Helpers/ModalHelper";
 import WishlistItemModal, {
   WishlistItemFormValues,
@@ -19,7 +19,7 @@ export default function WishlistListItem(props: WishlistListItemProps) {
 
   async function onEdit(data: WishlistItemFormValues) {
     try {
-      await editItem({ json: data });
+      await editItem({ data });
       refetch?.();
       toast({
         description: `Successfully updated "${item.name}"!`,

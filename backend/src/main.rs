@@ -73,6 +73,9 @@ fn rocket() -> _ {
                 me::parties::index::post,
                 me::parties::id::index::get,
                 me::parties::id::index::put,
+                me::parties::id::lists::index::get,
+                me::parties::id::lists::id::get,
+                me::parties::id::lists::id::put,
             ],
         )
 }

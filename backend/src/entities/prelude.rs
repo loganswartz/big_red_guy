@@ -6,4 +6,5 @@ pub use super::users::Entity as Users;
 pub use super::wishlist_item_list_assignments::Entity as WishlistItemListAssignments;
 pub use super::wishlist_item_user_fulfillments::Entity as WishlistItemUserFulfillments;
 pub use super::wishlist_items::Entity as WishlistItems;
+pub use super::wishlist_party_assignments::Entity as WishlistPartyAssignments;
 pub use super::wishlists::Entity as Wishlists;

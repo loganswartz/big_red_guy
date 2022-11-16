@@ -1,6 +1,8 @@
 import { useApiMutation } from "../Client";
 
 export default function useLogout() {
-  const { mutateAsync } = useApiMutation<{}>("/logout");
+  const { mutateAsync } = useApiMutation<{}>({
+    path: "/logout",
+  });
   return () => mutateAsync({});
 }

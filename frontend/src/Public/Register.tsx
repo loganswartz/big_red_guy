@@ -35,7 +35,7 @@ export default function Register() {
   async function onSubmit(values: FormValues) {
     try {
       await mutateAsync({
-        json: {
+        data: {
           name: values.name,
           email: values.email,
           password: values.password,

@@ -8,4 +8,5 @@ pub mod users;
 pub mod wishlist_item_list_assignments;
 pub mod wishlist_item_user_fulfillments;
 pub mod wishlist_items;
+pub mod wishlist_party_assignments;
 pub mod wishlists;

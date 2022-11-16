@@ -19,11 +19,7 @@ import AddWishlistItemButton from "./Components/AddWishlistItemButton";
 export default function ViewWishlist() {
   const { id = "" } = useParams<{ id: string }>();
 
-  const {
-    data: wishlist,
-    isInitialLoading: wishlistLoading,
-    refetch: refetchList,
-  } = useWishlist(id);
+  const { data: wishlist, isInitialLoading: wishlistLoading } = useWishlist(id);
   const {
     data: items,
     isInitialLoading: wishlistItemsLoading,
@@ -42,11 +38,7 @@ export default function ViewWishlist() {
         <Center>
           <HStack spacing={2}>
             <Heading>{wishlist.name}</Heading>
-            <EditWishlistButton
-              list={wishlist}
-              refetch={refetchList}
-              variant="icon"
-            />
+            <EditWishlistButton list={wishlist} variant="icon" />
           </HStack>
         </Center>
         <Divider />
@@ -64,7 +56,7 @@ export default function ViewWishlist() {
           )}
         </List>
         <Center>
-          <AddWishlistItemButton listId={wishlist.id} refetch={refetchItems} />
+          <AddWishlistItemButton listId={wishlist.id} />
         </Center>
       </VStack>
     </Card>

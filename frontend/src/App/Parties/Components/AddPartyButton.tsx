@@ -16,8 +16,10 @@ export default function AddPartyButton(props: AddPartyButtonProps) {
 
   async function onSubmit(data: PartyFormValues) {
     try {
-      const created = await mutateAsync({ json: data });
-      navigate(`/app/parties/${created.id}`);
+      const created = await mutateAsync({ data });
+      if (created) {
+        navigate(`/app/parties/${created.id}`);
+      }
     } catch (e: any) {
       toast({
         title: "An error occurred.",

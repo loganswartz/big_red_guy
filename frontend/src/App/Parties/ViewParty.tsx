@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import useParty from "../../Global/Api/Queries/Parties/useParty";
 import Loading from "../../Components/Loading";
 import EditPartyButton from "./Components/EditPartyButton";
+import AssignWishlistButton from "./Components/AssignWishlistButton";
 
 export default function ViewParty() {
   const { id = "" } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ export default function ViewParty() {
           </HStack>
         </Center>
         <Divider />
+        <AssignWishlistButton party={party} variant="hybrid" />
       </VStack>
     </Card>
   );

@@ -9,7 +9,6 @@ pub struct Migration;
 
 struct KeyManager {
     wishlist_owner: String,
-    wishlist_party: String,
     wishlist_items_owner: String,
     wishlist_item_list_assignment_wishlist: String,
     wishlist_item_list_assignment_items: String,
@@ -27,12 +26,6 @@ impl KeyManager {
                 &Wishlists::OwnerId.to_string(),
                 &Users::Table.to_string(),
                 &Users::Id.to_string(),
-            ),
-            wishlist_party: Self::format(
-                &Wishlists::Table.to_string(),
-                &Wishlists::PartyId.to_string(),
-                &Parties::Table.to_string(),
-                &Parties::Id.to_string(),
             ),
             wishlist_items_owner: Self::format(
                 &WishlistItems::Table.to_string(),
@@ -115,15 +108,6 @@ impl MigrationTrait for Migration {
                             .name(&keys.wishlist_owner)
                             .from(Wishlists::Table, Wishlists::OwnerId)
                             .to(Users::Table, Users::Id)
-                            .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade),
-                    )
-                    .col(ColumnDef::new(Wishlists::PartyId).big_unsigned())
-                    .foreign_key(
-                        sea_query::ForeignKey::create()
-                            .name(&keys.wishlist_party)
-                            .from(Wishlists::Table, Wishlists::PartyId)
-                            .to(Parties::Table, Parties::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -330,14 +314,6 @@ impl MigrationTrait for Migration {
         manager
             .drop_foreign_key(
                 sea_query::ForeignKey::drop()
-                    .name(&keys.wishlist_party)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_foreign_key(
-                sea_query::ForeignKey::drop()
                     .name(&keys.wishlist_items_owner)
                     .to_owned(),
             )
@@ -433,7 +409,6 @@ pub enum Wishlists {
     Table,
     Id,
     OwnerId,
-    PartyId,
     Name,
 }
 

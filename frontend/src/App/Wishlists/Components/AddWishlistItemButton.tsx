@@ -8,7 +8,7 @@ import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 export default function AddWishlistItemButton(
   props: AddWishlistItemButtonProps
 ) {
-  const { variant, listId, refetch } = props;
+  const { variant, listId } = props;
 
   const [open, modal] = useModalState();
   const { mutateAsync } = useCreateWishlistItem(listId);
@@ -16,12 +16,11 @@ export default function AddWishlistItemButton(
 
   async function onSubmit(data: WishlistItemFormValues) {
     try {
-      const result = await mutateAsync({ json: data });
+      const result = await mutateAsync({ data });
       toast({
-        title: `Added "${result.name}"!`,
+        title: `Added "${result?.name ?? "item"}"!`,
         status: "success",
       });
-      refetch?.();
     } catch (e: any) {
       toast({
         title: "Unable to save item",
@@ -47,5 +46,4 @@ export default function AddWishlistItemButton(
 interface AddWishlistItemButtonProps {
   variant?: FlexButtonVariant;
   listId?: string | number;
-  refetch?: () => void;
 }

@@ -1,7 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { client } from "./Global/Api/Client";
 import Login from "./Public/Login";
 import FrontPage from "./Public/FrontPage";
 import Register from "./Public/Register";
@@ -13,6 +12,8 @@ import ViewWishlist from "./App/Wishlists/ViewWishlist";
 import Root from "./Root";
 import ViewParty from "./App/Parties/ViewParty";
 import PartiesIndex from "./App/Parties/PartiesIndex";
+
+const client = new QueryClient();
 
 function App() {
   const router = createBrowserRouter([

@@ -1,8 +1,9 @@
 import { useApiMutation } from "../../Client";
-import { Party } from "../../Types";
+import { Party } from "../../Types/Api";
 
 export default function useEditParty(id: string | number) {
-  return useApiMutation<Party>(`/me/parties/${id}`, {
+  return useApiMutation<Party>({
+    path: `/me/parties/${id}`,
     method: "PUT",
   });
 }
