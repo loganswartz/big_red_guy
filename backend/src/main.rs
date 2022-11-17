@@ -16,7 +16,7 @@ use rocket::{
 use rocket_db_pools::Database;
 
 use crate::routes::{
-    api::{login, logout, me, parties, register, users, wishlist_items, wishlists},
+    api::{default as api_default, login, logout, me, register},
     default,
 };
 use db::pool::Db;
@@ -39,6 +39,7 @@ fn rocket() -> _ {
         .mount(
             "/api",
             routes![
+                api_default::get,
                 register::post,
                 logout::post,
                 login::post,
@@ -76,6 +77,12 @@ fn rocket() -> _ {
                 me::parties::id::lists::index::get,
                 me::parties::id::lists::id::get,
                 me::parties::id::lists::id::put,
+                me::parties::id::lists::id::delete,
+                me::parties::id::users::index::get,
+                me::parties::id::users::id::get,
+                me::parties::id::users::id::put,
+                me::parties::id::users::id::delete,
+                me::parties::id::users::add::put,
             ],
         )
 }

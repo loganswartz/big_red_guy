@@ -1,9 +1,11 @@
-use rocket::{get, put, serde::json::Json};
+use migration::JoinType;
+use rocket::{delete, get, put, serde::json::Json};
 use rocket_db_pools::Connection;
-use sea_orm::{ActiveModelTrait, ActiveValue::Set, ModelTrait};
-use sea_orm::{ColumnTrait, QueryFilter};
+use sea_orm::{sea_query, ActiveModelTrait, ActiveValue::Set, ModelTrait};
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter, QuerySelect, RelationTrait};
 
 use crate::bail_msg;
+use crate::entities::{parties, party_memberships};
 use crate::routes::api::me::parties::id::index::find_participating_party;
 use crate::{db::pool::Db, entities::wishlists};
 use crate::{entities::users, routes::api::me::wishlists::id::find_own_wishlist};
@@ -38,7 +40,7 @@ pub async fn put(
     list_id: i32,
 ) -> RocketResult<()> {
     let party = find_participating_party(party_id, &*db, &user).await?;
-    let list = find_own_wishlist(party_id, &*db, &user).await?;
+    let list = find_own_wishlist(list_id, &*db, &user).await?;
 
     if !(party.is_some() && list.is_some()) {
         bail_msg!("Party or wishlist not found.");
@@ -51,7 +53,63 @@ pub async fn put(
         ..Default::default()
     };
 
-    assignment.insert(&*db).await?;
+    wishlist_party_assignments::Entity::insert(assignment)
+        .on_conflict(
+            // upsert
+            sea_query::OnConflict::columns(
+                vec![
+                    wishlist_party_assignments::Column::PartyId,
+                    wishlist_party_assignments::Column::WishlistId,
+                ]
+                .into_iter(),
+            )
+            .do_nothing()
+            .to_owned(),
+        )
+        .exec(&*db)
+        .await?;
+
+    Ok(())
+}
+
+#[delete("/parties/<party_id>/wishlists/<list_id>")]
+pub async fn delete(
+    user: users::Model,
+    db: Connection<Db>,
+    party_id: i32,
+    list_id: i32,
+) -> RocketResult<()> {
+    // assign it to the list
+    let result = wishlist_party_assignments::Entity::find()
+        .join(
+            JoinType::InnerJoin,
+            wishlists::Relation::WishlistPartyAssignments.def().rev(),
+        )
+        .join(
+            JoinType::InnerJoin,
+            parties::Relation::WishlistPartyAssignments.def().rev(),
+        )
+        .join(
+            JoinType::LeftJoin,
+            party_memberships::Relation::Parties.def().rev(),
+        )
+        .join(
+            JoinType::InnerJoin,
+            users::Relation::PartyMemberships.def().rev(),
+        )
+        .filter(wishlists::Column::OwnerId.eq(user.id))
+        .filter(party_memberships::Column::UserId.eq(user.id))
+        .filter(wishlist_party_assignments::Column::WishlistId.eq(list_id))
+        .filter(wishlist_party_assignments::Column::PartyId.eq(party_id))
+        .one(&*db)
+        .await?;
+
+    let found = match result {
+        Some(model) => model,
+        None => bail_msg!("Party or wishlist not found."),
+    };
+
+    found.delete(&*db).await?;
 
     Ok(())
 }

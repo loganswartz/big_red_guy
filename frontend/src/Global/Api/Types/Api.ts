@@ -3,6 +3,7 @@ export interface LoginResponse {
 }
 
 export interface User {
+  id: number;
   email: string;
   name: string;
 }
@@ -10,11 +11,12 @@ export interface User {
 export interface Party {
   id: number;
   name: string;
+  owner_id: number;
 }
 
 export interface Wishlist {
   id: number;
-  owner: User;
+  owner_id: number;
   name: string;
 }
 

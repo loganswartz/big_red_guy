@@ -1,5 +1,7 @@
 import {
   Button,
+  Center,
+  Divider,
   HStack,
   List,
   ListItem,
@@ -10,6 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import useAssignListToParty from "../../../Global/Api/Mutations/Parties/useAssignListToParty";
 import usePartyLists from "../../../Global/Api/Queries/Parties/usePartyLists";
@@ -18,12 +21,7 @@ import { Party } from "../../../Global/Api/Types/Api";
 import { ID } from "../../../Global/Api/Types/Utility";
 
 export default function AssignWishlistModal(props: AssignWishlistModalProps) {
-  const {
-    party,
-    title = `Assign list to ${party.name}`,
-    open,
-    setOpen,
-  } = props;
+  const { party, title = `Wishlists for ${party.name}`, open, setOpen } = props;
 
   const { data: allLists } = useAllWishlists();
   const { data: partyLists, refetch } = usePartyLists(party.id);
@@ -45,30 +43,40 @@ export default function AssignWishlistModal(props: AssignWishlistModalProps) {
     <Modal isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
+        <ModalHeader>
+          <Center>{title}</Center>
+        </ModalHeader>
         <ModalBody>
-          <List spacing={1}>
-            {wishlists.length === 0 ? (
-              <ListItem>No lists found.</ListItem>
-            ) : (
-              wishlists.map((list) => {
-                const assigned = listIsAssignedToParty(list.id);
-                return (
-                  <ListItem>
-                    <HStack justifyContent="space-around">
-                      <Text fontSize="lg">{list.name}</Text>
-                      <Button
-                        color={assigned ? "cyan" : "red.400"}
-                        onClick={() => toggleAssignment(list.id)}
-                      >
-                        {assigned ? "Unassign" : "Assign"}
-                      </Button>
-                    </HStack>
-                  </ListItem>
-                );
-              })
-            )}
-          </List>
+          <VStack spacing={3}>
+            <Text fontSize="lg">
+              What lists should other people in this party to be able to see?
+            </Text>
+            <Divider />
+            <List sx={{ width: "100%" }} spacing={2}>
+              {wishlists.length === 0 ? (
+                <ListItem>No lists found.</ListItem>
+              ) : (
+                wishlists.map((list) => {
+                  const assigned = listIsAssignedToParty(list.id);
+                  return (
+                    <ListItem>
+                      <HStack>
+                        <Text fontSize="lg" flexGrow={1}>
+                          <Center>{list.name}</Center>
+                        </Text>
+                        <Button
+                          color={assigned ? "cyan" : "red.400"}
+                          onClick={() => toggleAssignment(list.id)}
+                        >
+                          {assigned ? "Remove" : "Add"}
+                        </Button>
+                      </HStack>
+                    </ListItem>
+                  );
+                })
+              )}
+            </List>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => setOpen(false)} colorScheme="blue">

@@ -1,7 +1,7 @@
 use rocket::serde::json::Json;
 use rocket::{get, post};
 use rocket_db_pools::Connection;
-use sea_orm::{entity::prelude::*, ModelTrait, Set};
+use sea_orm::{entity::prelude::*, sea_query, ModelTrait, Set};
 
 use crate::db::pool::Db;
 use crate::entities::{users, wishlist_item_list_assignments, wishlist_items};
@@ -53,7 +53,20 @@ pub async fn post(
         ..Default::default()
     };
 
-    assignment.insert(&*db).await?;
+    wishlist_item_list_assignments::Entity::insert(assignment)
+        .on_conflict(
+            sea_query::OnConflict::columns(
+                vec![
+                    wishlist_item_list_assignments::Column::WishlistId,
+                    wishlist_item_list_assignments::Column::WishlistItemId,
+                ]
+                .into_iter(),
+            )
+            .do_nothing()
+            .to_owned(),
+        )
+        .exec(&*db)
+        .await?;
 
     Ok(Json(item))
 }

@@ -1,5 +1,12 @@
 import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
-import { HStack, Tag, Link, useToast, IconButton } from "@chakra-ui/react";
+import {
+  HStack,
+  Tag,
+  Link,
+  useToast,
+  IconButton,
+  Text,
+} from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
 import useEditWishlistItem from "../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
@@ -52,9 +59,13 @@ export default function WishlistListItem(props: WishlistListItemProps) {
   return (
     <>
       <HStack spacing={4} justifyContent="space-between">
-        <Link href={item.url ?? "#"} isExternal>
-          {item.name} {item.url && <ExternalLinkIcon />}
-        </Link>
+        {item.url ? (
+          <Link href={item.url} isExternal>
+            {item.name} <ExternalLinkIcon />
+          </Link>
+        ) : (
+          <Text>{item.name}</Text>
+        )}
         <Tag>Qty: {item.quantity ?? "No limit"}</Tag>
         <EditButton onClick={modal.open} />
         <IconButton

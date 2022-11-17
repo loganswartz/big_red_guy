@@ -154,13 +154,6 @@ impl MigrationTrait for Migration {
                     .table(WishlistItemListAssignments::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(WishlistItemListAssignments::Id)
-                            .big_unsigned()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
-                    )
-                    .col(
                         ColumnDef::new(WishlistItemListAssignments::WishlistId)
                             .big_unsigned()
                             .not_null(),
@@ -191,6 +184,11 @@ impl MigrationTrait for Migration {
                             .to(WishlistItems::Table, WishlistItems::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(WishlistItemListAssignments::WishlistId)
+                            .col(WishlistItemListAssignments::WishlistItemId),
                     )
                     .to_owned(),
             )
@@ -255,13 +253,6 @@ impl MigrationTrait for Migration {
                     .table(WishlistPartyAssignments::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(WishlistPartyAssignments::Id)
-                            .big_unsigned()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
-                    )
-                    .col(
                         ColumnDef::new(WishlistPartyAssignments::WishlistId)
                             .big_unsigned()
                             .not_null(),
@@ -292,6 +283,11 @@ impl MigrationTrait for Migration {
                             .to(Parties::Table, Parties::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(WishlistPartyAssignments::WishlistId)
+                            .col(WishlistPartyAssignments::PartyId),
                     )
                     .to_owned(),
             )
@@ -425,7 +421,6 @@ pub enum WishlistItems {
 #[derive(Iden)]
 pub enum WishlistItemListAssignments {
     Table,
-    Id,
     WishlistId,
     WishlistItemId,
 }
@@ -442,7 +437,6 @@ pub enum WishlistItemUserFulfillments {
 #[derive(Iden)]
 pub enum WishlistPartyAssignments {
     Table,
-    Id,
     WishlistId,
     PartyId,
 }

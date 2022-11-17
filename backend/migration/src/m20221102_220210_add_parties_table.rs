@@ -85,13 +85,6 @@ impl MigrationTrait for Migration {
                     .table(PartyMemberships::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(PartyMemberships::Id)
-                            .big_unsigned()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
-                    )
-                    .col(
                         ColumnDef::new(PartyMemberships::UserId)
                             .big_unsigned()
                             .not_null(),
@@ -116,6 +109,11 @@ impl MigrationTrait for Migration {
                             .to(Parties::Table, Parties::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(PartyMemberships::UserId)
+                            .col(PartyMemberships::PartyId),
                     )
                     .to_owned(),
             )
@@ -168,7 +166,6 @@ pub enum Parties {
 #[derive(Iden)]
 pub enum PartyMemberships {
     Table,
-    Id,
     UserId,
     PartyId,
 }

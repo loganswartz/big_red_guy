@@ -11,7 +11,7 @@ use crate::entities::users;
 use crate::rocket_anyhow::Result as RocketResult;
 use crate::utils;
 
-use super::me::index::Me;
+use super::me::index::SanitizedUser;
 
 #[derive(Deserialize, Debug)]
 pub struct RegistrationForm<'r> {
@@ -28,7 +28,7 @@ struct ErrorMessage<'a> {
 #[derive(Debug, Responder)]
 enum RegistrationOutcome<'a> {
     #[response(status = 200, content_type = "json")]
-    Account(Json<Me>),
+    Account(Json<SanitizedUser>),
     #[response(status = 422, content_type = "json")]
     Error(Json<ErrorMessage<'a>>),
 }
@@ -66,7 +66,8 @@ pub async fn post(
 
     let new = new.insert(&*db).await?;
 
-    Ok(RegistrationOutcome::Account(Json(Me {
+    Ok(RegistrationOutcome::Account(Json(SanitizedUser {
+        id: new.id,
         name: new.name,
         email: new.email,
     })))

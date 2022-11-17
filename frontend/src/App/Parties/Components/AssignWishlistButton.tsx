@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import { Party } from "../../../Global/Api/Types/Api";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
@@ -12,8 +12,8 @@ export default function AssignWishlistButton(props: AssignWishlistButtonProps) {
   return (
     <>
       <FlexButton
-        title="Assign lists"
-        icon={<AddIcon />}
+        title="Set your lists"
+        icon={<EditIcon />}
         onClick={modal.open}
         variant={variant}
       />
