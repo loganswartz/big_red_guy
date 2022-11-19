@@ -8,8 +8,7 @@ use crate::bail_msg;
 use crate::db::pool::Db;
 use crate::entities::{users, wishlists};
 use crate::rocket_anyhow::Result as RocketResult;
-
-use super::index::AddWishlist;
+use crate::routes::api::me::wishlists::index::AddWishlist;
 
 pub async fn find_own_wishlist(
     id: i32,

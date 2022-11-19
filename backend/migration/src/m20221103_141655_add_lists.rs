@@ -142,6 +142,7 @@ impl MigrationTrait for Migration {
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .col(ColumnDef::new(WishlistItems::Name).string().not_null())
+                    .col(ColumnDef::new(WishlistItems::Notes).string())
                     .col(ColumnDef::new(WishlistItems::Url).string())
                     .col(ColumnDef::new(WishlistItems::Quantity).big_unsigned())
                     .to_owned(),
@@ -414,6 +415,7 @@ pub enum WishlistItems {
     Id,
     OwnerId,
     Name,
+    Notes,
     Url,
     Quantity,
 }

@@ -26,6 +26,7 @@ import usePartyMembers from "../../../Global/Api/Queries/Parties/usePartyMembers
 import useCurrentUser from "../../../Global/Api/Queries/useCurrentUser";
 import { Party } from "../../../Global/Api/Types/Api";
 import { ID } from "../../../Global/Api/Types/Utility";
+import { UserAvatar } from "../../Components/UserAvatar";
 
 export default function AssignPartyMembersModal(
   props: AssignPartyMembersModalProps
@@ -99,12 +100,9 @@ export default function AssignPartyMembersModal(
                     <HStack>
                       <Text fontSize="lg" flexGrow={1}>
                         <Center>
-                          <HStack spacing={1}>
-                            {userIsOwner(user.id) ? (
-                              <Box>
-                                <StarIcon />
-                              </Box>
-                            ) : null}
+                          <HStack spacing={1} alignItems="center">
+                            {userIsOwner(user.id) ? <StarIcon /> : null}
+                            <UserAvatar user={user} size="sm" />
                             <Box>{user.name}</Box>
                           </HStack>
                         </Center>

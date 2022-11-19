@@ -12,10 +12,9 @@ const config: ThemeConfig = {
 
 const components: Record<string, StyleConfig> = {
   Card: {
-    baseStyle: ({ colorMode }) => ({
-      bg: colorMode === "dark" ? "gray.700" : "white",
-      borderColor: colorMode === "dark" ? "gray.600" : "gray.200",
-    }),
+    defaultProps: {
+      size: "sm",
+    },
   },
   Button: {
     defaultProps: {

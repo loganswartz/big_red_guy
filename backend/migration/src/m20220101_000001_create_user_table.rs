@@ -21,6 +21,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Users::Name).string().not_null())
                     .col(ColumnDef::new(Users::Email).string().not_null())
                     .col(ColumnDef::new(Users::Password).string().not_null())
+                    .col(ColumnDef::new(Users::ProfilePicture).string())
                     .to_owned(),
             )
             .await
@@ -41,4 +42,5 @@ pub enum Users {
     Name,
     Email,
     Password,
+    ProfilePicture,
 }

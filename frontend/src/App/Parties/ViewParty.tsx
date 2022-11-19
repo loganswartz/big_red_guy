@@ -1,15 +1,17 @@
 import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
   Center,
   Divider,
   Heading,
   HStack,
   IconButton,
-  List,
-  ListItem,
+  SimpleGrid,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import Card from "../../Components/Card";
 import { useParams } from "react-router-dom";
 import useParty from "../../Global/Api/Queries/Parties/useParty";
 import Loading from "../../Components/Loading";
@@ -21,15 +23,17 @@ import useModalState from "../../Global/Helpers/ModalHelper";
 import AssignPartyMembersModal from "./Components/AssignPartyMembersModal";
 import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
 import usePartyMembers from "../../Global/Api/Queries/Parties/usePartyMembers";
-import { User, Wishlist } from "../../Global/Api/Types/Api";
+import { User, WishlistWithItems } from "../../Global/Api/Types/Api";
+import { UserAvatar } from "../Components/UserAvatar";
+import { ListsAccordion } from "./Components/ListsAccordion";
 
 export default function ViewParty() {
   const { id = "" } = useParams<{ id: string }>();
 
   const [open, modal] = useModalState();
   const { data: me } = useCurrentUser();
-  const { data: party, isInitialLoading, refetch } = useParty(id);
-  const { data: lists } = usePartyLists(id);
+  const { data: party, isInitialLoading, refetch: refetchParty } = useParty(id);
+  const { data: lists, refetch: refetchLists } = usePartyLists(id);
   const { data: users } = usePartyMembers(id);
 
   if (isInitialLoading) {
@@ -42,15 +46,15 @@ export default function ViewParty() {
   const members = users ?? [];
   const memberLists = members.map(
     (user) =>
-      [user, wishlists.filter((list) => list.owner_id === user.id)] as [
-        User,
-        Wishlist[]
-      ]
+      [
+        user,
+        wishlists.filter((list) => list.wishlist.owner_id === user.id),
+      ] as [User, WishlistWithItems[]]
   );
 
   return (
-    <Card>
-      <VStack spacing={4}>
+    <Card minH="lg" minW="lg">
+      <CardHeader>
         <Center>
           <VStack>
             <HStack spacing={2}>
@@ -58,7 +62,7 @@ export default function ViewParty() {
               {party.owner_id === me?.id ? (
                 <EditPartyButton
                   party={party}
-                  refetch={refetch}
+                  refetch={refetchParty}
                   variant="icon"
                 />
               ) : null}
@@ -73,27 +77,42 @@ export default function ViewParty() {
             </HStack>
           </VStack>
         </Center>
-        <Divider />
-        <HStack spacing={3}>
+      </CardHeader>
+      <Divider />
+      <CardBody>
+        <SimpleGrid minChildWidth="220px" spacing={3}>
           {memberLists.map(([user, lists]) => (
-            <Card>
-              <VStack spacing={2}>
-                <Center>{user.name}</Center>
-                <List>
-                  {lists.map((list) => (
-                    <ListItem>
-                      <HStack>
-                        <Text>{list.name}</Text>
-                      </HStack>
-                    </ListItem>
-                  ))}
-                </List>
-              </VStack>
+            <Card variant="outline">
+              <CardHeader>
+                <HStack spacing={2}>
+                  <UserAvatar user={user} size="sm" />
+                  <Text size="md">{user.name}</Text>
+                </HStack>
+              </CardHeader>
+              <CardBody>
+                {lists.length === 0 ? (
+                  <Center>
+                    <i>{user.name} hasn't added any lists yet.</i>
+                  </Center>
+                ) : (
+                  <ListsAccordion
+                    user={user}
+                    lists={lists}
+                    refetch={refetchLists}
+                  />
+                )}
+              </CardBody>
             </Card>
           ))}
-        </HStack>
-      </VStack>
-      <AssignPartyMembersModal party={party} open={open} setOpen={modal.set} />
+        </SimpleGrid>
+      </CardBody>
+      <CardFooter>
+        <AssignPartyMembersModal
+          party={party}
+          open={open}
+          setOpen={modal.set}
+        />
+      </CardFooter>
     </Card>
   );
 }

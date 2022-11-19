@@ -66,9 +66,5 @@ pub async fn post(
 
     let new = new.insert(&*db).await?;
 
-    Ok(RegistrationOutcome::Account(Json(SanitizedUser {
-        id: new.id,
-        name: new.name,
-        email: new.email,
-    })))
+    Ok(RegistrationOutcome::Account(Json(new.into())))
 }

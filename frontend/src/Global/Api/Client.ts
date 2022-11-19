@@ -95,10 +95,10 @@ async function apiFetch<R>(
 function makeOptions<T extends SimpleApiOptions>(
   options?: T
 ): { path: T["path"]; options: RequestInit } {
-  const { path, data, headers, params, method } = options ?? {};
+  const { path, data, headers, params, method, body } = options ?? {};
 
   let newPath: string | undefined = path;
-  let newOptions: RequestInit = { headers, method };
+  let newOptions: RequestInit = { body, headers, method };
   if (data) {
     newOptions = {
       ...newOptions,
@@ -121,6 +121,7 @@ interface SimpleApiOptions {
   path?: string;
   data?: any;
   params?: URLSearchParams;
+  body?: RequestInit["body"];
   headers?: RequestInit["headers"];
   method?: RequestInit["method"];
 }

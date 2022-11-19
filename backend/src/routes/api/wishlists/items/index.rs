@@ -38,6 +38,7 @@ pub async fn post(
     // make the new item
     let item = wishlist_items::ActiveModel {
         name: Set(form.name.to_owned()),
+        notes: Set(form.notes.map_or(None, |value| Some(value.to_owned()))),
         url: Set(form.url.map_or(None, |value| Some(value.to_owned()))),
         quantity: Set(form.quantity),
         owner_id: Set(user.id),

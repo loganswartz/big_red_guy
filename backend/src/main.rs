@@ -15,12 +15,12 @@ use rocket::{
 };
 use rocket_db_pools::Database;
 
-use crate::routes::{
+use db::pool::Db;
+use migration::MigratorTrait;
+use routes::{
     api::{default as api_default, login, logout, me, register},
     default,
 };
-use db::pool::Db;
-use migration::MigratorTrait;
 
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
     let conn = &Db::fetch(&rocket).unwrap().conn;
@@ -34,8 +34,15 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
-        .mount("/", FileServer::from(relative!("../frontend/build")))
         .mount("/", routes![default::get])
+        .mount(
+            "/",
+            FileServer::from(relative!("../frontend/build")).rank(12),
+        )
+        .mount(
+            "/public/uploads",
+            FileServer::from(relative!("../frontend/public/uploads")).rank(14),
+        )
         .mount(
             "/api",
             routes![
@@ -62,22 +69,23 @@ fn rocket() -> _ {
             "/api/me",
             routes![
                 me::index::get,
+                me::pfp::put,
                 me::wishlists::index::get,
                 me::wishlists::index::post,
-                me::wishlists::id::get,
-                me::wishlists::id::put,
-                me::wishlists::items::index::get,
-                me::wishlists::items::index::post,
+                me::wishlists::id::index::get,
+                me::wishlists::id::index::put,
+                me::wishlists::id::items::index::get,
+                me::wishlists::id::items::index::post,
                 me::wishlist_items::id::put,
                 me::wishlist_items::id::delete,
                 me::parties::index::get,
                 me::parties::index::post,
                 me::parties::id::index::get,
                 me::parties::id::index::put,
-                me::parties::id::lists::index::get,
-                me::parties::id::lists::id::get,
-                me::parties::id::lists::id::put,
-                me::parties::id::lists::id::delete,
+                me::parties::id::wishlists::index::get,
+                me::parties::id::wishlists::id::get,
+                me::parties::id::wishlists::id::put,
+                me::parties::id::wishlists::id::delete,
                 me::parties::id::users::index::get,
                 me::parties::id::users::id::get,
                 me::parties::id::users::id::put,

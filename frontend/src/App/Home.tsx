@@ -1,6 +1,12 @@
-import { Box, Button, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Center,
+  VStack,
+} from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import Card from "../Components/Card";
 import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
 
 export default function Home() {
@@ -14,15 +20,19 @@ export default function Home() {
 
   return (
     <Card>
-      <VStack>
-        <Box>Welcome, {data.name}!</Box>
-        <Button as={ReactRouterLink} to="/app/parties">
-          Go to Parties
-        </Button>
-        <Button as={ReactRouterLink} to="/app/wishlists">
-          Go to Wishlists
-        </Button>
-      </VStack>
+      <CardHeader>
+        <Center>Welcome, {data.name}!</Center>
+      </CardHeader>
+      <CardBody>
+        <VStack>
+          <Button as={ReactRouterLink} to="/app/parties">
+            Go to Parties
+          </Button>
+          <Button as={ReactRouterLink} to="/app/wishlists">
+            Go to Wishlists
+          </Button>
+        </VStack>
+      </CardBody>
     </Card>
   );
 }

@@ -1,5 +1,6 @@
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Text,
   Button,
   Center,
   Drawer,
@@ -14,13 +15,16 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
+import { CurrentUserAvatar } from "../App/Components/UserAvatar";
 import useLogout from "../Global/Api/Mutations/useLogout";
+import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
 import useModalState from "../Global/Helpers/ModalHelper";
 import BigRedGuy from "./BigRedGuy";
 
 export default function Appbar(props: AppbarProps) {
   const { height = "3rem" } = props;
 
+  const { data: me } = useCurrentUser();
   const logout = useLogout();
   const navigate = useNavigate();
   const [open, drawer] = useModalState();
@@ -70,6 +74,10 @@ export default function Appbar(props: AppbarProps) {
           </DrawerBody>
           <DrawerFooter>
             <VStack sx={{ width: "100%" }}>
+              <HStack justifyContent="space-between">
+                <CurrentUserAvatar />
+                <Text>{me?.name}</Text>
+              </HStack>
               <Button
                 onClick={() => {
                   logout();

@@ -1,13 +1,15 @@
 import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
   Center,
   Divider,
   Heading,
   HStack,
   List,
   ListItem,
-  VStack,
 } from "@chakra-ui/react";
-import Card from "../../Components/Card";
 import { useParams } from "react-router-dom";
 import useWishlist from "../../Global/Api/Queries/Wishlists/useWishlist";
 import useWishlistItems from "../../Global/Api/Queries/Wishlists/useWishlistItems";
@@ -34,14 +36,16 @@ export default function ViewWishlist() {
 
   return (
     <Card>
-      <VStack spacing={4}>
+      <CardHeader>
         <Center>
           <HStack spacing={2}>
             <Heading>{wishlist.name}</Heading>
             <EditWishlistButton list={wishlist} variant="icon" />
           </HStack>
         </Center>
-        <Divider />
+      </CardHeader>
+      <Divider />
+      <CardBody>
         <List spacing={2}>
           {items.length === 0 ? (
             <ListItem>
@@ -50,15 +54,15 @@ export default function ViewWishlist() {
           ) : (
             items.map((item) => (
               <ListItem>
-                <WishlistListItem item={item} refetch={refetchItems} />
+                <WishlistListItem item={item} refetch={refetchItems} canEdit />
               </ListItem>
             ))
           )}
         </List>
-        <Center>
-          <AddWishlistItemButton listId={wishlist.id} />
-        </Center>
-      </VStack>
+      </CardBody>
+      <CardFooter justifyContent="center">
+        <AddWishlistItemButton listId={wishlist.id} />
+      </CardFooter>
     </Card>
   );
 }

@@ -6,6 +6,12 @@ import {
   useToast,
   IconButton,
   Text,
+  Button,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
 } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
@@ -17,7 +23,7 @@ import WishlistItemModal, {
 } from "./Components/WishlistItemModal";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
-  const { item, refetch } = props;
+  const { item, refetch, canEdit = false } = props;
 
   const [open, modal] = useModalState();
   const { mutateAsync: editItem } = useEditWishlistItem(item.id);
@@ -66,13 +72,34 @@ export default function WishlistListItem(props: WishlistListItemProps) {
         ) : (
           <Text>{item.name}</Text>
         )}
-        <Tag>Qty: {item.quantity ?? "No limit"}</Tag>
-        <EditButton onClick={modal.open} />
-        <IconButton
-          aria-label={`Delete ${item.name}`}
-          icon={<DeleteIcon />}
-          onClick={onDelete}
-        />
+        <HStack spacing={1}>
+          {item.notes ? (
+            <Popover>
+              <PopoverTrigger>
+                <Button size="xs">See Notes</Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverBody>{item.notes}</PopoverBody>
+              </PopoverContent>
+            </Popover>
+          ) : null}
+          {item.quantity ? (
+            <Tag borderRadius="full" colorScheme="green">
+              Amount: {item.quantity}
+            </Tag>
+          ) : null}
+        </HStack>
+        {canEdit ? (
+          <HStack spacing={1}>
+            <EditButton onClick={modal.open} />
+            <IconButton
+              aria-label={`Delete ${item.name}`}
+              icon={<DeleteIcon />}
+              onClick={onDelete}
+            />
+          </HStack>
+        ) : null}
       </HStack>
       <WishlistItemModal
         open={open}
@@ -87,4 +114,5 @@ export default function WishlistListItem(props: WishlistListItemProps) {
 interface WishlistListItemProps {
   item: WishlistItem;
   refetch?: () => void;
+  canEdit?: boolean;
 }

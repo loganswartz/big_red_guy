@@ -41,13 +41,7 @@ pub async fn get(
         .one(&*db)
         .await?;
 
-    Ok(user.map(|model| {
-        Json(SanitizedUser {
-            id: model.id,
-            name: model.name,
-            email: model.email,
-        })
-    }))
+    Ok(user.map(|model| Json(model.into())))
 }
 
 #[put("/parties/<party_id>/users/<user_id>", rank = 5)]

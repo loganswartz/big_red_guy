@@ -28,7 +28,7 @@ export default function AssignWishlistModal(props: AssignWishlistModalProps) {
   const { mutateAsync } = useAssignListToParty();
 
   function listIsAssignedToParty(listId: ID) {
-    return (partyLists ?? []).some((list) => list.id === listId);
+    return (partyLists ?? []).some((list) => list.wishlist.id === listId);
   }
 
   async function toggleAssignment(listId: ID) {

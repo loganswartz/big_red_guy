@@ -10,6 +10,7 @@ pub struct SanitizedUser {
     pub id: i32,
     pub name: String,
     pub email: String,
+    pub profile_picture: Option<String>,
 }
 
 impl From<users::Model> for SanitizedUser {
@@ -18,15 +19,12 @@ impl From<users::Model> for SanitizedUser {
             id: user.id,
             name: user.name,
             email: user.email,
+            profile_picture: user.profile_picture,
         };
     }
 }
 
 #[get("/")]
 pub async fn get(user: users::Model) -> Json<SanitizedUser> {
-    Json(SanitizedUser {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-    })
+    Json(user.into())
 }

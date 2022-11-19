@@ -1,3 +1,3 @@
 pub mod index;
-pub mod lists;
 pub mod users;
+pub mod wishlists;

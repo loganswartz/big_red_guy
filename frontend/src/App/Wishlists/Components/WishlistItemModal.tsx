@@ -13,8 +13,10 @@ import {
   NumberIncrementStepper,
   NumberInputField,
   NumberInputStepper,
+  Textarea,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { WishlistItem } from "../../../Global/Api/Types/Api";
 
 export default function WishlistItemModal(props: WishlistItemModalProps) {
   const { open, setOpen, initialValues, onSubmit: userOnSubmit } = props;
@@ -36,6 +38,7 @@ export default function WishlistItemModal(props: WishlistItemModalProps) {
           <VStack>
             <Input placeholder="Name" {...register("name")} />
             <Input placeholder="Link" {...register("url")} />
+            <Textarea placeholder="Notes" {...register("notes")} />
             <NumberInput precision={0}>
               <NumberInputField
                 placeholder="How many?"
@@ -70,8 +73,4 @@ interface WishlistItemModalProps {
   onSubmit: (values: WishlistItemFormValues) => void;
 }
 
-export interface WishlistItemFormValues {
-  name: string;
-  url?: string;
-  quantity?: number;
-}
+export type WishlistItemFormValues = Omit<WishlistItem, "id">;

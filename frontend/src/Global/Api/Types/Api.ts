@@ -4,8 +4,9 @@ export interface LoginResponse {
 
 export interface User {
   id: number;
-  email: string;
   name: string;
+  email: string;
+  profile_picture?: string;
 }
 
 export interface Party {
@@ -23,6 +24,12 @@ export interface Wishlist {
 export type WishlistItem = {
   id: number;
   name: string;
+  notes?: string;
   url?: string;
   quantity?: number;
 };
+
+export interface WishlistWithItems {
+  wishlist: Wishlist;
+  items: WishlistItem[];
+}
