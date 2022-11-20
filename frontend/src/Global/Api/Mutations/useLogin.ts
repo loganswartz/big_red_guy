@@ -1,8 +1,13 @@
 import { useApiMutation } from "../Client";
-import { LoginResponse } from "../Types/Api";
+import { AuthResponse } from "../Types/Api";
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
 
 export default function useLogin() {
-  return useApiMutation<LoginResponse>({
+  return useApiMutation<LoginInput, AuthResponse>({
     path: "/login",
   });
 }

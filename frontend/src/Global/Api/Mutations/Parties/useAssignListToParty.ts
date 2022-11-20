@@ -14,7 +14,7 @@ export default function useAssignListToParty() {
     return `/me/parties/${partyId}/wishlists/${listId}`;
   };
 
-  return useApiMutation<Party, typeof template>({
+  return useApiMutation<undefined, Party, typeof template>({
     path: template,
     method: "PUT",
   });

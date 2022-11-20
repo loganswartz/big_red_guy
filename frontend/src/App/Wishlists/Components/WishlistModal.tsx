@@ -11,10 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-
-export interface WishlistFormValues {
-  name: string;
-}
+import { AddWishlistInput } from "../../../Global/Api/Mutations/Wishlists/useCreateWishlist";
 
 export default function WishlistModal(props: WishlistModalProps) {
   const {
@@ -24,9 +21,9 @@ export default function WishlistModal(props: WishlistModalProps) {
     title = "Create a Wishlist",
   } = props;
 
-  const { handleSubmit, register } = useForm<WishlistFormValues>();
+  const { handleSubmit, register } = useForm<AddWishlistInput>();
 
-  function onSubmit(values: WishlistFormValues) {
+  function onSubmit(values: AddWishlistInput) {
     setOpen(false);
     userOnSubmit(values);
   }
@@ -57,7 +54,7 @@ export default function WishlistModal(props: WishlistModalProps) {
 interface WishlistModalProps {
   open: boolean;
   setOpen: (state: boolean) => void;
-  initialValues?: WishlistFormValues;
+  initialValues?: AddWishlistInput;
   title?: ReactNode;
-  onSubmit: (values: WishlistFormValues) => void;
+  onSubmit: (values: AddWishlistInput) => void;
 }

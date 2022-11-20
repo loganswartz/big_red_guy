@@ -1,9 +1,10 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
-import WishlistItemModal, { WishlistItemFormValues } from "./WishlistItemModal";
+import WishlistItemModal from "./WishlistItemModal";
 import useCreateWishlistItem from "../../../Global/Api/Mutations/Wishlists/useCreateWishlistItem";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
+import { EditWishlistItemInput } from "../../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
 
 export default function AddWishlistItemButton(
   props: AddWishlistItemButtonProps
@@ -14,7 +15,7 @@ export default function AddWishlistItemButton(
   const { mutateAsync } = useCreateWishlistItem(listId);
   const toast = useToast();
 
-  async function onSubmit(data: WishlistItemFormValues) {
+  async function onSubmit(data: EditWishlistItemInput) {
     try {
       const result = await mutateAsync({ data });
       toast({

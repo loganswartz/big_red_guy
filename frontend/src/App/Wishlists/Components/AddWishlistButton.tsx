@@ -1,8 +1,10 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import WishlistModal, { WishlistFormValues } from "./WishlistModal";
-import useAddWishlist from "../../../Global/Api/Mutations/Wishlists/useCreateWishlist";
+import WishlistModal from "./WishlistModal";
+import useAddWishlist, {
+  AddWishlistInput,
+} from "../../../Global/Api/Mutations/Wishlists/useCreateWishlist";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 
@@ -14,7 +16,7 @@ export default function AddWishlistButton(props: AddWishlistButtonProps) {
   const toast = useToast();
   const navigate = useNavigate();
 
-  async function onSubmit(data: WishlistFormValues) {
+  async function onSubmit(data: AddWishlistInput) {
     try {
       const created = await mutateAsync({ data });
       if (created) {

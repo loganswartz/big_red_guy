@@ -15,22 +15,26 @@ import {
 } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
-import useEditWishlistItem from "../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
+import useEditWishlistItem, {
+  EditWishlistItemInput,
+} from "../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
+import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
 import { WishlistItem } from "../../Global/Api/Types/Api";
 import useModalState from "../../Global/Helpers/ModalHelper";
-import WishlistItemModal, {
-  WishlistItemFormValues,
-} from "./Components/WishlistItemModal";
+import WishlistItemModal from "./Components/WishlistItemModal";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
-  const { item, refetch, canEdit = false } = props;
+  const { item, refetch } = props;
 
   const [open, modal] = useModalState();
+  const { data: me } = useCurrentUser();
   const { mutateAsync: editItem } = useEditWishlistItem(item.id);
   const { mutateAsync: deleteItem } = useDeleteWishlistItem(item.id);
   const toast = useToast();
 
-  async function onEdit(data: WishlistItemFormValues) {
+  const canEdit = me?.id === item.owner_id;
+
+  async function onEdit(data: EditWishlistItemInput) {
     try {
       await editItem({ data });
       refetch?.();
@@ -114,5 +118,4 @@ export default function WishlistListItem(props: WishlistListItemProps) {
 interface WishlistListItemProps {
   item: WishlistItem;
   refetch?: () => void;
-  canEdit?: boolean;
 }

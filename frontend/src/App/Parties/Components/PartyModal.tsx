@@ -11,10 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
-
-export interface PartyFormValues {
-  name: string;
-}
+import { AddPartyInput } from "../../../Global/Api/Mutations/Parties/useAddParty";
 
 export default function PartyModal(props: PartyModalProps) {
   const {
@@ -24,9 +21,9 @@ export default function PartyModal(props: PartyModalProps) {
     title = "Create a Party",
   } = props;
 
-  const { handleSubmit, register } = useForm<PartyFormValues>();
+  const { handleSubmit, register } = useForm<AddPartyInput>();
 
-  function onSubmit(values: PartyFormValues) {
+  function onSubmit(values: AddPartyInput) {
     setOpen(false);
     userOnSubmit(values);
   }
@@ -57,7 +54,7 @@ export default function PartyModal(props: PartyModalProps) {
 interface PartyModalProps {
   open: boolean;
   setOpen: (state: boolean) => void;
-  initialValues?: PartyFormValues;
+  initialValues?: AddPartyInput;
   title?: ReactNode;
-  onSubmit: (values: PartyFormValues) => void;
+  onSubmit: (values: AddPartyInput) => void;
 }

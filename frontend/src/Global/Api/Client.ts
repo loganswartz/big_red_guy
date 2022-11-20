@@ -126,11 +126,15 @@ interface SimpleApiOptions {
   method?: RequestInit["method"];
 }
 
-interface ApiOptions<T> extends Omit<SimpleApiOptions, "path"> {
+interface ApiOptions<T, D = any>
+  extends Omit<SimpleApiOptions, "path" | "data"> {
+  data?: D;
   path?: ApiPathParameters<T>;
 }
 
-interface DefaultApiOptions<T> extends Omit<SimpleApiOptions, "path"> {
+interface DefaultApiOptions<T, D = any>
+  extends Omit<SimpleApiOptions, "path" | "data"> {
+  data?: D;
   path: ApiPath<T>;
 }
 
@@ -188,19 +192,25 @@ export function useApiQuery<TData = unknown>(
  * automatic inference once this is merged:
  * https://github.com/microsoft/TypeScript/issues/10571
  */
-export function useApiMutation<TData = unknown, TPath = string>(
+export function useApiMutation<TInput = any, TData = unknown, TPath = string>(
   defaultApiOptions?: DefaultApiOptions<TPath>,
   defaultMutationOptions?: Omit<
-    UseMutationOptions<TData | null, ApiError, ApiOptions<TPath>, unknown>,
+    UseMutationOptions<
+      TData | null,
+      ApiError,
+      ApiOptions<TPath, TInput>,
+      unknown
+    >,
     "mutationFn"
   >
 ) {
   const client = useQueryClient();
   let { path: defaultPath, ...other } = defaultApiOptions ?? {};
 
-  const mutationFn: MutationFunction<TData | null, ApiOptions<TPath>> = async (
-    variables: ApiOptions<TPath>
-  ) => {
+  const mutationFn: MutationFunction<
+    TData | null,
+    ApiOptions<TPath, TInput>
+  > = async (variables: ApiOptions<TPath, TInput>) => {
     const path = determinePath(defaultPath, variables.path);
 
     const { path: uri, options } = makeOptions({

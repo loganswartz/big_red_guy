@@ -12,20 +12,15 @@ import {
 import { useForm } from "react-hook-form";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
-import useLogin from "../Global/Api/Mutations/useLogin";
-
-interface FormValues {
-  email: string;
-  password: string;
-}
+import useLogin, { LoginInput } from "../Global/Api/Mutations/useLogin";
 
 export default function Login() {
   const { mutateAsync } = useLogin();
-  const { register, handleSubmit } = useForm<FormValues>();
+  const { register, handleSubmit } = useForm<LoginInput>();
 
   const navigate = useNavigate();
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: LoginInput) {
     const response = await mutateAsync({ data });
     if (response?.success) {
       navigate("/app");

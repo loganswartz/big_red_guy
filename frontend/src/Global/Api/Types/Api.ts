@@ -1,4 +1,4 @@
-export interface LoginResponse {
+export interface AuthResponse {
   success: boolean;
 }
 
@@ -23,6 +23,7 @@ export interface Wishlist {
 
 export type WishlistItem = {
   id: number;
+  owner_id: number;
   name: string;
   notes?: string;
   url?: string;
@@ -32,4 +33,11 @@ export type WishlistItem = {
 export interface WishlistWithItems {
   wishlist: Wishlist;
   items: WishlistItem[];
+}
+
+export interface Fulfillment {
+  id: number;
+  wishlist_item_id: number;
+  user_id: number;
+  quantity: number;
 }

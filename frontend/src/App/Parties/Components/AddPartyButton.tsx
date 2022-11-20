@@ -1,8 +1,10 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import PartyModal, { PartyFormValues } from "./PartyModal";
-import useAddParty from "../../../Global/Api/Mutations/Parties/useAddParty";
+import PartyModal from "./PartyModal";
+import useAddParty, {
+  AddPartyInput,
+} from "../../../Global/Api/Mutations/Parties/useAddParty";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
 
@@ -14,7 +16,7 @@ export default function AddPartyButton(props: AddPartyButtonProps) {
   const toast = useToast();
   const navigate = useNavigate();
 
-  async function onSubmit(data: PartyFormValues) {
+  async function onSubmit(data: AddPartyInput) {
     try {
       const created = await mutateAsync({ data });
       if (created) {

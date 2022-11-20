@@ -14,7 +14,7 @@ export default function useAssignPartyMember() {
     return `/me/parties/${partyId}/users/${userId}`;
   };
 
-  return useApiMutation<User[], typeof template>({
+  return useApiMutation<undefined, User[], typeof template>({
     path: template,
     method: "PUT",
   });

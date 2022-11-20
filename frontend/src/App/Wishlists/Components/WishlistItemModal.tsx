@@ -16,15 +16,15 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { WishlistItem } from "../../../Global/Api/Types/Api";
+import { EditWishlistItemInput } from "../../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
 
 export default function WishlistItemModal(props: WishlistItemModalProps) {
   const { open, setOpen, initialValues, onSubmit: userOnSubmit } = props;
-  const { handleSubmit, register } = useForm<WishlistItemFormValues>({
+  const { handleSubmit, register } = useForm<EditWishlistItemInput>({
     defaultValues: initialValues,
   });
 
-  function onSubmit(values: WishlistItemFormValues) {
+  function onSubmit(values: EditWishlistItemInput) {
     setOpen(false);
     userOnSubmit(values);
   }
@@ -69,8 +69,6 @@ export default function WishlistItemModal(props: WishlistItemModalProps) {
 interface WishlistItemModalProps {
   open: boolean;
   setOpen: (state: boolean) => void;
-  initialValues?: WishlistItemFormValues;
-  onSubmit: (values: WishlistItemFormValues) => void;
+  initialValues?: EditWishlistItemInput;
+  onSubmit: (values: EditWishlistItemInput) => void;
 }
-
-export type WishlistItemFormValues = Omit<WishlistItem, "id">;

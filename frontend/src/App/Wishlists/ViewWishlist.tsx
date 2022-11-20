@@ -54,7 +54,7 @@ export default function ViewWishlist() {
           ) : (
             items.map((item) => (
               <ListItem>
-                <WishlistListItem item={item} refetch={refetchItems} canEdit />
+                <WishlistListItem item={item} refetch={refetchItems} />
               </ListItem>
             ))
           )}

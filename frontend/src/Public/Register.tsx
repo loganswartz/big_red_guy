@@ -18,7 +18,9 @@ import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
-import useRegister from "../Global/Api/Mutations/useRegister";
+import useRegister, {
+  RegisterInput,
+} from "../Global/Api/Mutations/useRegister";
 
 export default function Register() {
   const { mutateAsync } = useRegister();
@@ -108,9 +110,6 @@ export default function Register() {
   );
 }
 
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
+interface FormValues extends RegisterInput {
   confirm_password: string;
 }

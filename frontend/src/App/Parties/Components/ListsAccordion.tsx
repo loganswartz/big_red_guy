@@ -7,14 +7,11 @@ import {
   Box,
   List,
 } from "@chakra-ui/react";
-import useCurrentUser from "../../../Global/Api/Queries/useCurrentUser";
 import { User, WishlistWithItems } from "../../../Global/Api/Types/Api";
 import WishlistListItem from "../../Wishlists/WishlistListItem";
 
 export function ListsAccordion(props: ListsAccordionProps) {
   const { lists, refetch } = props;
-
-  const { data: me } = useCurrentUser();
 
   return (
     <Accordion allowMultiple allowToggle>
@@ -31,12 +28,7 @@ export function ListsAccordion(props: ListsAccordionProps) {
           <AccordionPanel pb={4}>
             <List spacing={1}>
               {items.map((item) => (
-                <WishlistListItem
-                  key={item.id}
-                  item={item}
-                  refetch={refetch}
-                  canEdit={wishlist.owner_id === me?.id}
-                />
+                <WishlistListItem key={item.id} item={item} refetch={refetch} />
               ))}
             </List>
           </AccordionPanel>

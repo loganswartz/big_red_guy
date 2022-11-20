@@ -1,7 +1,9 @@
 import { EditIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
-import PartyModal, { PartyFormValues } from "./PartyModal";
-import useEditParty from "../../../Global/Api/Mutations/Parties/useEditParty";
+import PartyModal from "./PartyModal";
+import useEditParty, {
+  EditPartyInput,
+} from "../../../Global/Api/Mutations/Parties/useEditParty";
 import { Party } from "../../../Global/Api/Types/Api";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
@@ -13,7 +15,7 @@ export default function EditPartyButton(props: EditPartyButtonProps) {
   const { mutateAsync } = useEditParty(party.id);
   const toast = useToast();
 
-  async function onSubmit(data: PartyFormValues) {
+  async function onSubmit(data: EditPartyInput) {
     await mutateAsync({ data });
     refetch?.();
     toast({
