@@ -53,7 +53,7 @@ export default function ViewParty() {
   );
 
   return (
-    <Card minH="lg" minW="lg">
+    <Card>
       <CardHeader>
         <Center>
           <VStack>

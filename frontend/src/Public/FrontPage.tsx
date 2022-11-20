@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Card,
@@ -7,13 +6,14 @@ import {
   CardFooter,
   CardHeader,
   Center,
+  Container,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
 
 export default function FrontPage() {
   return (
-    <AbsoluteCenter>
+    <Container height="100vh" justifyContent="center" centerContent>
       <Card>
         <CardHeader>
           <Center>
@@ -32,6 +32,6 @@ export default function FrontPage() {
           </Button>
         </CardFooter>
       </Card>
-    </AbsoluteCenter>
+    </Container>
   );
 }

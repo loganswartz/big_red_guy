@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Alert,
   AlertDescription,
   AlertIcon,
@@ -62,44 +61,42 @@ export default function Register() {
   };
 
   return (
-    <AbsoluteCenter>
-      <Card minWidth="md" as="form" onSubmit={handleSubmit(onSubmit)}>
+    <Container flexGrow={1} justifyContent="center" centerContent>
+      <Card maxWidth="sm" as="form" onSubmit={handleSubmit(onSubmit)}>
         <CardHeader>
           <Center>
             <BigRedGuy />
           </Center>
         </CardHeader>
         <CardBody>
-          <Container>
-            <VStack spacing={2}>
-              <Heading size="md">Create an account</Heading>
-              <Input placeholder="Name" {...register("name")} />
-              <Input placeholder="Email" {...register("email")} />
-              <Input
-                type="password"
-                placeholder="Password"
-                isInvalid={hasPasswordError}
-                minLength={12}
-                {...register("password", { minLength: passwordLengthRule })}
-              />
-              <Input
-                type="password"
-                placeholder="Confirm password"
-                isInvalid={hasPasswordError}
-                {...register("confirm_password", {
-                  minLength: passwordLengthRule,
-                  validate: (value) =>
-                    value === password.current || "The passwords do not match",
-                })}
-              />
-              {notices.map(([_, error]) => (
-                <Alert status="error" sx={{ borderRadius: "0.3rem" }}>
-                  <AlertIcon />
-                  <AlertDescription>{error.message}</AlertDescription>
-                </Alert>
-              ))}
-            </VStack>
-          </Container>
+          <VStack spacing={2} paddingX={4}>
+            <Heading size="md">Create an account</Heading>
+            <Input placeholder="Name" {...register("name")} />
+            <Input placeholder="Email" {...register("email")} />
+            <Input
+              type="password"
+              placeholder="Password"
+              isInvalid={hasPasswordError}
+              minLength={12}
+              {...register("password", { minLength: passwordLengthRule })}
+            />
+            <Input
+              type="password"
+              placeholder="Confirm password"
+              isInvalid={hasPasswordError}
+              {...register("confirm_password", {
+                minLength: passwordLengthRule,
+                validate: (value) =>
+                  value === password.current || "The passwords do not match",
+              })}
+            />
+            {notices.map(([_, error]) => (
+              <Alert status="error" sx={{ borderRadius: "0.3rem" }}>
+                <AlertIcon />
+                <AlertDescription>{error.message}</AlertDescription>
+              </Alert>
+            ))}
+          </VStack>
         </CardBody>
         <CardFooter justifyContent="center">
           <Button disabled={hasPasswordError} type="submit">
@@ -107,7 +104,7 @@ export default function Register() {
           </Button>
         </CardFooter>
       </Card>
-    </AbsoluteCenter>
+    </Container>
   );
 }
 

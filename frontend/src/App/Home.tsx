@@ -19,7 +19,7 @@ export default function Home() {
   }
 
   return (
-    <Card>
+    <Card maxWidth="sm">
       <CardHeader>
         <Center>Welcome, {data.name}!</Center>
       </CardHeader>

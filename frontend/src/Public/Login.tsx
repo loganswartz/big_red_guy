@@ -1,11 +1,11 @@
 import {
-  AbsoluteCenter,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   Center,
+  Container,
   Input,
   VStack,
 } from "@chakra-ui/react";
@@ -33,15 +33,15 @@ export default function Login() {
   }
 
   return (
-    <AbsoluteCenter>
-      <Card as="form" onSubmit={handleSubmit(onSubmit)}>
+    <Container height="100vh" justifyContent="center" centerContent>
+      <Card as="form" onSubmit={handleSubmit(onSubmit)} maxWidth="md">
         <CardHeader>
           <Center>
             <BigRedGuy />
           </Center>
         </CardHeader>
         <CardBody>
-          <VStack>
+          <VStack paddingX={4}>
             <Input placeholder="Email" {...register("email")} />
             <Input
               placeholder="Password"
@@ -59,6 +59,6 @@ export default function Login() {
           </Button>
         </CardFooter>
       </Card>
-    </AbsoluteCenter>
+    </Container>
   );
 }

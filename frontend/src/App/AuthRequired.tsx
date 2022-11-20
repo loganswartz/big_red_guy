@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react";
+import { Container } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import Appbar from "../Components/Appbar";
 import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
@@ -9,9 +9,9 @@ export default function AuthRequired() {
   return (
     <>
       <Appbar />
-      <VStack sx={{ width: "100vw", flexGrow: 1 }} justifyContent="center">
+      <Container flexGrow={1} justifyContent="center" centerContent>
         <Outlet />
-      </VStack>
+      </Container>
     </>
   );
 }
