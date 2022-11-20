@@ -7,39 +7,38 @@ import {
   ModalFooter,
   Button,
   VStack,
-  Input,
   NumberInput,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInputField,
   NumberInputStepper,
-  Textarea,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { EditWishlistItemInput } from "../../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
+import { FulfillItemInput } from "../../../Global/Api/Mutations/Fulfillments/useFulfillItem";
 
-export default function WishlistItemModal(props: WishlistItemModalProps) {
-  const { open, setOpen, initialValues, onSubmit: userOnSubmit } = props;
-  const { handleSubmit, register, reset } = useForm<EditWishlistItemInput>({
-    defaultValues: initialValues,
+export default function FulfillItemModal(props: FulfillItemModalProps) {
+  const {
+    open,
+    setOpen,
+    title = "Fulfill an item",
+    onSubmit: userOnSubmit,
+  } = props;
+  const { handleSubmit, register } = useForm<FulfillItemFormValues>({
+    defaultValues: { quantity: 1 },
   });
 
-  function onSubmit(values: EditWishlistItemInput) {
+  function onSubmit(values: FulfillItemFormValues) {
     setOpen(false);
     userOnSubmit(values);
-    reset();
   }
 
   return (
     <Modal isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Add an Item</ModalHeader>
+        <ModalHeader>{title}</ModalHeader>
         <ModalBody>
           <VStack>
-            <Input placeholder="Name" {...register("name")} />
-            <Input placeholder="Link" {...register("url")} />
-            <Textarea placeholder="Notes" {...register("notes")} />
             <NumberInput precision={0}>
               <NumberInputField
                 placeholder="How many?"
@@ -59,7 +58,7 @@ export default function WishlistItemModal(props: WishlistItemModalProps) {
             Cancel
           </Button>
           <Button type="submit" colorScheme="blue">
-            Add
+            Fulfill
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -67,9 +66,12 @@ export default function WishlistItemModal(props: WishlistItemModalProps) {
   );
 }
 
-interface WishlistItemModalProps {
+interface FulfillItemModalProps {
   open: boolean;
   setOpen: (state: boolean) => void;
-  initialValues?: EditWishlistItemInput;
-  onSubmit: (values: EditWishlistItemInput) => void;
+  onSubmit: (values: FulfillItemFormValues) => void;
+  title?: string;
 }
+
+export interface FulfillItemFormValues
+  extends Omit<FulfillItemInput, "wishlist_item_id"> {}

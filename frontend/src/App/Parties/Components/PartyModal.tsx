@@ -18,14 +18,18 @@ export default function PartyModal(props: PartyModalProps) {
     open,
     setOpen,
     onSubmit: userOnSubmit,
+    initialValues,
     title = "Create a Party",
   } = props;
 
-  const { handleSubmit, register } = useForm<AddPartyInput>();
+  const { handleSubmit, register, reset } = useForm<AddPartyInput>({
+    defaultValues: initialValues,
+  });
 
   function onSubmit(values: AddPartyInput) {
     setOpen(false);
     userOnSubmit(values);
+    reset();
   }
 
   return (

@@ -19,12 +19,13 @@ import useEditWishlistItem, {
   EditWishlistItemInput,
 } from "../../Global/Api/Mutations/Wishlists/useEditWishlistItem";
 import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
-import { WishlistItem } from "../../Global/Api/Types/Api";
+import { Fulfillment, WishlistItem } from "../../Global/Api/Types/Api";
 import useModalState from "../../Global/Helpers/ModalHelper";
 import WishlistItemModal from "./Components/WishlistItemModal";
+import FulfillItemButton from "./Components/FulfillItemButton";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
-  const { item, refetch } = props;
+  const { item, fulfillments, refetch } = props;
 
   const [open, modal] = useModalState();
   const { data: me } = useCurrentUser();
@@ -66,6 +67,15 @@ export default function WishlistListItem(props: WishlistListItemProps) {
     }
   }
 
+  const needed = item.quantity;
+  const qtyFulfilled = (fulfillments ?? []).reduce(
+    (sum, entry) => sum + entry.quantity,
+    0
+  );
+  // finished if there's a set quantity needed AND that amount has been fulfilled
+  // items with no quantity means there is no upper limit
+  const isFullyFulfilled = needed && qtyFulfilled >= needed;
+
   return (
     <>
       <HStack spacing={4} justifyContent="space-between">
@@ -88,22 +98,28 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               </PopoverContent>
             </Popover>
           ) : null}
-          {item.quantity ? (
-            <Tag borderRadius="full" colorScheme="green">
-              Amount: {item.quantity}
-            </Tag>
-          ) : null}
+          <Tag borderRadius="full" colorScheme="green">
+            {!fulfillments
+              ? `Want: ${needed ?? "∞"}`
+              : `${qtyFulfilled} / ${needed ?? "∞"}`}
+          </Tag>
         </HStack>
-        {canEdit ? (
-          <HStack spacing={1}>
-            <EditButton onClick={modal.open} />
-            <IconButton
-              aria-label={`Delete ${item.name}`}
-              icon={<DeleteIcon />}
-              onClick={onDelete}
-            />
-          </HStack>
-        ) : null}
+        <HStack spacing={1}>
+          {canEdit ? (
+            <>
+              <EditButton onClick={modal.open} />
+              <IconButton
+                aria-label={`Delete ${item.name}`}
+                icon={<DeleteIcon />}
+                onClick={onDelete}
+              />
+            </>
+          ) : !isFullyFulfilled ? (
+            <FulfillItemButton item={item} />
+          ) : (
+            <Tag>Done!</Tag>
+          )}
+        </HStack>
       </HStack>
       <WishlistItemModal
         open={open}
@@ -117,5 +133,6 @@ export default function WishlistListItem(props: WishlistListItemProps) {
 
 interface WishlistListItemProps {
   item: WishlistItem;
+  fulfillments?: Fulfillment[];
   refetch?: () => void;
 }

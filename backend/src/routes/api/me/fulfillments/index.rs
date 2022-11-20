@@ -1,7 +1,9 @@
 use rocket::post;
 use rocket::serde::json::Json;
 use rocket_db_pools::Connection;
-use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter, Set, TryIntoModel};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, EntityTrait, ModelTrait, QueryFilter, Set, TryIntoModel,
+};
 use serde::Deserialize;
 
 use crate::bail_msg;
@@ -49,7 +51,7 @@ pub async fn post(
         ..Default::default()
     };
 
-    let model = assignment.try_into_model()?;
+    let model = assignment.insert(&*db).await?;
 
     Ok(Json(model))
 }

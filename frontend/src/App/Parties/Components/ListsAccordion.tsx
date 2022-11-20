@@ -5,30 +5,37 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Heading,
   List,
 } from "@chakra-ui/react";
 import { User, WishlistWithItems } from "../../../Global/Api/Types/Api";
+import { GroupedFulfillments } from "../../../Global/Helpers/FulfillmentHelpers";
 import WishlistListItem from "../../Wishlists/WishlistListItem";
 
 export function ListsAccordion(props: ListsAccordionProps) {
-  const { lists, refetch } = props;
+  const { lists, fulfillments, refetch } = props;
 
   return (
     <Accordion allowMultiple allowToggle>
       {lists.map(({ wishlist, items }) => (
         <AccordionItem>
-          <h2>
+          <Heading size="md">
             <AccordionButton>
               <Box flex="1" textAlign="left">
                 {wishlist.name}
               </Box>
               <AccordionIcon />
             </AccordionButton>
-          </h2>
+          </Heading>
           <AccordionPanel pb={4}>
             <List spacing={1}>
               {items.map((item) => (
-                <WishlistListItem key={item.id} item={item} refetch={refetch} />
+                <WishlistListItem
+                  key={item.id}
+                  item={item}
+                  fulfillments={fulfillments[item.id]}
+                  refetch={refetch}
+                />
               ))}
             </List>
           </AccordionPanel>
@@ -41,5 +48,6 @@ export function ListsAccordion(props: ListsAccordionProps) {
 export interface ListsAccordionProps {
   user: User;
   lists: WishlistWithItems[];
+  fulfillments: GroupedFulfillments;
   refetch?: () => void;
 }

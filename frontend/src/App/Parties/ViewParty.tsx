@@ -12,20 +12,26 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { SettingsIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
 import useParty from "../../Global/Api/Queries/Parties/useParty";
 import Loading from "../../Components/Loading";
 import EditPartyButton from "./Components/EditPartyButton";
 import AssignWishlistButton from "./Components/AssignWishlistButton";
 import usePartyLists from "../../Global/Api/Queries/Parties/usePartyLists";
-import { SettingsIcon } from "@chakra-ui/icons";
 import useModalState from "../../Global/Helpers/ModalHelper";
 import AssignPartyMembersModal from "./Components/AssignPartyMembersModal";
 import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
 import usePartyMembers from "../../Global/Api/Queries/Parties/usePartyMembers";
-import { User, WishlistWithItems } from "../../Global/Api/Types/Api";
+import {
+  Fulfillment,
+  User,
+  WishlistWithItems,
+} from "../../Global/Api/Types/Api";
 import { UserAvatar } from "../Components/UserAvatar";
 import { ListsAccordion } from "./Components/ListsAccordion";
+import usePartyFulfillments from "../../Global/Api/Queries/Parties/usePartyFulfillments";
+import { groupFulfillments } from "../../Global/Helpers/FulfillmentHelpers";
 
 export default function ViewParty() {
   const { id = "" } = useParams<{ id: string }>();
@@ -35,6 +41,7 @@ export default function ViewParty() {
   const { data: party, isInitialLoading, refetch: refetchParty } = useParty(id);
   const { data: lists, refetch: refetchLists } = usePartyLists(id);
   const { data: users } = usePartyMembers(id);
+  const { data: fulfillments } = usePartyFulfillments(id);
 
   if (isInitialLoading) {
     return <Loading />;
@@ -51,6 +58,8 @@ export default function ViewParty() {
         wishlists.filter((list) => list.wishlist.owner_id === user.id),
       ] as [User, WishlistWithItems[]]
   );
+
+  const groupedFulfillments = groupFulfillments(fulfillments ?? []);
 
   return (
     <Card>
@@ -98,6 +107,7 @@ export default function ViewParty() {
                   <ListsAccordion
                     user={user}
                     lists={lists}
+                    fulfillments={groupedFulfillments}
                     refetch={refetchLists}
                   />
                 )}

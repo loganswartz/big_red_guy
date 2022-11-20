@@ -18,10 +18,13 @@ export default function WishlistModal(props: WishlistModalProps) {
     open,
     setOpen,
     onSubmit: userOnSubmit,
+    initialValues,
     title = "Create a Wishlist",
   } = props;
 
-  const { handleSubmit, register } = useForm<AddWishlistInput>();
+  const { handleSubmit, register } = useForm<AddWishlistInput>({
+    defaultValues: initialValues,
+  });
 
   function onSubmit(values: AddWishlistInput) {
     setOpen(false);
