@@ -31,6 +31,37 @@ pub enum Relation {
     WishlistItemUserFulfillments,
 }
 
+pub struct WishlistItemToUsers;
+
+impl Linked for WishlistItemToUsers {
+    type FromEntity = Entity;
+    type ToEntity = super::users::Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![
+            super::wishlist_item_list_assignments::Relation::WishlistItems
+                .def()
+                .rev(),
+            super::wishlist_item_list_assignments::Relation::Wishlists.def(),
+            super::wishlists::Relation::WishlistItemListAssignments
+                .def()
+                .rev(),
+            super::wishlists::Relation::WishlistPartyAssignments.def(),
+            super::wishlist_party_assignments::Relation::Wishlists
+                .def()
+                .rev(),
+            super::wishlist_party_assignments::Relation::Parties.def(),
+            super::parties::Relation::WishlistPartyAssignments
+                .def()
+                .rev(),
+            super::parties::Relation::PartyMemberships.def(),
+            super::party_memberships::Relation::Parties.def().rev(),
+            super::party_memberships::Relation::Users.def(),
+            super::users::Relation::PartyMemberships.def().rev(),
+        ]
+    }
+}
+
 impl Related<super::users::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Users.def()

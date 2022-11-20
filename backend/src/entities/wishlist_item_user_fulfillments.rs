@@ -10,7 +10,7 @@ pub struct Model {
     pub id: i32,
     pub user_id: i32,
     pub wishlist_item_id: i32,
-    pub quantity: Option<i32>,
+    pub quantity: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

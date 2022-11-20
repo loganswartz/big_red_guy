@@ -76,6 +76,29 @@ impl Linked for PartyToWishlistItems {
     }
 }
 
+pub struct PartyToWishlistItemFulfillments;
+
+impl Linked for PartyToWishlistItemFulfillments {
+    type FromEntity = Entity;
+    type ToEntity = super::wishlist_item_user_fulfillments::Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![
+            super::wishlist_party_assignments::Relation::Parties
+                .def()
+                .rev(),
+            super::wishlist_party_assignments::Relation::Wishlists.def(),
+            super::wishlist_item_list_assignments::Relation::Wishlists
+                .def()
+                .rev(),
+            super::wishlist_item_list_assignments::Relation::WishlistItems.def(),
+            super::wishlist_item_user_fulfillments::Relation::WishlistItems
+                .def()
+                .rev(),
+        ]
+    }
+}
+
 impl Related<super::wishlist_party_assignments::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::WishlistPartyAssignments.def()

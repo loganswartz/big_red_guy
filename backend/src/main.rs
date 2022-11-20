@@ -70,14 +70,16 @@ fn rocket() -> _ {
             routes![
                 me::index::get,
                 me::pfp::put,
+                me::fulfillments::index::post,
+                me::fulfillments::id::index::delete,
                 me::wishlists::index::get,
                 me::wishlists::index::post,
                 me::wishlists::id::index::get,
                 me::wishlists::id::index::put,
                 me::wishlists::id::items::index::get,
                 me::wishlists::id::items::index::post,
-                me::wishlist_items::id::put,
-                me::wishlist_items::id::delete,
+                me::wishlist_items::id::index::put,
+                me::wishlist_items::id::index::delete,
                 me::parties::index::get,
                 me::parties::index::post,
                 me::parties::id::index::get,
@@ -91,6 +93,7 @@ fn rocket() -> _ {
                 me::parties::id::users::id::put,
                 me::parties::id::users::id::delete,
                 me::parties::id::users::add::put,
+                me::parties::id::fulfillments::get,
             ],
         )
 }
