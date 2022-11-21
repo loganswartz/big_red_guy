@@ -1,6 +1,7 @@
 import {
   Button,
   HStack,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,7 +13,6 @@ import {
 import { useForm } from "react-hook-form";
 import usePfp from "../../Global/Api/Mutations/usePfp";
 import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
-import { FileInput } from "./FileInput";
 
 export function SetProfilePictureModal(props: SetProfilePictureModalProps) {
   const { open, setOpen } = props;
@@ -24,6 +24,7 @@ export function SetProfilePictureModal(props: SetProfilePictureModalProps) {
   const { mutateAsync } = usePfp();
 
   async function onSubmit(data: PfpForm) {
+    console.log(data);
     const file = data.files.item(0) ?? null;
     if (!file) {
       return;
@@ -49,7 +50,7 @@ export function SetProfilePictureModal(props: SetProfilePictureModalProps) {
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
         <ModalHeader>Upload a picture</ModalHeader>
         <ModalBody>
-          <FileInput
+          <Input
             type="file"
             accept="image/jpeg,image/png,image/gif,image/webp"
             {...register("files")}

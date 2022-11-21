@@ -1,4 +1,8 @@
-import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import {
+  CheckCircleIcon,
+  DeleteIcon,
+  ExternalLinkIcon,
+} from "@chakra-ui/icons";
 import {
   HStack,
   Tag,
@@ -12,6 +16,9 @@ import {
   PopoverContent,
   PopoverArrow,
   PopoverBody,
+  ListIcon,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
@@ -77,15 +84,22 @@ export default function WishlistListItem(props: WishlistListItemProps) {
   const isFullyFulfilled = needed && qtyFulfilled >= needed;
 
   return (
-    <>
-      <HStack spacing={4} justifyContent="space-between">
-        {item.url ? (
-          <Link href={item.url} isExternal>
-            {item.name} <ExternalLinkIcon />
-          </Link>
-        ) : (
-          <Text>{item.name}</Text>
-        )}
+    <Flex alignItems="center">
+      <ListIcon
+        as={CheckCircleIcon}
+        color="green.500"
+        sx={{ opacity: isFullyFulfilled ? "100%" : "0" }}
+      />
+      <HStack flexGrow={1} justifyContent="space-between">
+        <Box>
+          {item.url ? (
+            <Link href={item.url} isExternal>
+              {item.name} <ExternalLinkIcon />
+            </Link>
+          ) : (
+            <Text>{item.name}</Text>
+          )}
+        </Box>
         <HStack spacing={1}>
           {item.notes ? (
             <Popover>
@@ -98,13 +112,13 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               </PopoverContent>
             </Popover>
           ) : null}
+        </HStack>
+        <HStack spacing={1}>
           <Tag borderRadius="full" colorScheme="green">
             {!fulfillments
               ? `Want: ${needed ?? "∞"}`
               : `${qtyFulfilled} / ${needed ?? "∞"}`}
           </Tag>
-        </HStack>
-        <HStack spacing={1}>
           {canEdit ? (
             <>
               <EditButton onClick={modal.open} />
@@ -115,10 +129,8 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               />
             </>
           ) : !isFullyFulfilled ? (
-            <FulfillItemButton item={item} />
-          ) : (
-            <Tag>Done!</Tag>
-          )}
+            <FulfillItemButton item={item} variant="text" />
+          ) : null}
         </HStack>
       </HStack>
       <WishlistItemModal
@@ -127,7 +139,7 @@ export default function WishlistListItem(props: WishlistListItemProps) {
         initialValues={item}
         onSubmit={onEdit}
       />
-    </>
+    </Flex>
   );
 }
 

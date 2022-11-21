@@ -32,6 +32,7 @@ export default function FulfillItemButton(props: FulfillItemButtonProps) {
         icon={<CheckIcon />}
         onClick={modal.open}
         variant={variant}
+        size="sm"
       />
       <FulfillItemModal
         title={`Fulfill ${item.name}`}

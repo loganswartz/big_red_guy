@@ -62,7 +62,7 @@ export default function ViewParty() {
   const groupedFulfillments = groupFulfillments(fulfillments ?? []);
 
   return (
-    <Card>
+    <Card minWidth="sm">
       <CardHeader>
         <Center>
           <VStack>
