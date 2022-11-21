@@ -23,11 +23,7 @@ import useModalState from "../../Global/Helpers/ModalHelper";
 import AssignPartyMembersModal from "./Components/AssignPartyMembersModal";
 import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
 import usePartyMembers from "../../Global/Api/Queries/Parties/usePartyMembers";
-import {
-  Fulfillment,
-  User,
-  WishlistWithItems,
-} from "../../Global/Api/Types/Api";
+import { User, WishlistWithItems } from "../../Global/Api/Types/Api";
 import { UserAvatar } from "../Components/UserAvatar";
 import { ListsAccordion } from "./Components/ListsAccordion";
 import usePartyFulfillments from "../../Global/Api/Queries/Parties/usePartyFulfillments";
@@ -41,7 +37,8 @@ export default function ViewParty() {
   const { data: party, isInitialLoading, refetch: refetchParty } = useParty(id);
   const { data: lists, refetch: refetchLists } = usePartyLists(id);
   const { data: users } = usePartyMembers(id);
-  const { data: fulfillments } = usePartyFulfillments(id);
+  const { data: fulfillments, refetch: refetchFulfillments } =
+    usePartyFulfillments(id);
 
   if (isInitialLoading) {
     return <Loading />;
@@ -62,7 +59,7 @@ export default function ViewParty() {
   const groupedFulfillments = groupFulfillments(fulfillments ?? []);
 
   return (
-    <Card minWidth="sm">
+    <Card minWidth="90%">
       <CardHeader>
         <Center>
           <VStack>
@@ -89,7 +86,7 @@ export default function ViewParty() {
       </CardHeader>
       <Divider />
       <CardBody>
-        <SimpleGrid minChildWidth="220px" spacing={3}>
+        <SimpleGrid minChildWidth="320px" spacing={3}>
           {memberLists.map(([user, lists]) => (
             <Card variant="outline">
               <CardHeader>
@@ -109,6 +106,7 @@ export default function ViewParty() {
                     lists={lists}
                     fulfillments={groupedFulfillments}
                     refetch={refetchLists}
+                    fulfillmentsRefetch={refetchFulfillments}
                   />
                 )}
               </CardBody>

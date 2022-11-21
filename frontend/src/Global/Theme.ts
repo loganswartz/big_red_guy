@@ -1,9 +1,4 @@
-import {
-  extendTheme,
-  StyleConfig,
-  SystemStyleInterpolation,
-  type ThemeConfig,
-} from "@chakra-ui/react";
+import { extendTheme, StyleConfig, type ThemeConfig } from "@chakra-ui/react";
 
 const config: ThemeConfig = {
   initialColorMode: "dark",
@@ -23,18 +18,9 @@ const components: Record<string, StyleConfig> = {
   },
 };
 
-const styles: Record<string, SystemStyleInterpolation> = {
-  global: ({ colorMode }) => ({
-    body: {
-      backgroundColor: colorMode === "dark" ? "gray.800" : "gray.100",
-    },
-  }),
-};
-
 const theme = extendTheme({
   config,
   components,
-  styles,
 });
 
 export default theme;

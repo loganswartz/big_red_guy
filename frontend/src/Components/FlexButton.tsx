@@ -3,30 +3,45 @@ import {
   ButtonProps,
   IconButton,
   IconButtonProps,
+  useBreakpointValue,
+  forwardRef,
 } from "@chakra-ui/react";
 
-export default function FlexButton(props: FlexButtonProps) {
+const FlexButton = forwardRef((props: FlexButtonProps, ref) => {
   const {
     icon,
     title,
-    variant = "hybrid",
+    variant: userVariant,
     iconSide = "right",
     ...other
   } = props;
 
-  const unlabelled = <IconButton aria-label={title} icon={icon} {...other} />;
+  const autoVariant = useBreakpointValue(
+    {
+      base: "icon",
+      xs: "icon",
+      sm: "text",
+      lg: "hybrid",
+    },
+    { ssr: false }
+  );
+  const variant = userVariant ?? autoVariant;
+
+  const unlabelled = (
+    <IconButton aria-label={title} icon={icon} ref={ref} {...other} />
+  );
 
   const hasIcon = variant === "hybrid";
   const leftIcon = hasIcon && iconSide === "left" ? icon : undefined;
   const rightIcon = hasIcon && iconSide === "right" ? icon : undefined;
   const labelled = (
-    <Button rightIcon={rightIcon} leftIcon={leftIcon} {...other}>
+    <Button rightIcon={rightIcon} leftIcon={leftIcon} ref={ref} {...other}>
       {title}
     </Button>
   );
 
   return variant === "icon" ? unlabelled : labelled;
-}
+});
 
 export type FlexButtonVariant = "text" | "icon" | "hybrid";
 
@@ -36,3 +51,5 @@ interface FlexButtonProps extends ButtonProps {
   variant?: FlexButtonVariant;
   iconSide?: "left" | "right";
 }
+
+export default FlexButton;

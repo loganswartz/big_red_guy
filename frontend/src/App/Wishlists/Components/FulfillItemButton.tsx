@@ -7,7 +7,7 @@ import useFulfillItem from "../../../Global/Api/Mutations/Fulfillments/useFulfil
 import FulfillItemModal, { FulfillItemFormValues } from "./FulfillItemModal";
 
 export default function FulfillItemButton(props: FulfillItemButtonProps) {
-  const { item, variant } = props;
+  const { item, variant, refetch } = props;
 
   const [open, modal] = useModalState();
   const { mutateAsync } = useFulfillItem();
@@ -20,6 +20,7 @@ export default function FulfillItemButton(props: FulfillItemButtonProps) {
         ...data,
       },
     });
+    refetch?.();
     toast({
       description: `Marked ${data.quantity} of ${item.name} as completed!`,
     });
@@ -47,4 +48,5 @@ export default function FulfillItemButton(props: FulfillItemButtonProps) {
 interface FulfillItemButtonProps {
   item: WishlistItem;
   variant?: FlexButtonVariant;
+  refetch?: () => void;
 }

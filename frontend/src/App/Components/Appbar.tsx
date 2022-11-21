@@ -1,4 +1,4 @@
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
   Text,
   Button,
@@ -15,11 +15,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
-import { CurrentUserAvatar } from "../App/Components/UserAvatar";
-import useLogout from "../Global/Api/Mutations/useLogout";
-import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
-import useModalState from "../Global/Helpers/ModalHelper";
-import BigRedGuy from "./BigRedGuy";
+import { CurrentUserAvatar } from "./UserAvatar";
+import useLogout from "../../Global/Api/Mutations/useLogout";
+import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
+import useModalState from "../../Global/Helpers/ModalHelper";
+import BigRedGuy from "../../Components/BigRedGuy";
+import { SettingsModal } from "./SettingsModal";
 
 export default function Appbar(props: AppbarProps) {
   const { height = "3rem" } = props;
@@ -28,6 +29,7 @@ export default function Appbar(props: AppbarProps) {
   const logout = useLogout();
   const navigate = useNavigate();
   const [open, drawer] = useModalState();
+  const [settingsOpen, settings] = useModalState();
 
   return (
     <>
@@ -78,18 +80,26 @@ export default function Appbar(props: AppbarProps) {
                 <CurrentUserAvatar />
                 <Text>{me?.name}</Text>
               </HStack>
-              <Button
-                onClick={() => {
-                  logout();
-                  navigate("/login");
-                }}
-              >
-                Log Out
-              </Button>
+              <HStack justifyContent="space-between">
+                <IconButton
+                  aria-label="User settings"
+                  icon={<SettingsIcon />}
+                  onClick={settings.open}
+                />
+                <Button
+                  onClick={() => {
+                    logout();
+                    navigate("/login");
+                  }}
+                >
+                  Log Out
+                </Button>
+              </HStack>
             </VStack>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+      <SettingsModal open={settingsOpen} setOpen={settings.set} />
     </>
   );
 }

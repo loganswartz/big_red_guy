@@ -13,7 +13,7 @@ import { GroupedFulfillments } from "../../../Global/Helpers/FulfillmentHelpers"
 import WishlistListItem from "../../Wishlists/WishlistListItem";
 
 export function ListsAccordion(props: ListsAccordionProps) {
-  const { lists, fulfillments, refetch } = props;
+  const { lists, fulfillments, refetch, fulfillmentsRefetch } = props;
 
   return (
     <Accordion allowMultiple allowToggle>
@@ -34,6 +34,7 @@ export function ListsAccordion(props: ListsAccordionProps) {
                   key={item.id}
                   item={item}
                   fulfillments={fulfillments[item.id]}
+                  fulfillmentsRefetch={fulfillmentsRefetch}
                   refetch={refetch}
                 />
               ))}
@@ -50,4 +51,5 @@ export interface ListsAccordionProps {
   lists: WishlistWithItems[];
   fulfillments: GroupedFulfillments;
   refetch?: () => void;
+  fulfillmentsRefetch?: () => void;
 }

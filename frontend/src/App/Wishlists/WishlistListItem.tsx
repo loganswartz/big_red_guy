@@ -1,4 +1,5 @@
 import {
+  ChatIcon,
   CheckCircleIcon,
   DeleteIcon,
   ExternalLinkIcon,
@@ -19,6 +20,7 @@ import {
   ListIcon,
   Box,
   Flex,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
@@ -30,9 +32,11 @@ import { Fulfillment, WishlistItem } from "../../Global/Api/Types/Api";
 import useModalState from "../../Global/Helpers/ModalHelper";
 import WishlistItemModal from "./Components/WishlistItemModal";
 import FulfillItemButton from "./Components/FulfillItemButton";
+import DashedCircleIcon from "../../Components/DashedCircleIcon";
+import FlexButton from "../../Components/FlexButton";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
-  const { item, fulfillments, refetch } = props;
+  const { item, fulfillments, refetch, fulfillmentsRefetch } = props;
 
   const [open, modal] = useModalState();
   const { data: me } = useCurrentUser();
@@ -85,13 +89,13 @@ export default function WishlistListItem(props: WishlistListItemProps) {
 
   return (
     <Flex alignItems="center">
-      <ListIcon
-        as={CheckCircleIcon}
-        color="green.500"
-        sx={{ opacity: isFullyFulfilled ? "100%" : "0" }}
-      />
+      {isFullyFulfilled ? (
+        <ListIcon as={CheckCircleIcon} color="green.500" />
+      ) : (
+        <ListIcon as={DashedCircleIcon} color="gray.500" />
+      )}
       <HStack flexGrow={1} justifyContent="space-between">
-        <Box>
+        <Box maxWidth="fit-content">
           {item.url ? (
             <Link href={item.url} isExternal>
               {item.name} <ExternalLinkIcon />
@@ -101,10 +105,10 @@ export default function WishlistListItem(props: WishlistListItemProps) {
           )}
         </Box>
         <HStack spacing={1}>
-          {item.notes ? (
+          {!isFullyFulfilled && item.notes ? (
             <Popover>
               <PopoverTrigger>
-                <Button size="xs">See Notes</Button>
+                <FlexButton title="Notes" icon={<ChatIcon />} size="xs" />
               </PopoverTrigger>
               <PopoverContent>
                 <PopoverArrow />
@@ -114,10 +118,12 @@ export default function WishlistListItem(props: WishlistListItemProps) {
           ) : null}
         </HStack>
         <HStack spacing={1}>
-          <Tag borderRadius="full" colorScheme="green">
-            {!fulfillments
-              ? `Want: ${needed ?? "∞"}`
-              : `${qtyFulfilled} / ${needed ?? "∞"}`}
+          <Tag
+            borderRadius="full"
+            colorScheme={isFullyFulfilled ? "green" : "yellow"}
+            minWidth="max-content"
+          >
+            {canEdit ? "?" : qtyFulfilled} / {needed ?? "∞"}
           </Tag>
           {canEdit ? (
             <>
@@ -129,7 +135,11 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               />
             </>
           ) : !isFullyFulfilled ? (
-            <FulfillItemButton item={item} variant="text" />
+            <FulfillItemButton
+              item={item}
+              variant="text"
+              refetch={fulfillmentsRefetch}
+            />
           ) : null}
         </HStack>
       </HStack>
@@ -147,4 +157,5 @@ interface WishlistListItemProps {
   item: WishlistItem;
   fulfillments?: Fulfillment[];
   refetch?: () => void;
+  fulfillmentsRefetch?: () => void;
 }
