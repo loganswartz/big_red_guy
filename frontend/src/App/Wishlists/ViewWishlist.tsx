@@ -49,7 +49,9 @@ export default function ViewWishlist() {
         <List spacing={2}>
           {items.length === 0 ? (
             <ListItem>
-              <i>You don't have any items in this list yet.</i>
+              <Center>
+                <i>You don't have any items in this list yet.</i>
+              </Center>
             </ListItem>
           ) : (
             items.map((item) => (
