@@ -3,4 +3,4 @@ address = "0.0.0.0"
 port = 4440
 
 [default.databases.main]
-url = "sqlite:///home/logans/big-red-guy.sqlite?mode=rwc"
+url = "sqlite://./big-red-guy.sqlite?mode=rwc"

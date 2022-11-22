@@ -26,6 +26,24 @@ the frontend, and then embed those frontend files into the compiled binary. This
 means that a production build should be able to be run with absolutely no
 external dependencies.
 
+# Usage
+
+To run a production binary, you need to specify some environment variables:
+
+The only required variable is `ROCKET_SECRET_KEY`. Generate a key with `openssl
+rand -base64 32`, and pass the key in:
+
+```bash
+ROCKET_SECRET_KEY='<your private key>' /path/to/big_red_guy
+```
+
+The path to the database file can be customized via the `ROCKET_DATABASES` env
+variable (defaults to `./big_red_guy.sqlite`).
+
+```bash
+ROCKET_DATABASES='{main={url="sqlite:///path/to/db.sqlite?mode=rwc"}}'
+```
+
 # Development
 
 To set up a dev environment:
