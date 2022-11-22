@@ -29,11 +29,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev-start": "concurrently \"cd .. && cargo run\" \"npm:start\"",
+    "dev-start": "concurrently \"cd ../backend && cargo run\" \"npm:start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:4440",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -52,5 +53,7 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
 }

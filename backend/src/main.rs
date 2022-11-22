@@ -19,7 +19,7 @@ use db::pool::Db;
 use migration::MigratorTrait;
 use routes::{
     api::{default as api_default, login, logout, me, register},
-    default,
+    default, statics,
 };
 
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
@@ -34,11 +34,7 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
-        .mount("/", routes![default::get])
-        .mount(
-            "/",
-            FileServer::from(relative!("../frontend/build")).rank(12),
-        )
+        .mount("/", routes![default::get, statics::get])
         .mount(
             "/public/uploads",
             FileServer::from(relative!("../frontend/public/uploads")).rank(14),

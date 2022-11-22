@@ -1,10 +1,10 @@
-use rocket::{fs::NamedFile, get};
-use std::{io, path::Path};
+use rocket::{get, response::content::RawHtml};
+use std::borrow::Cow;
+
+use crate::routes::statics::Asset;
 
 #[get("/<_..>", rank = 15)]
-pub async fn get() -> io::Result<NamedFile> {
-    let page_directory_path = format!("{}/../frontend/build", env!("CARGO_MANIFEST_DIR"));
-    let absolute = Path::new(&page_directory_path).join("index.html");
-
-    NamedFile::open(absolute).await
+pub fn get() -> Option<RawHtml<Cow<'static, [u8]>>> {
+    let asset = Asset::get("index.html")?;
+    Some(RawHtml(asset.data))
 }

@@ -17,3 +17,4 @@ sea-orm = { version = "^0", features = [ "sqlx-sqlite", "runtime-tokio-native-tl
 sea-orm-rocket = "^0"
 tokio = "^1"
 nanoid = "0.4.0"
+rust-embed = "6.4.2"

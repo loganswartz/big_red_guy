@@ -11,7 +11,6 @@ import {
   useToast,
   IconButton,
   Text,
-  Button,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -20,7 +19,6 @@ import {
   ListIcon,
   Box,
   Flex,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
