@@ -45,7 +45,7 @@ export default function Register() {
           password: values.password,
         },
       });
-      navigate("/app/home");
+      navigate("/app");
     } catch (e: any) {
       toast({
         status: "error",
