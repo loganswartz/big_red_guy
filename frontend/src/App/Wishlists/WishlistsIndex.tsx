@@ -40,7 +40,7 @@ export default function WishlistsIndex() {
             <ListItem>You don't have any lists yet.</ListItem>
           ) : (
             wishlists.map((list) => (
-              <ListItem>
+              <ListItem key={list.id}>
                 <HStack justifyContent="space-between">
                   <Text fontSize="lg">{list.name}</Text>
                   <Text fontSize="lg">—</Text>

@@ -96,7 +96,7 @@ export default function AssignPartyMembersModal(
                 <ListItem>No members found.</ListItem>
               ) : (
                 members.map((user) => (
-                  <ListItem>
+                  <ListItem key={user.id}>
                     <HStack>
                       <Text fontSize="lg" flexGrow={1}>
                         <Center>

@@ -40,7 +40,7 @@ export default function PartiesIndex() {
             <ListItem>You don't have any parties yet.</ListItem>
           ) : (
             parties.map((party) => (
-              <ListItem>
+              <ListItem key={party.id}>
                 <HStack justifyContent="space-between">
                   <Text fontSize="lg">{party.name}</Text>
                   <Text fontSize="lg">—</Text>

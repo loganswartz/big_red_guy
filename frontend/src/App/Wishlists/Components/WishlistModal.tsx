@@ -22,7 +22,7 @@ export default function WishlistModal(props: WishlistModalProps) {
     title = "Create a Wishlist",
   } = props;
 
-  const { handleSubmit, register } = useForm<AddWishlistInput>({
+  const { handleSubmit, register, reset } = useForm<AddWishlistInput>({
     defaultValues: initialValues,
   });
 
@@ -32,7 +32,13 @@ export default function WishlistModal(props: WishlistModalProps) {
   }
 
   return (
-    <Modal isOpen={open} onClose={() => setOpen(false)}>
+    <Modal
+      isOpen={open}
+      onClose={() => {
+        reset();
+        setOpen(false);
+      }}
+    >
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
         <ModalHeader>{title}</ModalHeader>

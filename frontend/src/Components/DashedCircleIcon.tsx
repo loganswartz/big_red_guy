@@ -6,9 +6,9 @@ const DashedCircleIcon = createIcon({
     <g
       fill="currentColor"
       stroke="currentColor"
-      stroke-linecap="butt"
+      strokeLinecap="butt"
       strokeDasharray="3"
-      stroke-width="2"
+      strokeWidth="2"
     >
       <circle cx="12" cy="12" fill="none" r="11"></circle>
     </g>

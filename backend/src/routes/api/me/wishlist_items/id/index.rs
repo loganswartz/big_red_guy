@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use rocket::{
     delete, put,
     response::status::{self, NoContent},
@@ -15,7 +17,8 @@ use crate::rocket_anyhow::Result as RocketResult;
 #[derive(Deserialize, Debug)]
 pub struct AddWishlistItem<'r> {
     pub name: &'r str,
-    pub notes: Option<&'r str>,
+    #[serde(borrow)]
+    pub notes: Option<Cow<'r, str>>,
     pub url: Option<&'r str>,
     pub quantity: Option<i32>,
 }
@@ -43,7 +46,10 @@ pub async fn put(
     let item = wishlist_items::ActiveModel {
         id,
         name: Set(form.name.to_owned()),
-        notes: Set(form.notes.map_or(None, |value| Some(value.to_owned()))),
+        notes: Set(form
+            .notes
+            .clone()
+            .map_or(None, |value| Some(value.to_string()))),
         url: Set(form.url.map_or(None, |value| Some(value.to_owned()))),
         quantity: Set(form.quantity),
         owner_id: Set(user.id),

@@ -32,8 +32,13 @@ export default function PartyModal(props: PartyModalProps) {
     reset();
   }
 
+  function onCancel() {
+    reset();
+    setOpen(false);
+  }
+
   return (
-    <Modal isOpen={open} onClose={() => setOpen(false)}>
+    <Modal isOpen={open} onClose={onCancel}>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
         <ModalHeader>{title}</ModalHeader>
@@ -43,7 +48,7 @@ export default function PartyModal(props: PartyModalProps) {
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={() => setOpen(false)} mr={3}>
+          <Button variant="ghost" onClick={onCancel} mr={3}>
             Cancel
           </Button>
           <Button type="submit" colorScheme="blue">

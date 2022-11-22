@@ -88,7 +88,7 @@ export default function ViewParty() {
       <CardBody>
         <SimpleGrid minChildWidth="320px" spacing={3}>
           {memberLists.map(([user, lists]) => (
-            <Card variant="outline">
+            <Card variant="outline" key={user.id}>
               <CardHeader>
                 <HStack spacing={2}>
                   <UserAvatar user={user} size="sm" />

@@ -59,7 +59,7 @@ export default function AssignWishlistModal(props: AssignWishlistModalProps) {
                 wishlists.map((list) => {
                   const assigned = listIsAssignedToParty(list.id);
                   return (
-                    <ListItem>
+                    <ListItem key={list.id}>
                       <HStack>
                         <Text fontSize="lg" flexGrow={1}>
                           <Center>{list.name}</Center>

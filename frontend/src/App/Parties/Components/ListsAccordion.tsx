@@ -18,7 +18,7 @@ export function ListsAccordion(props: ListsAccordionProps) {
   return (
     <Accordion allowMultiple allowToggle>
       {lists.map(({ wishlist, items }) => (
-        <AccordionItem>
+        <AccordionItem key={wishlist.id}>
           <Heading size="md">
             <AccordionButton>
               <Box flex="1" textAlign="left">

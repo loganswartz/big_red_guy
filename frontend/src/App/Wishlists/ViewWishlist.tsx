@@ -35,7 +35,7 @@ export default function ViewWishlist() {
   }
 
   return (
-    <Card>
+    <Card minWidth="md">
       <CardHeader>
         <Center>
           <HStack spacing={2}>
@@ -53,7 +53,7 @@ export default function ViewWishlist() {
             </ListItem>
           ) : (
             items.map((item) => (
-              <ListItem>
+              <ListItem key={item.id}>
                 <WishlistListItem item={item} refetch={refetchItems} />
               </ListItem>
             ))

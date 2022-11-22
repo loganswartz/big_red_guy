@@ -110,7 +110,9 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               </PopoverTrigger>
               <PopoverContent>
                 <PopoverArrow />
-                <PopoverBody>{item.notes}</PopoverBody>
+                <PopoverBody sx={{ whiteSpace: "pre-wrap" }}>
+                  {item.notes}
+                </PopoverBody>
               </PopoverContent>
             </Popover>
           ) : null}
@@ -144,6 +146,8 @@ export default function WishlistListItem(props: WishlistListItemProps) {
       <WishlistItemModal
         open={open}
         setOpen={modal.set}
+        title={`Edit ${item.name}`}
+        submitName="Save"
         initialValues={item}
         onSubmit={onEdit}
       />
