@@ -86,7 +86,7 @@ export default function ViewParty() {
       </CardHeader>
       <Divider />
       <CardBody>
-        <SimpleGrid minChildWidth="320px" spacing={3}>
+        <SimpleGrid minChildWidth="min(400px, 100%)" spacing={3}>
           {memberLists.map(([user, lists]) => (
             <Card variant="outline" key={user.id}>
               <CardHeader>

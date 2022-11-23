@@ -54,6 +54,10 @@ git clone git@github.com:loganswartz/big_red_guy.git && cd big_red_guy
 cd backend && cargo install
 cd ../frontend && npm install
 
+# for live-reloading the backend. Not required, but without it you have to
+# restart your `npm run dev-start` command every time you change the backend
+cargo install cargo-watch
+
 npm run dev-start
 ```
 
@@ -69,3 +73,7 @@ the backend will serve all the production-ready frontend files.
 
 I started this as a pet project to learn Rust, so there will be a lot of
 improvements to be made.
+
+# Misc
+
+The favicon was generated from an icon from [Twemoji](https://twemoji.twitter.com/).

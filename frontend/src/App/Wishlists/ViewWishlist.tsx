@@ -35,7 +35,7 @@ export default function ViewWishlist() {
   }
 
   return (
-    <Card minWidth="md">
+    <Card minWidth="min(var(--chakra-sizes-xl), 100%)">
       <CardHeader>
         <Center>
           <HStack spacing={2}>

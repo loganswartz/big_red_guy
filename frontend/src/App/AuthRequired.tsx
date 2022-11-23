@@ -9,12 +9,7 @@ export default function AuthRequired() {
   return (
     <>
       <Appbar />
-      <Container
-        maxW="container.xl"
-        flexGrow={1}
-        justifyContent="center"
-        centerContent
-      >
+      <Container maxW="100%" flexGrow={1} justifyContent="center" centerContent>
         <Outlet />
       </Container>
     </>

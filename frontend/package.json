@@ -29,7 +29,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev-start": "concurrently --kill-others \"cd ../backend && cargo run\" \"npm:start\"",
+    "dev-start": "concurrently --kill-others \"npm:watch-backend\" \"npm:start\"",
+    "watch-backend": "bash -c \"cd ../backend && cargo watch -x run || cargo run\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

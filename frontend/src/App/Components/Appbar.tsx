@@ -23,8 +23,6 @@ import BigRedGuy from "../../Components/BigRedGuy";
 import { SettingsModal } from "./SettingsModal";
 
 export default function Appbar(props: AppbarProps) {
-  const { height = "3rem" } = props;
-
   const { data: me } = useCurrentUser();
   const logout = useLogout();
   const navigate = useNavigate();
@@ -36,13 +34,14 @@ export default function Appbar(props: AppbarProps) {
       <HStack
         p={2}
         justifyContent="space-between"
-        sx={{ width: "100%", height }}
+        sx={{ width: "100%" }}
         bg="grey.100"
       >
         <IconButton
           aria-label="Open Drawer"
           icon={<HamburgerIcon />}
           onClick={drawer.open}
+          size="md"
         />
       </HStack>
       <Drawer placement="left" onClose={drawer.close} isOpen={open}>
@@ -104,6 +103,4 @@ export default function Appbar(props: AppbarProps) {
   );
 }
 
-interface AppbarProps {
-  height?: string;
-}
+interface AppbarProps {}
