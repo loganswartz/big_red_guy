@@ -12,6 +12,8 @@ import ViewWishlist from "./App/Wishlists/ViewWishlist";
 import Root from "./Root";
 import ViewParty from "./App/Parties/ViewParty";
 import PartiesIndex from "./App/Parties/PartiesIndex";
+import ThemeColorHelper from "./Global/ThemeColorHelper";
+import { HelmetProvider } from "react-helmet-async";
 
 const client = new QueryClient();
 
@@ -74,11 +76,14 @@ function App() {
   ]);
 
   return (
-    <ChakraProvider theme={Theme}>
-      <QueryClientProvider client={client}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </ChakraProvider>
+    <HelmetProvider>
+      <ChakraProvider theme={Theme}>
+        <ThemeColorHelper />
+        <QueryClientProvider client={client}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </ChakraProvider>
+    </HelmetProvider>
   );
 }
 
