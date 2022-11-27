@@ -4,6 +4,7 @@ import {
   UseMutationOptions,
   useQuery,
   useQueryClient,
+  UseQueryOptions,
 } from "@tanstack/react-query";
 import { CustomError } from "ts-custom-error";
 
@@ -149,7 +150,13 @@ type ApiPathParameters<T> = T extends TemplateFunction ? Parameters<T> : string;
  */
 export function useApiQuery<TData = unknown>(
   path: SimpleApiOptions["path"],
-  defaultOptions?: Omit<SimpleApiOptions, "path">
+  defaultOptions?: Omit<SimpleApiOptions, "path">,
+  defaultQueryOptions?: Omit<
+    UseQueryOptions<TData | null, ApiError, TData | null, string[]>,
+    "queryKey" | "queryFn" | "initialData"
+  > & {
+    initialData?: () => undefined;
+  }
 ) {
   const { path: newPath, options } = makeOptions({ path, ...defaultOptions });
 
@@ -159,9 +166,10 @@ export function useApiQuery<TData = unknown>(
 
   const query = useQuery({
     queryKey: [newPath],
-    queryFn: async (_) => {
+    queryFn: async () => {
       return apiFetch<TData>(newPath, options);
     },
+    ...defaultQueryOptions,
   });
 
   return query;

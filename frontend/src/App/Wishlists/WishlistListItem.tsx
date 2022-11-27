@@ -32,17 +32,20 @@ import WishlistItemModal from "./Components/WishlistItemModal";
 import FulfillItemButton from "./Components/FulfillItemButton";
 import DashedCircleIcon from "../../Components/DashedCircleIcon";
 import FlexButton from "../../Components/FlexButton";
+import ViewFulfillmentsModal from "./Components/ViewFulfillmentsModal";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
   const { item, fulfillments, refetch, fulfillmentsRefetch } = props;
 
   const [open, modal] = useModalState();
+  const [fulfillmentModalOpen, fulfillmentModal] = useModalState();
   const { data: me } = useCurrentUser();
   const { mutateAsync: editItem } = useEditWishlistItem(item.id);
   const { mutateAsync: deleteItem } = useDeleteWishlistItem(item.id);
   const toast = useToast();
 
   const canEdit = me?.id === item.owner_id;
+  const censored = canEdit;
 
   async function onEdit(data: EditWishlistItemInput) {
     try {
@@ -85,6 +88,16 @@ export default function WishlistListItem(props: WishlistListItemProps) {
   // items with no quantity means there is no upper limit
   const isFullyFulfilled = needed && qtyFulfilled >= needed;
 
+  function getTagColor() {
+    if (isFullyFulfilled) {
+      return "green";
+    } else if (qtyFulfilled > 0) {
+      return "yellow";
+    } else {
+      return "red";
+    }
+  }
+
   return (
     <Flex alignItems="center">
       {isFullyFulfilled ? (
@@ -120,10 +133,15 @@ export default function WishlistListItem(props: WishlistListItemProps) {
         <HStack spacing={1}>
           <Tag
             borderRadius="full"
-            colorScheme={isFullyFulfilled ? "green" : "yellow"}
+            colorScheme={getTagColor()}
             minWidth="max-content"
+            sx={{
+              userSelect: "none",
+              cursor: censored ? undefined : "pointer",
+            }}
+            onClick={censored ? undefined : fulfillmentModal.open}
           >
-            {canEdit ? "?" : qtyFulfilled} / {needed ?? "∞"}
+            {censored ? "?" : qtyFulfilled} / {needed ?? "∞"}
           </Tag>
           {canEdit ? (
             <>
@@ -150,6 +168,12 @@ export default function WishlistListItem(props: WishlistListItemProps) {
         submitName="Save"
         initialValues={item}
         onSubmit={onEdit}
+      />
+      <ViewFulfillmentsModal
+        open={fulfillmentModalOpen}
+        setOpen={fulfillmentModal.set}
+        item={item}
+        refetch={fulfillmentsRefetch}
       />
     </Flex>
   );

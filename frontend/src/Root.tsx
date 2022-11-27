@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 export default function Root() {
   return (
-    <VStack sx={{ width: "100vw", minHeight: "100vh" }}>
+    <VStack width="100%" minHeight="100vh" pb={4}>
       <Outlet />
     </VStack>
   );

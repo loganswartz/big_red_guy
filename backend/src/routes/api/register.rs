@@ -26,7 +26,7 @@ struct ErrorMessage<'a> {
 }
 
 #[derive(Debug, Responder)]
-enum RegistrationOutcome<'a> {
+pub enum RegistrationOutcome<'a> {
     #[response(status = 200, content_type = "json")]
     Account(Json<SanitizedUser>),
     #[response(status = 422, content_type = "json")]

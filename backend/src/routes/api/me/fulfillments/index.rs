@@ -1,8 +1,10 @@
+use std::borrow::Cow;
+
 use rocket::post;
 use rocket::serde::json::Json;
 use rocket_db_pools::Connection;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, EntityTrait, ModelTrait, QueryFilter, Set, TryIntoModel,
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter, Set,
 };
 use serde::Deserialize;
 
@@ -13,18 +15,19 @@ use crate::rocket_anyhow::Result as RocketResult;
 use crate::{db::pool::Db, entities::users};
 
 #[derive(Deserialize, Debug)]
-pub struct FulfillWishlistItem {
+pub struct FulfillWishlistItem<'a> {
     pub wishlist_item_id: i32,
+    #[serde(borrow)]
+    pub notes: Option<Cow<'a, str>>,
     pub quantity: i32,
 }
 
-#[post("/fulfillments", data = "<form>")]
-pub async fn post(
-    user: users::Model,
-    db: Connection<Db>,
-    form: Json<FulfillWishlistItem>,
-) -> RocketResult<Json<wishlist_item_user_fulfillments::Model>> {
-    let item = wishlist_items::Entity::find_by_id(form.wishlist_item_id)
+pub async fn item_is_shared_with_user(
+    item_id: i32,
+    user_id: i32,
+    db: &DatabaseConnection,
+) -> RocketResult<wishlist_items::Model> {
+    let item = wishlist_items::Entity::find_by_id(item_id)
         .one(&*db)
         .await?;
 
@@ -36,7 +39,7 @@ pub async fn post(
     // check that the user somehow has access to this item
     let allowed = item
         .find_linked(WishlistItemToUsers)
-        .filter(users::Column::Id.eq(user.id))
+        .filter(users::Column::Id.eq(user_id))
         .one(&*db)
         .await?;
 
@@ -44,9 +47,24 @@ pub async fn post(
         bail_msg!("Item not found.");
     }
 
+    Ok(item)
+}
+
+#[post("/fulfillments", data = "<form>")]
+pub async fn post(
+    user: users::Model,
+    db: Connection<Db>,
+    form: Json<FulfillWishlistItem<'_>>,
+) -> RocketResult<Json<wishlist_item_user_fulfillments::Model>> {
+    item_is_shared_with_user(form.wishlist_item_id, user.id, &*db).await?;
+
     let assignment = wishlist_item_user_fulfillments::ActiveModel {
         wishlist_item_id: Set(form.wishlist_item_id),
         user_id: Set(user.id),
+        notes: Set(form
+            .notes
+            .clone()
+            .map_or(None, |value| Some(value.to_string()))),
         quantity: Set(form.quantity),
         ..Default::default()
     };

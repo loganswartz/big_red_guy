@@ -38,6 +38,11 @@ export interface WishlistWithItems {
 export interface Fulfillment {
   id: number;
   wishlist_item_id: number;
-  user_id: number;
   quantity: number;
+  notes: string;
+}
+
+export interface ItemFulfillment {
+  fulfillment: Fulfillment;
+  editable: boolean;
 }

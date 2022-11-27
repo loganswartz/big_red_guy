@@ -16,7 +16,7 @@ export function ListsAccordion(props: ListsAccordionProps) {
   const { lists, fulfillments, refetch, fulfillmentsRefetch } = props;
 
   return (
-    <Accordion allowMultiple allowToggle>
+    <Accordion allowMultiple>
       {lists.map(({ wishlist, items }) => (
         <AccordionItem key={wishlist.id}>
           <Heading size="md">

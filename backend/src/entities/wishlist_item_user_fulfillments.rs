@@ -10,6 +10,7 @@ pub struct Model {
     pub id: i32,
     pub user_id: i32,
     pub wishlist_item_id: i32,
+    pub notes: Option<String>,
     pub quantity: i32,
 }
 

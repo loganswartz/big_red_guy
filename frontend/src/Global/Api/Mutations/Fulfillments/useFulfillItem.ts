@@ -3,7 +3,7 @@ import { Fulfillment } from "../../Types/Api";
 
 export type FulfillItemInput = Pick<
   Fulfillment,
-  "wishlist_item_id" | "quantity"
+  "wishlist_item_id" | "quantity" | "notes"
 >;
 
 export default function useFulfillItem() {

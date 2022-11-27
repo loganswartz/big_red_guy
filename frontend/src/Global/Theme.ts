@@ -1,26 +1,38 @@
-import { extendTheme, StyleConfig, type ThemeConfig } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
+import { modalAnatomy } from "@chakra-ui/anatomy";
+import { createMultiStyleConfigHelpers } from "@chakra-ui/styled-system";
 
-const config: ThemeConfig = {
-  initialColorMode: "dark",
-  useSystemColorMode: true,
-};
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(modalAnatomy.keys);
 
-const components: Record<string, StyleConfig> = {
-  Card: {
-    defaultProps: {
-      size: "sm",
-    },
+const baseStyle = definePartsStyle({
+  dialogContainer: {
+    p: 4,
   },
-  Button: {
-    defaultProps: {
-      size: "sm",
-    },
-  },
-};
+});
+
+export const modalTheme = defineMultiStyleConfig({
+  baseStyle,
+});
 
 const theme = extendTheme({
-  config,
-  components,
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: true,
+  },
+  components: {
+    Card: {
+      defaultProps: {
+        size: "sm",
+      },
+    },
+    Button: {
+      defaultProps: {
+        size: "sm",
+      },
+    },
+    Modal: modalTheme,
+  },
 });
 
 export default theme;
