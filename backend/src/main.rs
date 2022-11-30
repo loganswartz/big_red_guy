@@ -1,13 +1,6 @@
 #[macro_use]
 extern crate rocket;
 
-mod db;
-mod entities;
-mod macros;
-mod rocket_anyhow;
-mod routes;
-mod utils;
-
 use rocket::{
     fairing::{self, AdHoc},
     fs::{relative, FileServer},
@@ -15,12 +8,14 @@ use rocket::{
 };
 use rocket_db_pools::Database;
 
-use db::pool::Db;
-use migration::MigratorTrait;
-use routes::{
-    api::{default as api_default, login, logout, me, register},
-    default, statics,
+use big_red_guy::{
+    db::pool::Db,
+    routes::{
+        api::{default as api_default, login, logout, me, register},
+        default, statics,
+    },
 };
+use migration::MigratorTrait;
 
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
     let conn = &Db::fetch(&rocket).unwrap().conn;

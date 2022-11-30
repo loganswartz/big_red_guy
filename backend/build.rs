@@ -2,12 +2,12 @@ use std::env;
 use std::process::Command;
 
 fn main() -> Result<(), std::io::Error> {
-    if env::var("PROFILE").unwrap() == "release".to_owned() {
+    if env::var("PROFILE").unwrap() == *"release" {
         let path = format!("{}/../frontend", env!("CARGO_MANIFEST_DIR"));
 
         Command::new("yarn")
             .current_dir(&path)
-            .args(&["build"])
+            .args(["build"])
             .status()
             .expect("Failed to build frontend.");
 

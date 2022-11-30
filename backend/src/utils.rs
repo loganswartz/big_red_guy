@@ -1,4 +1,3 @@
-use argon2;
 use rand::distributions::Alphanumeric;
 use rand::prelude::*;
 

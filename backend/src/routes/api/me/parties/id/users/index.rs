@@ -17,7 +17,7 @@ pub async fn get(
     db: Connection<Db>,
     id: i32,
 ) -> RocketResult<Option<Json<Vec<SanitizedUser>>>> {
-    let party = find_participating_party(id, &*db, &user).await?;
+    let party = find_participating_party(id, &db, &user).await?;
 
     let party = match party {
         Some(party) => party,

@@ -45,14 +45,14 @@ pub async fn post(
 
     if user.verify_password(values.password) {
         cookies.add_private(Cookie::new(users::Model::COOKIE_ID, user.id.to_string()));
-        return Ok(status::Custom(
+        Ok(status::Custom(
             Status::Ok,
             Json(AuthResponse { success: true }),
-        ));
+        ))
     } else {
-        return Ok(status::Custom(
+        Ok(status::Custom(
             Status::Unauthorized,
             Json(AuthResponse { success: false }),
-        ));
+        ))
     }
 }

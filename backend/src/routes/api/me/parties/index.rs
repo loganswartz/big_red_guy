@@ -43,7 +43,6 @@ pub async fn post(
     let membership = party_memberships::ActiveModel {
         user_id: Set(user.id),
         party_id: Set(model.id),
-        ..Default::default()
     };
 
     membership.insert(&*db).await?;

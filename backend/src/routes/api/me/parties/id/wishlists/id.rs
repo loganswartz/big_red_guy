@@ -20,7 +20,7 @@ pub async fn get(
     party_id: i32,
     list_id: i32,
 ) -> RocketResult<Option<Json<WishlistWithItems>>> {
-    let party = match find_participating_party(party_id, &*db, &user).await? {
+    let party = match find_participating_party(party_id, &db, &user).await? {
         Some(found) => found,
         None => bail_msg!("Party not found."),
     };
@@ -50,8 +50,8 @@ pub async fn put(
     party_id: i32,
     list_id: i32,
 ) -> RocketResult<()> {
-    let party = find_participating_party(party_id, &*db, &user).await?;
-    let list = find_own_wishlist(list_id, &*db, &user).await?;
+    let party = find_participating_party(party_id, &db, &user).await?;
+    let list = find_own_wishlist(list_id, &db, &user).await?;
 
     if !(party.is_some() && list.is_some()) {
         bail_msg!("Party or wishlist not found.");
@@ -61,7 +61,6 @@ pub async fn put(
     let assignment = wishlist_party_assignments::ActiveModel {
         party_id: Set(party_id),
         wishlist_id: Set(list_id),
-        ..Default::default()
     };
 
     wishlist_party_assignments::Entity::insert(assignment)

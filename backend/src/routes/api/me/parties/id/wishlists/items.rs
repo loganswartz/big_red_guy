@@ -16,7 +16,7 @@ pub async fn get(
     db: Connection<Db>,
     party_id: i32,
 ) -> RocketResult<Option<Json<Vec<wishlist_items::Model>>>> {
-    let party = find_participating_party(party_id, &*db, &user).await?;
+    let party = find_participating_party(party_id, &db, &user).await?;
 
     let items = match party {
         Some(found) => found.find_linked(PartyToWishlistItems).all(&*db).await?,

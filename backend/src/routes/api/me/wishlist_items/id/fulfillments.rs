@@ -42,7 +42,7 @@ pub async fn get(
     db: Connection<Db>,
     id: i32,
 ) -> RocketResult<Option<Json<Vec<ItemFulfillment>>>> {
-    let item = item_is_shared_with_user(id, user.id, &*db).await?;
+    let item = item_is_shared_with_user(id, user.id, &db).await?;
 
     let query = item.find_related(wishlist_item_user_fulfillments::Entity);
     let censored = censor_fulfillments(query, &user);

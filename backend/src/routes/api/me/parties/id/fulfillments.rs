@@ -17,7 +17,7 @@ pub async fn get(
     db: Connection<Db>,
     id: i32,
 ) -> RocketResult<Option<Json<Vec<wishlist_item_user_fulfillments::Model>>>> {
-    let party = match find_participating_party(id, &*db, &user).await? {
+    let party = match find_participating_party(id, &db, &user).await? {
         Some(party) => party,
         None => bail_msg!("Party not found."),
     };

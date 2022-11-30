@@ -21,8 +21,8 @@ pub struct RegistrationForm<'r> {
 }
 
 #[derive(Debug, Serialize)]
-struct ErrorMessage<'a> {
-    message: &'a str,
+pub struct ErrorMessage<'a> {
+    pub message: &'a str,
 }
 
 #[derive(Debug, Responder)]
@@ -43,7 +43,7 @@ pub async fn post(
         .one(&*db)
         .await?;
 
-    if let Some(_) = result {
+    if result.is_some() {
         return Ok(RegistrationOutcome::Error(Json(ErrorMessage {
             message: "That email is already in use.",
         })));

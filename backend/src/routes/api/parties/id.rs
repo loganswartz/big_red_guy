@@ -24,13 +24,13 @@ pub async fn find_party(
         .await
     {
         Ok(Some(party)) => Some(party),
-        _ => return None,
+        _ => None,
     }
 }
 
 #[get("/parties/<id>")]
 pub async fn get(user: users::Model, db: Connection<Db>, id: i32) -> Option<Json<parties::Model>> {
-    let wishlist = find_party(id, &*db, user).await?;
+    let wishlist = find_party(id, &db, user).await?;
 
     Some(Json(wishlist))
 }
@@ -58,7 +58,6 @@ pub async fn put(
         id,
         name: Set(form.name.to_owned()),
         owner_id: Unchanged(user.id),
-        ..Default::default()
     };
 
     let party = party.save(&*db).await?;

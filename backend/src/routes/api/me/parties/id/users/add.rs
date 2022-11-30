@@ -23,7 +23,7 @@ pub async fn put(
     party_id: i32,
     data: Json<AssignUser<'_>>,
 ) -> RocketResult<()> {
-    if let None = find_own_party(party_id, &*db, &user).await? {
+    if find_own_party(party_id, &db, &user).await?.is_none() {
         bail_msg!("Party not found or not allowed to edit party.");
     }
 
@@ -40,7 +40,6 @@ pub async fn put(
     let assignment = party_memberships::ActiveModel {
         party_id: Set(party_id),
         user_id: Set(found.id),
-        ..Default::default()
     };
 
     party_memberships::Entity::insert(assignment)

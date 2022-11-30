@@ -27,9 +27,7 @@ pub async fn item_is_shared_with_user(
     user_id: i32,
     db: &DatabaseConnection,
 ) -> RocketResult<wishlist_items::Model> {
-    let item = wishlist_items::Entity::find_by_id(item_id)
-        .one(&*db)
-        .await?;
+    let item = wishlist_items::Entity::find_by_id(item_id).one(db).await?;
 
     let item = match item {
         Some(model) => model,
@@ -40,10 +38,10 @@ pub async fn item_is_shared_with_user(
     let allowed = item
         .find_linked(WishlistItemToUsers)
         .filter(users::Column::Id.eq(user_id))
-        .one(&*db)
+        .one(db)
         .await?;
 
-    if let None = allowed {
+    if allowed.is_none() {
         bail_msg!("Item not found.");
     }
 
@@ -56,15 +54,12 @@ pub async fn post(
     db: Connection<Db>,
     form: Json<FulfillWishlistItem<'_>>,
 ) -> RocketResult<Json<wishlist_item_user_fulfillments::Model>> {
-    item_is_shared_with_user(form.wishlist_item_id, user.id, &*db).await?;
+    item_is_shared_with_user(form.wishlist_item_id, user.id, &db).await?;
 
     let assignment = wishlist_item_user_fulfillments::ActiveModel {
         wishlist_item_id: Set(form.wishlist_item_id),
         user_id: Set(user.id),
-        notes: Set(form
-            .notes
-            .clone()
-            .map_or(None, |value| Some(value.to_string()))),
+        notes: Set(form.notes.clone().map(|value| value.to_string())),
         quantity: Set(form.quantity),
         ..Default::default()
     };

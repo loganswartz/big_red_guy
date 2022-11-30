@@ -120,9 +120,9 @@ impl<'r> FromRequest<'r> for Model {
         let header = req
             .cookies()
             .get_private(Model::COOKIE_ID)
-            .and_then(|cookie| Some(cookie.value().to_owned()));
+            .map(|cookie| cookie.value().to_owned());
 
-        let id: i32 = match header.and_then(|value| Some(value.parse())) {
+        let id: i32 = match header.map(|value| value.parse()) {
             Some(Ok(id)) => id,
             _ => return denied,
         };

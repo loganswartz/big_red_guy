@@ -43,10 +43,7 @@ pub async fn put(
 
     let item = wishlist_item_user_fulfillments::ActiveModel {
         id,
-        notes: Set(form
-            .notes
-            .clone()
-            .map_or(None, |value| Some(value.to_string()))),
+        notes: Set(form.notes.clone().map(|value| value.to_string())),
         quantity: Set(form.quantity),
         user_id: Set(user.id),
         ..Default::default()

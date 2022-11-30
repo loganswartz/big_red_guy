@@ -31,9 +31,7 @@ pub async fn get(
     db: Connection<Db>,
     id: i32,
 ) -> RocketResult<Option<Json<parties::Model>>> {
-    let wishlist = find_participating_party(id, &*db, &user)
-        .await?
-        .map(|model| Json(model));
+    let wishlist = find_participating_party(id, &db, &user).await?.map(Json);
 
     Ok(wishlist)
 }
@@ -61,7 +59,6 @@ pub async fn put(
         id,
         name: Set(form.name.to_owned()),
         owner_id: Unchanged(user.id),
-        ..Default::default()
     };
 
     let party = party.save(&*db).await?;

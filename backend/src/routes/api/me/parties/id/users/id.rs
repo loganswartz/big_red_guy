@@ -30,7 +30,7 @@ pub async fn get(
     party_id: i32,
     user_id: i32,
 ) -> RocketResult<Option<Json<SanitizedUser>>> {
-    let party = match find_participating_party(party_id, &*db, &user).await? {
+    let party = match find_participating_party(party_id, &db, &user).await? {
         Some(found) => found,
         None => return Ok(None),
     };
@@ -51,11 +51,15 @@ pub async fn put(
     party_id: i32,
     user_id: i32,
 ) -> RocketResult<()> {
-    if let None = find_own_party(party_id, &*db, &user).await? {
+    if find_own_party(party_id, &db, &user).await?.is_none() {
         bail_msg!("Party not found or not allowed to edit party.");
     }
 
-    if let None = users::Entity::find_by_id(user_id).one(&*db).await? {
+    if users::Entity::find_by_id(user_id)
+        .one(&*db)
+        .await?
+        .is_none()
+    {
         bail_msg!("User not found.");
     }
 
@@ -63,7 +67,6 @@ pub async fn put(
     let assignment = party_memberships::ActiveModel {
         party_id: Set(party_id),
         user_id: Set(user_id),
-        ..Default::default()
     };
 
     party_memberships::Entity::insert(assignment)
@@ -93,7 +96,7 @@ pub async fn delete(
     user_id: i32,
 ) -> RocketResult<()> {
     // assign it to the list
-    if let None = find_own_party(party_id, &*db, &user).await? {
+    if find_own_party(party_id, &db, &user).await?.is_none() {
         bail_msg!("Not allowed to edit this party.");
     }
 

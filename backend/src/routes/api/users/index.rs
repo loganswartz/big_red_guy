@@ -8,7 +8,7 @@ use crate::entities::users;
 use crate::rocket_anyhow::Result as RocketResult;
 
 #[get("/users")]
-pub async fn get(user: users::Model, db: Connection<Db>) -> RocketResult<Json<Vec<users::Model>>> {
+pub async fn get(_user: users::Model, db: Connection<Db>) -> RocketResult<Json<Vec<users::Model>>> {
     let users = users::Entity::find().all(&*db).await?;
 
     Ok(Json(users))

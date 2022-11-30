@@ -1,9 +1,6 @@
-mod db;
-mod entities;
-mod macros;
-mod rocket_anyhow;
-mod routes;
-mod utils;
-
-#[macro_use]
-extern crate anyhow;
+pub mod db;
+pub mod entities;
+pub mod macros;
+pub mod rocket_anyhow;
+pub mod routes;
+pub mod utils;

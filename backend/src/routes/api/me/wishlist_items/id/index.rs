@@ -46,14 +46,10 @@ pub async fn put(
     let item = wishlist_items::ActiveModel {
         id,
         name: Set(form.name.to_owned()),
-        notes: Set(form
-            .notes
-            .clone()
-            .map_or(None, |value| Some(value.to_string()))),
-        url: Set(form.url.map_or(None, |value| Some(value.to_owned()))),
+        notes: Set(form.notes.clone().map(|value| value.to_string())),
+        url: Set(form.url.map(|value| value.to_owned())),
         quantity: Set(form.quantity),
         owner_id: Set(user.id),
-        ..Default::default()
     };
 
     let item = item.save(&*db).await?;

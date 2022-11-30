@@ -22,7 +22,7 @@ pub async fn find_wishlist(
         .await
     {
         Ok(Some(list)) => Some(list),
-        _ => return None,
+        _ => None,
     }
 }
 
@@ -32,9 +32,7 @@ pub async fn get(
     db: Connection<Db>,
     id: i32,
 ) -> Option<Json<wishlists::Model>> {
-    let wishlist = find_wishlist(id, &*db, user).await?;
-
-    Some(Json(wishlist))
+    find_wishlist(id, &db, user).await.map(Json)
 }
 
 #[put("/wishlists/<id>", data = "<form>")]
@@ -60,7 +58,6 @@ pub async fn put(
         id,
         name: Set(form.name.to_owned()),
         owner_id: Unchanged(user.id),
-        ..Default::default()
     };
 
     let list = list.save(&*db).await?;

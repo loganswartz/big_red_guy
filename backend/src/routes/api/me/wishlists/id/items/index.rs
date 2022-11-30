@@ -15,7 +15,7 @@ pub async fn get(
     db: Connection<Db>,
     list_id: i32,
 ) -> Option<Json<Vec<wishlist_items::Model>>> {
-    let wishlist = find_wishlist(list_id, &*db, user).await;
+    let wishlist = find_wishlist(list_id, &db, user).await;
 
     let items = wishlist?
         .find_related(wishlist_items::Entity)
@@ -38,11 +38,8 @@ pub async fn post(
     // make the new item
     let item = wishlist_items::ActiveModel {
         name: Set(form.name.to_owned()),
-        notes: Set(form
-            .notes
-            .clone()
-            .map_or(None, |value| Some(value.to_string()))),
-        url: Set(form.url.map_or(None, |value| Some(value.to_owned()))),
+        notes: Set(form.notes.clone().map(|value| value.to_string())),
+        url: Set(form.url.map(|value| value.to_owned())),
         quantity: Set(form.quantity),
         owner_id: Set(user.id),
         ..Default::default()
@@ -54,7 +51,6 @@ pub async fn post(
     let assignment = wishlist_item_list_assignments::ActiveModel {
         wishlist_id: Set(id),
         wishlist_item_id: Set(item.id),
-        ..Default::default()
     };
 
     wishlist_item_list_assignments::Entity::insert(assignment)

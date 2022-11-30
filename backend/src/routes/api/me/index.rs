@@ -15,12 +15,12 @@ pub struct SanitizedUser {
 
 impl From<users::Model> for SanitizedUser {
     fn from(user: users::Model) -> Self {
-        return SanitizedUser {
+        SanitizedUser {
             id: user.id,
             name: user.name,
             email: user.email,
             profile_picture: user.profile_picture,
-        };
+        }
     }
 }
 
