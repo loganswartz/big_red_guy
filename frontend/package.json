@@ -33,6 +33,7 @@
     "dev-start": "concurrently --kill-others \"npm:watch-backend\" \"npm:start\"",
     "watch-backend": "bash -c \"cd ../backend && cargo watch -x run || cargo run\"",
     "build": "react-scripts build",
+    "build-release": "yarn install && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
