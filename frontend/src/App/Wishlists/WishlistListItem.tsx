@@ -108,11 +108,11 @@ export default function WishlistListItem(props: WishlistListItemProps) {
       <HStack flexGrow={1} justifyContent="space-between">
         <Box maxWidth="fit-content">
           {item.url ? (
-            <Link href={item.url} isExternal>
+            <Link href={item.url} isExternal overflowWrap="anywhere">
               {item.name} <ExternalLinkIcon />
             </Link>
           ) : (
-            <Text>{item.name}</Text>
+            <Text overflowWrap="anywhere">{item.name}</Text>
           )}
         </Box>
         <HStack spacing={1}>
@@ -153,11 +153,7 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               />
             </>
           ) : !isFullyFulfilled ? (
-            <FulfillItemButton
-              item={item}
-              variant="text"
-              refetch={fulfillmentsRefetch}
-            />
+            <FulfillItemButton item={item} refetch={fulfillmentsRefetch} />
           ) : null}
         </HStack>
       </HStack>

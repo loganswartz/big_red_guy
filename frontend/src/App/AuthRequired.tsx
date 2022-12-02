@@ -4,6 +4,8 @@ import Appbar from "./Components/Appbar";
 import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
 
 export default function AuthRequired() {
+  // ensure the user is logged in
+  // if not, using this hook will cause a redirect to the login page
   useCurrentUser();
 
   return (

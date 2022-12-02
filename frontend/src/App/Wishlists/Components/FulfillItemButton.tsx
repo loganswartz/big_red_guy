@@ -2,12 +2,12 @@ import { CheckIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import { WishlistItem } from "../../../Global/Api/Types/Api";
 import useModalState from "../../../Global/Helpers/ModalHelper";
-import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
+import FlexButton from "../../../Components/FlexButton";
 import useFulfillItem from "../../../Global/Api/Mutations/Fulfillments/useFulfillItem";
 import FulfillItemModal, { FulfillItemFormValues } from "./FulfillItemModal";
 
 export default function FulfillItemButton(props: FulfillItemButtonProps) {
-  const { item, variant, refetch } = props;
+  const { item, refetch } = props;
 
   const [open, modal] = useModalState();
   const { mutateAsync } = useFulfillItem();
@@ -32,7 +32,6 @@ export default function FulfillItemButton(props: FulfillItemButtonProps) {
         title="Fulfill"
         icon={<CheckIcon />}
         onClick={modal.open}
-        variant={variant}
         size="sm"
       />
       <FulfillItemModal
@@ -47,6 +46,5 @@ export default function FulfillItemButton(props: FulfillItemButtonProps) {
 
 interface FulfillItemButtonProps {
   item: WishlistItem;
-  variant?: FlexButtonVariant;
   refetch?: () => void;
 }

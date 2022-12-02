@@ -28,7 +28,7 @@ export default function Login() {
   }
 
   return (
-    <Container height="100vh" justifyContent="center" centerContent>
+    <Container flexGrow={1} justifyContent="center" centerContent>
       <Card as="form" onSubmit={handleSubmit(onSubmit)} maxWidth="md">
         <CardHeader>
           <Center>

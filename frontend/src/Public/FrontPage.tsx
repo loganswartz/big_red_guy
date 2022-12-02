@@ -13,7 +13,7 @@ import BigRedGuy from "../Components/BigRedGuy";
 
 export default function FrontPage() {
   return (
-    <Container height="100%" justifyContent="center" centerContent>
+    <Container flexGrow={1} justifyContent="center" centerContent>
       <Card>
         <CardHeader>
           <Center>
