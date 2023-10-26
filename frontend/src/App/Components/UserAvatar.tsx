@@ -7,7 +7,7 @@ import { SetProfilePictureModal } from "./SetProfilePictureModal";
 export function UserAvatar(props: UserAvatarProps) {
   const { user, ...other } = props;
   const url = user?.profile_picture
-    ? `/public/uploads/${user.profile_picture}`
+    ? `/uploads/${user.profile_picture}`
     : undefined;
 
   return <Avatar name={user?.name} src={url} userSelect="none" {...other} />;

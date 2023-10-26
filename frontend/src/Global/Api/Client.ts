@@ -36,13 +36,7 @@ export class ApiError extends CustomError {
  */
 function formatURL(path: string) {
   // collapse any duplicate slashes
-  const namespaced = `/api/${path}`.replace(/\/{2,}/, "/");
-
-  if (process.env.REACT_APP_HOST) {
-    return new URL(namespaced, process.env.REACT_APP_HOST).href;
-  } else {
-    return namespaced;
-  }
+  return `${import.meta.env.BASE_URL}/api/${path}`.replaceAll(/\/{2,}/g, "/");
 }
 
 /**
