@@ -55,7 +55,7 @@ pub async fn post(
         })));
     }
 
-    let hash = utils::make_password_hash(values.password)?;
+    let hash = utils::make_salted_hash(values.password)?;
 
     let new = users::ActiveModel {
         name: ActiveValue::Set(values.name.to_string()),

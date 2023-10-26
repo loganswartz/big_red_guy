@@ -88,7 +88,7 @@ impl Model {
 
     pub async fn set_password(self, password: &str, db: Connection<Db>) -> Result<Model, String> {
         let mut active = self.into_active_model();
-        let hash = match utils::make_password_hash(password) {
+        let hash = match utils::make_salted_hash(password) {
             Ok(value) => value,
             Err(e) => return Err(e.to_string()),
         };
