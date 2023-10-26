@@ -7,6 +7,7 @@ fn main() -> Result<(), String> {
             "../frontend/package.json",
             "../frontend/yarn.lock",
             "../frontend/tsconfig.json",
+            "../frontend/index.html",
             "../frontend/public/",
             "../frontend/src/",
         ];
