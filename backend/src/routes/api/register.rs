@@ -55,7 +55,14 @@ pub async fn post(
         })));
     }
 
-    let hash = utils::make_salted_hash(values.password)?;
+    let hash = match utils::make_salted_hash(values.password) {
+        Ok(hash) => hash,
+        Err(_) => {
+            return Ok(RegistrationOutcome::Error(Json(ErrorMessage {
+                message: "Something went wrong.",
+            })))
+        }
+    };
 
     let new = users::ActiveModel {
         name: ActiveValue::Set(values.name.to_string()),

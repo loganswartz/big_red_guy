@@ -53,8 +53,10 @@ async function apiFetch<R>(
 ): Promise<R | null> {
   const response = await fetch(formatURL(path), options);
 
-  if (response.status === 401) {
+  // don't redirect if already on the login page
+  if (response.status === 401 && window.location.pathname !== "/login") {
     window.location.href = "/login";
+    return null;
   }
 
   let data = null;
@@ -71,7 +73,8 @@ async function apiFetch<R>(
     }
   }
 
-  if (!response.ok) {
+  // exclude auth errors
+  if (response.status !== 401 && !response.ok) {
     throw new ApiError(
       response.status,
       data ?? { message: "(No data returned)" }

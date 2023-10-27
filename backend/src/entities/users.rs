@@ -103,7 +103,7 @@ impl Model {
     }
 
     pub fn verify_password(&self, password: &str) -> bool {
-        argon2::verify_encoded(&self.password, password.to_owned().as_bytes()).unwrap_or(false)
+        utils::verify_hash(&self.password, password)
     }
 }
 
