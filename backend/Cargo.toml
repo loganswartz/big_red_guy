@@ -8,16 +8,20 @@ edition = "2021"
 [dependencies]
 migration = { path = "migration" }
 anyhow = "^1"
-rand = "^0"
 argon2 = "0.5.2"
-rocket = { version = "0.5.0-rc.2", features = ["secrets", "json"] }
-rocket_db_pools = { version = "0.1.0-rc.2", features = ["sqlx_sqlite"] }
-serde = "^1"
-sea-orm-rocket = "^0"
-tokio = "^1"
-nanoid = "0.4.0"
-rust-embed = "^8"
+lazy_static = "1.4"
 lettre = "0.11"
+nanoid = "0.4.0"
+rand = "^0"
+regex = "^1"
+rocket_db_pools = { version = "0.1.0-rc.2", features = ["sqlx_sqlite"] }
+rocket = { version = "0.5.0-rc.2", features = ["secrets", "json"] }
+rust-embed = "^8"
+sea-orm-rocket = "^0"
+serde = "^1"
+tera = "1"
+tokio = "^1"
+url = "^2"
 
 [dependencies.sea-orm]
 version = "^0"
