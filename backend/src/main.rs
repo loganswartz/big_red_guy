@@ -9,6 +9,7 @@ use rocket::{
 use rocket_db_pools::Database;
 
 use big_red_guy::{
+    config::AppConfig,
     db::pool::Db,
     routes::{
         api::{default as api_default, login, logout, me, register},
@@ -26,7 +27,10 @@ async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build()
+    let config = AppConfig::setup();
+
+    rocket::custom(config)
+        .attach(AdHoc::config::<AppConfig>())
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
         .mount("/", routes![default::get, statics::get])

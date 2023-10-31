@@ -1,0 +1,14 @@
+[default]
+port = 4441
+
+[release]
+port = 4440
+
+[default.databases.main]
+url = "sqlite://./big-red-guy.sqlite?mode=rwc"
+
+[default.email]
+smtp_host = "smtp.example.com"
+username = ""
+password = ""
+from_address = "BigRedGuy <no-reply@domain.com>"
