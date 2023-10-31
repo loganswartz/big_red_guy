@@ -10,7 +10,7 @@ use sea_orm::{entity::prelude::*, IntoActiveModel, Set};
 use serde::Serialize;
 
 use crate::db::pool::Db;
-use crate::utils;
+use crate::utils::password;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize)]
 #[sea_orm(table_name = "users")]
@@ -88,7 +88,7 @@ impl Model {
 
     pub async fn set_password(self, password: &str, db: Connection<Db>) -> Result<Model, String> {
         let mut active = self.into_active_model();
-        let hash = match utils::make_salted_hash(password) {
+        let hash = match password::make_salted_hash(password) {
             Ok(value) => value,
             Err(e) => return Err(e.to_string()),
         };
@@ -103,7 +103,7 @@ impl Model {
     }
 
     pub fn verify_password(&self, password: &str) -> bool {
-        utils::verify_hash(&self.password, password)
+        password::verify_hash(&self.password, password)
     }
 }
 

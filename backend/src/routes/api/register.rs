@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::db::pool::Db;
 use crate::entities::users;
 use crate::rocket_anyhow::Result as RocketResult;
-use crate::utils;
+use crate::utils::password;
 
 use super::me::index::SanitizedUser;
 
@@ -55,7 +55,7 @@ pub async fn post(
         })));
     }
 
-    let hash = match utils::make_salted_hash(values.password) {
+    let hash = match password::make_salted_hash(values.password) {
         Ok(hash) => hash,
         Err(_) => {
             return Ok(RegistrationOutcome::Error(Json(ErrorMessage {

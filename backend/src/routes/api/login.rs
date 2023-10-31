@@ -36,11 +36,8 @@ pub async fn post(
         .one(&*db)
         .await?;
 
-    let user = match found {
-        Some(user) => user,
-        None => {
-            bail_msg!("User not found.");
-        }
+    let Some(user) = found else {
+        bail_msg!("User not found.");
     };
 
     if user.verify_password(values.password) {
