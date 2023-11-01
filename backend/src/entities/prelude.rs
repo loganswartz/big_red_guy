@@ -2,6 +2,7 @@
 
 pub use super::parties::Entity as Parties;
 pub use super::party_memberships::Entity as PartyMemberships;
+pub use super::transactional_events::Entity as TransactionalEvents;
 pub use super::users::Entity as Users;
 pub use super::wishlist_item_list_assignments::Entity as WishlistItemListAssignments;
 pub use super::wishlist_item_user_fulfillments::Entity as WishlistItemUserFulfillments;

@@ -4,6 +4,7 @@ pub mod prelude;
 
 pub mod parties;
 pub mod party_memberships;
+pub mod transactional_events;
 pub mod users;
 pub mod wishlist_item_list_assignments;
 pub mod wishlist_item_user_fulfillments;
