@@ -9,16 +9,20 @@ edition = "2021"
 migration = { path = "migration" }
 anyhow = "^1"
 argon2 = "0.5.2"
+base64 = "^0"
+constant_time_eq = "^0"
 lazy_static = "1.4"
 lettre = "0.11"
 nanoid = "0.4.0"
-rand = "^0"
+rand = { version = "^0", features = ["getrandom"] }
+rand_chacha = "^0"
 regex = "^1"
 rocket_db_pools = { version = "0.1.0-rc.2", features = ["sqlx_sqlite"] }
 rocket = { version = "0.5.0-rc.2", features = ["secrets", "json"] }
 rust-embed = "^8"
 sea-orm-rocket = "^0"
 serde = "^1"
+sha256 = "^1"
 tera = "1"
 tokio = "^1"
 url = "^2"

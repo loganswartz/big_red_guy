@@ -12,7 +12,9 @@ use big_red_guy::{
     config::AppConfig,
     db::pool::Db,
     routes::{
-        api::{default as api_default, login, logout, me, register},
+        api::{
+            default as api_default, forgot_password, login, logout, me, register, reset_password,
+        },
         default, statics,
     },
 };
@@ -45,6 +47,8 @@ fn rocket() -> _ {
                 register::post,
                 logout::post,
                 login::post,
+                forgot_password::post,
+                reset_password::post,
                 // TODO: implement Admin users auth
                 // wishlists::index::get,
                 // wishlists::index::post,

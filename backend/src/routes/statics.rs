@@ -15,15 +15,15 @@ use crate::rocket_anyhow;
 
 #[derive(RustEmbed)]
 #[folder = "../frontend/build/"]
-pub struct Asset;
+pub struct FrontendAsset;
 
-pub struct EmbeddedAsset {
+pub struct EmbeddedFrontendAsset {
     pub path: PathBuf,
     pub file: EmbeddedFile,
 }
 
 #[rocket::async_trait]
-impl<'r> FromRequest<'r> for EmbeddedAsset {
+impl<'r> FromRequest<'r> for EmbeddedFrontendAsset {
     type Error = rocket_anyhow::Error;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
@@ -41,7 +41,7 @@ impl<'r> FromRequest<'r> for EmbeddedAsset {
             None => return Outcome::Forward(()),
         };
 
-        let asset = Asset::get(stringified);
+        let asset = FrontendAsset::get(stringified);
         match asset {
             Some(file) => Outcome::Success(Self { path, file }),
             None => Outcome::Forward(()),
@@ -50,7 +50,7 @@ impl<'r> FromRequest<'r> for EmbeddedAsset {
 }
 
 #[get("/<_..>", rank = 12)]
-pub fn get(asset: EmbeddedAsset) -> Option<(ContentType, Cow<'static, [u8]>)> {
+pub fn get(asset: EmbeddedFrontendAsset) -> Option<(ContentType, Cow<'static, [u8]>)> {
     let content_type = asset
         .path
         .extension()

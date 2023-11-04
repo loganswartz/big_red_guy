@@ -1,9 +1,11 @@
 pub mod default;
+pub mod forgot_password;
 pub mod login;
 pub mod logout;
 pub mod me;
 pub mod parties;
 pub mod register;
+pub mod reset_password;
 pub mod users;
 pub mod wishlist_items;
 pub mod wishlists;
