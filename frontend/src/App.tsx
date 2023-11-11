@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./Public/Login";
 import FrontPage from "./Public/FrontPage";
 import Register from "./Public/Register";
+import ForgotPassword from "./Public/ForgotPassword";
+import ResetPassword from "./Public/ResetPassword";
 import Theme from "./Global/Theme";
 import Home from "./App/Home";
 import AuthRequired from "./App/AuthRequired";
@@ -34,6 +36,14 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/forgot-password",
+          element: <ForgotPassword />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPassword />,
         },
         {
           path: "/app/*",

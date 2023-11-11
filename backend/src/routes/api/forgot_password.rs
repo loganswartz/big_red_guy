@@ -3,6 +3,7 @@ use rocket_db_pools::Connection;
 use sea_orm::entity::prelude::*;
 use serde::Deserialize;
 
+use super::reset_password::AuthResponse;
 use crate::db::pool::Db;
 use crate::entities::users;
 use crate::events::initiate_password_reset_flow;
@@ -14,7 +15,10 @@ pub struct ForgotPasswordForm<'r> {
 }
 
 #[post("/forgot-password", data = "<values>")]
-pub async fn post(db: Connection<Db>, values: Json<ForgotPasswordForm<'_>>) -> RocketResult<()> {
+pub async fn post(
+    db: Connection<Db>,
+    values: Json<ForgotPasswordForm<'_>>,
+) -> RocketResult<Json<AuthResponse>> {
     let found = users::Entity::find()
         .filter(users::Column::Email.contains(values.email))
         .one(&*db)
@@ -26,5 +30,5 @@ pub async fn post(db: Connection<Db>, values: Json<ForgotPasswordForm<'_>>) -> R
     };
 
     // always return success to avoid leaking existing accounts
-    Ok(())
+    Ok(Json(AuthResponse { success: true }))
 }

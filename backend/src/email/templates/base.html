@@ -6,61 +6,70 @@
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
     />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#DD2E44" />
-    <link rel="manifest" href="/manifest.json" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for(path='/apple-touch-icon.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for(path='/favicon-32x32.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for(path='/favicon-16x16.png') }}"
+    />
+    <link rel="icon" href="{{ url_for(path='/favicon.ico') }}" />
+    <link
+      rel="mask-icon"
+      href="{{ url_for(path='/safari-pinned-tab.svg') }}"
+      color="#DD2E44"
+    />
+    <link rel="manifest" href="{{ url_for(path='/manifest.json') }}" />
     <title>{% block title %}BigRedGuy{% endblock title %}</title>
     {% block head %}{% endblock %}
   </head>
-  <body
-    style="
-      background: #f4f4f4;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-family: sans-serif;
-    "
-  >
-    <main
-      style="
-        width: 100%;
-        max-width: 700px;
-        background: white;
-        padding: 1rem;
-        border-radius: 0.4rem;
-        display: flex;
-        flex-direction: column;
-      "
-    >
-      {% block header %}
-      <div
-        style="display: flex; align-items: center; margin: 0.3rem 0 0.5rem 0"
-      >
-        <img
-          src="https://bigredguy.com/android-chrome-512x512.png"
-          style="height: 2rem; width: 2rem; margin-right: 0.5rem"
-        />
-        <h1 style="margin: 0">Big<span style="color: red">Red</span>Guy</h1>
-      </div>
-      {% endblock %}
-      <hr
+  <body style="background: #f4f4f4; font-family: sans-serif; padding: 1rem">
+    <div style="width: 100%; max-width: 600px; margin: auto">
+      <table
         style="
-          width: 100%;
-          height: 0.1rem;
-          background-color: #e4e4e4;
+          background: white;
+          padding: 1rem;
           border: 0;
+          border-radius: 0.4rem;
+          width: 100%;
         "
-      />
-      {% block body %}{% endblock %}
-    </main>
-    <footer style="color: #aaaaaa; font-size: 0.8rem">
-      {% block footer %}
-      <p>This is an automated message, please do not reply.</p>
-      {% endblock %}
-    </footer>
+      >
+        <tbody>
+          {% block header %}
+          <tr>
+            <td>
+              <img
+                src="{{ url_for(path='/android-chrome-512x512.png') }}"
+                style="
+                  height: 2rem;
+                  width: 2rem;
+                  margin-right: 0.5rem;
+                  vertical-align: sub;
+                "
+              />
+              <h1 style="margin: 0; display: inline">
+                Big<span style="color: red">Red</span>Guy
+              </h1>
+            </td>
+          </tr>
+          {% endblock %} {% block body %}{% endblock %}
+        </tbody>
+      </table>
+      <div style="color: #aaaaaa; font-size: 0.8rem">
+        <p style="text-align: center">
+          This is an automated message, please do not reply.
+        </p>
+      </div>
+    </div>
   </body>
 </html>

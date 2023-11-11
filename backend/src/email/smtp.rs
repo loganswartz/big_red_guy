@@ -1,4 +1,5 @@
 use lettre::{
+    message::header::ContentType,
     transport::smtp::{
         authentication::{Credentials, Mechanism},
         PoolConfig,
@@ -31,6 +32,7 @@ pub fn send_email(to: &str, subject: &str, body: &str) -> RocketResult<()> {
         .reply_to(email.from_address.parse()?)
         .to(to.parse()?)
         .subject(subject)
+        .header(ContentType::TEXT_HTML)
         .body(body.to_string())?;
 
     sender.send(&message)?;

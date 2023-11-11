@@ -17,8 +17,8 @@ pub async fn dispatch(db: &DatabaseConnection, user: &users::Model) -> RocketRes
     let TokenTuple { token, mut event } = transactional_events::ActiveModel::generate()?;
 
     event.event_type = Set(EventType::PasswordReset);
-    event.target_user_id = Set(Some(user.id));
-    event.save(db).await?;
+    event.primary_user_id = Set(Some(user.id));
+    event.insert(db).await?;
 
     let mut context = Context::new();
     context.insert("name", &user.name);
@@ -27,7 +27,7 @@ pub async fn dispatch(db: &DatabaseConnection, user: &users::Model) -> RocketRes
         &frontend_url(
             "/reset-password",
             Some(HashMap::from([("token".to_owned(), token)])),
-        ),
+        )?,
     );
 
     let body = TEMPLATES.render("reset-password.html", &context)?;

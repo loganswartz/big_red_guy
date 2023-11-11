@@ -3,10 +3,8 @@ use rocket_db_pools::Connection;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::bail_msg;
 use crate::db::pool::Db;
-use crate::entities::transactional_events;
-use crate::entities::users;
+use crate::entities::transactional_events::{self, TransactionalEventPrimaryUser};
 use crate::rocket_anyhow::Result as RocketResult;
 
 #[derive(Deserialize, Debug)]
@@ -24,20 +22,19 @@ pub struct AuthResponse {
 #[post("/reset-password", data = "<values>")]
 pub async fn post(
     db: Connection<Db>,
-    user: users::Model,
     values: Json<ResetPasswordForm<'_>>,
 ) -> RocketResult<Json<AuthResponse>> {
-    let Some(event) = transactional_events::Entity::find_from_token(values.token)
+    let Ok(Some((event, Some(user)))) = transactional_events::Entity::find_from_token(values.token)
         .filter(
             transactional_events::Column::EventType
                 .eq(transactional_events::EventType::PasswordReset),
         )
-        .filter(transactional_events::Column::SourceUserId.eq(user.id))
+        .find_also_linked(TransactionalEventPrimaryUser)
         .one(&*db)
-        .await?
+        .await
     else {
         // we want to avoid leaking the reason for failure
-        bail_msg!("Invalid token");
+        return Ok(Json(AuthResponse { success: false }))
     };
 
     // validated

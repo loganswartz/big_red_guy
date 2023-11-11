@@ -29,7 +29,7 @@ async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
 
 #[launch]
 fn rocket() -> _ {
-    let config = AppConfig::setup();
+    let config = AppConfig::figment();
 
     rocket::custom(config)
         .attach(AdHoc::config::<AppConfig>())

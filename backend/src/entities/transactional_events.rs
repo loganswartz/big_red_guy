@@ -4,7 +4,11 @@ use anyhow::Result;
 use base64::{engine::general_purpose, Engine};
 use constant_time_eq::constant_time_eq;
 use rand::{RngCore, SeedableRng};
-use sea_orm::{entity::prelude::*, ActiveValue::Set};
+use rocket::async_trait;
+use sea_orm::{
+    entity::prelude::*,
+    ActiveValue::{NotSet, Set},
+};
 
 #[derive(EnumIter, DeriveActiveEnum, Eq, PartialEq, Debug, Clone)]
 #[sea_orm(rs_type = "String", db_type = "String(Some(1))")]
@@ -19,32 +23,46 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub hash: String,
     pub event_type: EventType,
-    pub source_user_id: Option<i32>,
-    pub target_user_id: Option<i32>,
+    pub primary_user_id: Option<i32>,
+    pub secondary_user_id: Option<i32>,
     pub misc_data: Option<String>,
+    pub created_at: TimeDateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
         belongs_to = "super::users::Entity",
-        from = "Column::SourceUserId",
+        from = "Column::PrimaryUserId",
         to = "super::users::Column::Id",
         on_update = "Cascade",
         on_delete = "Cascade"
     )]
-    SourceUser,
+    PrimaryUser,
     #[sea_orm(
         belongs_to = "super::users::Entity",
-        from = "Column::TargetUserId",
+        from = "Column::SecondaryUserId",
         to = "super::users::Column::Id",
         on_update = "Cascade",
         on_delete = "Cascade"
     )]
-    TargetUser,
+    SecondaryUser,
 }
 
-impl ActiveModelBehavior for ActiveModel {}
+#[async_trait]
+impl ActiveModelBehavior for ActiveModel {
+    /// Automatically set the created_at field to the current time.
+    async fn before_save<C>(mut self, _db: &C, _insert: bool) -> Result<Self, DbErr>
+    where
+        C: ConnectionTrait,
+    {
+        if let NotSet = self.created_at {
+            self.created_at = Set(TimeDateTimeWithTimeZone::now_utc());
+        };
+
+        Ok(self)
+    }
+}
 
 /// A securely-generated random token, and a corresponding TransactionalEvent prefilled with a hash
 /// of that token.
@@ -72,7 +90,7 @@ impl ActiveModel {
         let encoded = general_purpose::URL_SAFE_NO_PAD.encode(token);
         // we don't need to use argon2 here because the token is already fully random
         // algos like argon2 are needed for passwords because passwords are not entirely random
-        let hash = sha256::digest(&token);
+        let hash = sha256::digest(&encoded);
 
         Ok(TokenTuple {
             token: encoded,
@@ -101,5 +119,27 @@ impl Entity {
     pub fn find_from_token(token: &str) -> Select<Self> {
         let hash = sha256::digest(token);
         Self::find_by_id(hash)
+    }
+}
+
+pub struct TransactionalEventPrimaryUser;
+
+impl Linked for TransactionalEventPrimaryUser {
+    type FromEntity = Entity;
+    type ToEntity = super::users::Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![Relation::PrimaryUser.def()]
+    }
+}
+
+pub struct TransactionalEventSecondaryUser;
+
+impl Linked for TransactionalEventSecondaryUser {
+    type FromEntity = Entity;
+    type ToEntity = super::users::Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![Relation::SecondaryUser.def()]
     }
 }

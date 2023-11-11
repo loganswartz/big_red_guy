@@ -14,7 +14,6 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
@@ -32,9 +31,7 @@ export default function Register() {
     register,
     watch,
     formState: { errors },
-  } = useForm<FormValues>();
-  const password = useRef({});
-  password.current = watch("password", "");
+  } = useForm<FormValues>({ mode: "onBlur" });
 
   async function onSubmit(values: FormValues) {
     try {
@@ -73,14 +70,23 @@ export default function Register() {
         <CardBody>
           <VStack spacing={2} paddingX={4}>
             <Heading size="md">Create an account</Heading>
-            <Input placeholder="Name" {...register("name")} />
-            <Input placeholder="Email" {...register("email")} />
+            <Input
+              placeholder="Name"
+              {...register("name", { required: true })}
+            />
+            <Input
+              placeholder="Email"
+              {...register("email", { required: true })}
+            />
             <Input
               type="password"
               placeholder="Password"
               isInvalid={hasPasswordError}
               minLength={12}
-              {...register("password", { minLength: passwordLengthRule })}
+              {...register("password", {
+                minLength: passwordLengthRule,
+                required: true,
+              })}
             />
             <Input
               type="password"
@@ -89,7 +95,7 @@ export default function Register() {
               {...register("confirm_password", {
                 minLength: passwordLengthRule,
                 validate: (value) =>
-                  value === password.current || "The passwords do not match",
+                  value === watch("password") || "Passwords do not match",
               })}
             />
             {notices.map(([_, error]) => (

@@ -1,5 +1,10 @@
 [default]
 port = 4441
+# public_port = 80
+# address = "0.0.0.0"
+# hostname = "localhost"
+# https = false
+# base_url = "/brg"
 
 [release]
 port = 4440
