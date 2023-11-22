@@ -6,7 +6,8 @@ use serde::Deserialize;
 use super::reset_password::AuthResponse;
 use crate::db::pool::Db;
 use crate::entities::users;
-use crate::events::initiate_password_reset_flow;
+use crate::events::initiate_password_reset_flow::SendPasswordResetEmail;
+use crate::queue::ManagedQueue;
 use crate::rocket_anyhow::Result as RocketResult;
 
 #[derive(Deserialize, Debug)]
@@ -16,6 +17,7 @@ pub struct ForgotPasswordForm<'r> {
 
 #[post("/forgot-password", data = "<values>")]
 pub async fn post(
+    queue: &rocket::State<ManagedQueue>,
     db: Connection<Db>,
     values: Json<ForgotPasswordForm<'_>>,
 ) -> RocketResult<Json<AuthResponse>> {
@@ -24,11 +26,16 @@ pub async fn post(
         .one(&*db)
         .await?;
 
-    if let Some(user) = found {
-        // TODO: offload to a background worker
-        initiate_password_reset_flow::dispatch(&*db, &user).await?;
+    let Some(user) = found else {
+        return Ok(Json(AuthResponse { success: true }))
     };
 
+    let job = Box::new(SendPasswordResetEmail::new(&*db, &user));
+    let success = queue.try_push(job).is_ok();
+    if !success {
+        println!("Failed to queue job");
+    }
+
     // always return success to avoid leaking existing accounts
-    Ok(Json(AuthResponse { success: true }))
+    Ok(Json(AuthResponse { success }))
 }

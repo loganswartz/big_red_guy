@@ -35,7 +35,10 @@ export default function ForgotPassword() {
     if (response?.success) {
       setRequested(true);
     } else {
-      setError("root", { type: "custom", message: "Unknown error occurred." });
+      setError("root", {
+        type: "custom",
+        message: "An unknown error occurred.",
+      });
     }
   }
 
@@ -65,10 +68,10 @@ export default function ForgotPassword() {
                   placeholder="Email"
                   {...register("email", { required: true })}
                 />
-                {errors.email ? (
+                {errors.root ? (
                   <Alert status="error">
                     <AlertIcon />
-                    {errors.email.message}
+                    {errors.root.message}
                   </Alert>
                 ) : null}
               </>

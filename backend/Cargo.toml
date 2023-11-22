@@ -26,6 +26,7 @@ sha256 = "^1"
 tera = "1"
 tokio = "^1"
 url = "^2"
+deadqueue = { version = "0.2.4", features = ["limited"] }
 
 [dependencies.sea-orm]
 version = "^0.11"

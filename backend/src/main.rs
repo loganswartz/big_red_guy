@@ -11,6 +11,7 @@ use rocket_db_pools::Database;
 use big_red_guy::{
     config::AppConfig,
     db::pool::Db,
+    queue::TaskQueue,
     routes::{
         api::{
             default as api_default, forgot_password, login, logout, me, register, reset_password,
@@ -31,10 +32,14 @@ async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
 fn rocket() -> _ {
     let config = AppConfig::figment();
 
+    // create an async task queue
+    let queue = TaskQueue::create();
+
     rocket::custom(config)
         .attach(AdHoc::config::<AppConfig>())
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
+        .manage(queue)
         .mount("/", routes![default::get, statics::get])
         .mount(
             "/public/uploads",

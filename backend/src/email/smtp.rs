@@ -1,3 +1,4 @@
+use anyhow::{bail, Result};
 use lettre::{
     message::header::ContentType,
     transport::smtp::{
@@ -7,13 +8,12 @@ use lettre::{
     Message, SmtpTransport, Transport,
 };
 
-use crate::rocket_anyhow::Result as RocketResult;
-use crate::{bail_msg, config::AppConfig};
+use crate::config::AppConfig;
 
-pub fn send_email(to: &str, subject: &str, body: &str) -> RocketResult<()> {
+pub fn send_email(to: &str, subject: &str, body: &str) -> Result<()> {
     let config = AppConfig::get()?;
     let Some(email) = &config.email else {
-        bail_msg!("Email not configured.");
+        bail!("Email not configured.");
     };
 
     // Create TLS transport on port 587 with STARTTLS
@@ -36,6 +36,7 @@ pub fn send_email(to: &str, subject: &str, body: &str) -> RocketResult<()> {
         .body(body.to_string())?;
 
     sender.send(&message)?;
+    println!("Email sent to {}.", to);
 
     Ok(())
 }
