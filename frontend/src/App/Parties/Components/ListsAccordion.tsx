@@ -24,10 +24,12 @@ export function ListsAccordion(props: ListsAccordionProps) {
             <AccordionButton>
               <HStack flexGrow={1} justifyContent="space-between">
                 <Text>{wishlist.name}</Text>
-                <Text as="i" color="GrayText">
-                  {items.length} {items.length === 1 ? "item" : "items"}
-                </Text>
-                <AccordionIcon color="GrayText" />
+                <HStack spacing={1}>
+                  <Text as="i" color="GrayText">
+                    {items.length} {items.length === 1 ? "item" : "items"}
+                  </Text>
+                  <AccordionIcon color="GrayText" />
+                </HStack>
               </HStack>
             </AccordionButton>
           </Heading>
