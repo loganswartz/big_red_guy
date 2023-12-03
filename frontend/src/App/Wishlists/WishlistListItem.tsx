@@ -19,6 +19,9 @@ import {
   ListIcon,
   Box,
   Flex,
+  VStack,
+  ListItem,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import EditButton from "../../Components/EditButton";
 import useDeleteWishlistItem from "../../Global/Api/Mutations/Wishlists/useDeleteWishlistItem";
@@ -33,12 +36,14 @@ import FulfillItemButton from "./Components/FulfillItemButton";
 import DashedCircleIcon from "../../Components/DashedCircleIcon";
 import FlexButton from "../../Components/FlexButton";
 import ViewFulfillmentsModal from "./Components/ViewFulfillmentsModal";
+import ConfirmationModal from "./Components/ConfirmDeleteModal";
 
 export default function WishlistListItem(props: WishlistListItemProps) {
   const { item, fulfillments, refetch, fulfillmentsRefetch } = props;
 
-  const [open, modal] = useModalState();
+  const [editModalOpen, editModel] = useModalState();
   const [fulfillmentModalOpen, fulfillmentModal] = useModalState();
+  const [deleteModalOpen, deleteModal] = useModalState();
   const { data: me } = useCurrentUser();
   const { mutateAsync: editItem } = useEditWishlistItem(item.id);
   const { mutateAsync: deleteItem } = useDeleteWishlistItem(item.id);
@@ -98,80 +103,100 @@ export default function WishlistListItem(props: WishlistListItemProps) {
     }
   }
 
+  const itemBg = useColorModeValue("gray.100", "gray.600");
+
   return (
-    <Flex alignItems="center">
-      {isFullyFulfilled ? (
-        <ListIcon as={CheckCircleIcon} color="green.500" />
-      ) : (
-        <ListIcon as={DashedCircleIcon} color="gray.500" />
-      )}
-      <HStack flexGrow={1} justifyContent="space-between">
-        <Box maxWidth="fit-content">
-          {item.url ? (
-            <Link href={item.url} isExternal overflowWrap="anywhere">
-              {item.name} <ExternalLinkIcon />
-            </Link>
-          ) : (
-            <Text overflowWrap="anywhere">{item.name}</Text>
-          )}
-        </Box>
-        <HStack spacing={1}>
-          {!isFullyFulfilled && item.notes ? (
-            <Popover>
-              <PopoverTrigger>
-                <FlexButton title="Notes" icon={<ChatIcon />} size="xs" />
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverBody sx={{ whiteSpace: "pre-wrap" }}>
-                  {item.notes}
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-          ) : null}
+    <ListItem p={2} borderRadius={4} background={itemBg}>
+      <Flex alignItems="center" flexGrow={1}>
+        <HStack spacing={2} flexGrow={1}>
+          <VStack alignItems="center" spacing={1}>
+            <ListIcon
+              {...(isFullyFulfilled
+                ? {
+                    as: CheckCircleIcon,
+                    color: "green.500",
+                  }
+                : {
+                    color: "gray.500",
+                    as: DashedCircleIcon,
+                  })}
+              m={0}
+            />
+            <Tag
+              borderRadius="full"
+              colorScheme={getTagColor()}
+              minWidth="max-content"
+              userSelect="none"
+              cursor={censored ? undefined : "pointer"}
+              onClick={censored ? undefined : fulfillmentModal.open}
+            >
+              {censored ? "?" : qtyFulfilled} / {needed ?? "∞"}
+            </Tag>
+          </VStack>
+          <VStack spacing={1} flexGrow={1} alignItems="center">
+            <Box maxWidth="fit-content">
+              {item.url ? (
+                <Link href={item.url} isExternal overflowWrap="anywhere">
+                  {item.name} <ExternalLinkIcon />
+                </Link>
+              ) : (
+                <Text overflowWrap="anywhere">{item.name}</Text>
+              )}
+            </Box>
+            <HStack spacing={1} justifyContent="center">
+              {!isFullyFulfilled && item.notes ? (
+                <Popover>
+                  <PopoverTrigger>
+                    <FlexButton title="Notes" icon={<ChatIcon />} size="xs" />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverBody whiteSpace="pre-wrap">
+                      {item.notes}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              ) : null}
+              {canEdit ? (
+                <>
+                  <EditButton onClick={editModel.open} size="xs" />
+                  <IconButton
+                    aria-label={`Delete ${item.name}`}
+                    icon={<DeleteIcon />}
+                    onClick={deleteModal.open}
+                    size="xs"
+                  />
+                </>
+              ) : !isFullyFulfilled ? (
+                <FulfillItemButton item={item} refetch={fulfillmentsRefetch} />
+              ) : null}
+            </HStack>
+          </VStack>
         </HStack>
-        <HStack spacing={1}>
-          <Tag
-            borderRadius="full"
-            colorScheme={getTagColor()}
-            minWidth="max-content"
-            sx={{
-              userSelect: "none",
-              cursor: censored ? undefined : "pointer",
-            }}
-            onClick={censored ? undefined : fulfillmentModal.open}
-          >
-            {censored ? "?" : qtyFulfilled} / {needed ?? "∞"}
-          </Tag>
-          {canEdit ? (
-            <>
-              <EditButton onClick={modal.open} />
-              <IconButton
-                aria-label={`Delete ${item.name}`}
-                icon={<DeleteIcon />}
-                onClick={onDelete}
-              />
-            </>
-          ) : !isFullyFulfilled ? (
-            <FulfillItemButton item={item} refetch={fulfillmentsRefetch} />
-          ) : null}
-        </HStack>
-      </HStack>
-      <WishlistItemModal
-        open={open}
-        setOpen={modal.set}
-        title={`Edit ${item.name}`}
-        submitName="Save"
-        initialValues={item}
-        onSubmit={onEdit}
-      />
-      <ViewFulfillmentsModal
-        open={fulfillmentModalOpen}
-        setOpen={fulfillmentModal.set}
-        item={item}
-        refetch={fulfillmentsRefetch}
-      />
-    </Flex>
+        <WishlistItemModal
+          open={editModalOpen}
+          setOpen={editModel.set}
+          title="Edit Item"
+          submitName="Save"
+          initialValues={item}
+          onSubmit={onEdit}
+        />
+        <ViewFulfillmentsModal
+          open={fulfillmentModalOpen}
+          setOpen={fulfillmentModal.set}
+          item={item}
+          refetch={fulfillmentsRefetch}
+        />
+        <ConfirmationModal
+          open={deleteModalOpen}
+          setOpen={deleteModal.set}
+          title="Delete item?"
+          onConfirm={onDelete}
+        >
+          Are you sure you want to delete "{item.name}"?
+        </ConfirmationModal>
+      </Flex>
+    </ListItem>
   );
 }
 

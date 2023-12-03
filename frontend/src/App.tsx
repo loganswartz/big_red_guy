@@ -6,7 +6,7 @@ import FrontPage from "./Public/FrontPage";
 import Register from "./Public/Register";
 import ForgotPassword from "./Public/ForgotPassword";
 import ResetPassword from "./Public/ResetPassword";
-import Theme from "./Global/Theme";
+import theme from "./Global/Theme";
 import Home from "./App/Home";
 import AuthRequired from "./App/AuthRequired";
 import WishlistsIndex from "./App/Wishlists/WishlistsIndex";
@@ -16,6 +16,7 @@ import ViewParty from "./App/Parties/ViewParty";
 import PartiesIndex from "./App/Parties/PartiesIndex";
 import ThemeColorHelper from "./Global/ThemeColorHelper";
 import { HelmetProvider } from "react-helmet-async";
+import Settings from "./App/Settings";
 
 const client = new QueryClient();
 
@@ -53,6 +54,7 @@ function App() {
               index: true,
               element: <Home />,
             },
+            { path: "settings", element: <Settings /> },
             {
               path: "parties/*",
               children: [
@@ -87,7 +89,7 @@ function App() {
 
   return (
     <HelmetProvider>
-      <ChakraProvider theme={Theme}>
+      <ChakraProvider theme={theme}>
         <ThemeColorHelper />
         <QueryClientProvider client={client}>
           <RouterProvider router={router} />

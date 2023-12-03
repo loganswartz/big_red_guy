@@ -10,6 +10,7 @@ import {
   IconButton,
   SimpleGrid,
   Text,
+  useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 import { SettingsIcon } from "@chakra-ui/icons";
@@ -57,45 +58,44 @@ export default function ViewParty() {
   );
 
   const groupedFulfillments = groupFulfillments(fulfillments ?? []);
+  const cardBg = useColorModeValue("gray.200", "gray.700");
 
   return (
-    <Card minWidth="90%">
-      <CardHeader>
-        <Center>
-          <VStack>
-            <HStack spacing={2}>
-              <Heading>{party.name}</Heading>
-              {party.owner_id === me?.id ? (
-                <EditPartyButton
-                  party={party}
-                  refetch={refetchParty}
-                  variant="icon"
-                />
-              ) : null}
-              <IconButton
-                icon={<SettingsIcon />}
-                aria-label="Party settings"
-                onClick={modal.open}
+    <>
+      <VStack
+        minWidth="min(var(--chakra-sizes-xl), 100%)"
+        justifyContent="flex-start"
+        spacing={4}
+        flexGrow={1}
+      >
+        <VStack py={2} px={10} background={cardBg} borderRadius={8}>
+          <Heading>{party.name}</Heading>
+          <HStack spacing={2}>
+            <AssignWishlistButton party={party} variant="hybrid" />
+            {party.owner_id === me?.id ? (
+              <EditPartyButton
+                party={party}
+                refetch={refetchParty}
+                variant="icon"
               />
-            </HStack>
-            <HStack spacing={2}>
-              <AssignWishlistButton party={party} variant="hybrid" />
-            </HStack>
-          </VStack>
-        </Center>
-      </CardHeader>
-      <Divider />
-      <CardBody>
+            ) : null}
+            <IconButton
+              icon={<SettingsIcon />}
+              aria-label="Party settings"
+              onClick={modal.open}
+            />
+          </HStack>
+        </VStack>
         <SimpleGrid minChildWidth="min(400px, 100%)" spacing={3}>
           {memberLists.map(([user, lists]) => (
-            <Card variant="outline" key={user.id}>
+            <Card variant="outline" background={cardBg} key={user.id}>
               <CardHeader>
                 <HStack spacing={2}>
                   <UserAvatar user={user} size="sm" />
                   <Text size="md">{user.name}</Text>
                 </HStack>
               </CardHeader>
-              <CardBody>
+              <CardBody px={0}>
                 {lists.length === 0 ? (
                   <Center>
                     <i>{user.name} hasn't added any lists yet.</i>
@@ -113,14 +113,8 @@ export default function ViewParty() {
             </Card>
           ))}
         </SimpleGrid>
-      </CardBody>
-      <CardFooter>
-        <AssignPartyMembersModal
-          party={party}
-          open={open}
-          setOpen={modal.set}
-        />
-      </CardFooter>
-    </Card>
+      </VStack>
+      <AssignPartyMembersModal party={party} open={open} setOpen={modal.set} />
+    </>
   );
 }

@@ -61,7 +61,7 @@ export default function ViewFulfillmentsModal(
           <ModalCloseButton />
           <ModalBody>
             {hasFulfillments ? (
-              <TableContainer sx={{ whiteSpace: "normal" }}>
+              <TableContainer whiteSpace="normal">
                 <Table size="sm">
                   <Thead>
                     <Tr>
@@ -76,7 +76,7 @@ export default function ViewFulfillmentsModal(
                         <Td>
                           <Box>{fulfillment.quantity}</Box>
                         </Td>
-                        <Td sx={{ overflowWrap: "anywhere" }}>
+                        <Td overflowWrap="anywhere">
                           {fulfillment?.notes ?? null}
                         </Td>
                         <Td>

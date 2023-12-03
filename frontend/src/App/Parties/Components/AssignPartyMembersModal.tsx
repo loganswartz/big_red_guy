@@ -91,7 +91,7 @@ export default function AssignPartyMembersModal(
               </HStack>
             ) : null}
             <Divider />
-            <List sx={{ width: "100%" }} spacing={2}>
+            <List width="100%" spacing={2}>
               {members.length === 0 ? (
                 <ListItem>No members found.</ListItem>
               ) : (

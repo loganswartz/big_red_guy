@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Center,
-  VStack,
-} from "@chakra-ui/react";
-import { Link as ReactRouterLink } from "react-router-dom";
+import { Card, CardHeader, Center } from "@chakra-ui/react";
 import useCurrentUser from "../Global/Api/Queries/useCurrentUser";
 
 export default function Home() {
@@ -23,16 +15,6 @@ export default function Home() {
       <CardHeader>
         <Center>Welcome, {data.name}!</Center>
       </CardHeader>
-      <CardBody>
-        <VStack>
-          <Button as={ReactRouterLink} to="/app/parties">
-            Go to Parties
-          </Button>
-          <Button as={ReactRouterLink} to="/app/wishlists">
-            Go to Wishlists
-          </Button>
-        </VStack>
-      </CardBody>
     </Card>
   );
 }

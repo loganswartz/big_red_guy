@@ -13,6 +13,7 @@ const FlexButton = forwardRef((props: FlexButtonProps, ref) => {
     title,
     variant: userVariant,
     iconSide = "right",
+    breakpoints = {},
     ...other
   } = props;
 
@@ -22,6 +23,7 @@ const FlexButton = forwardRef((props: FlexButtonProps, ref) => {
       xs: "icon",
       sm: "text",
       lg: "hybrid",
+      ...breakpoints,
     },
     { ssr: false }
   );
@@ -45,11 +47,12 @@ const FlexButton = forwardRef((props: FlexButtonProps, ref) => {
 
 export type FlexButtonVariant = "text" | "icon" | "hybrid";
 
-interface FlexButtonProps extends ButtonProps {
+export interface FlexButtonProps extends ButtonProps {
   title: string;
   icon: IconButtonProps["icon"];
   variant?: FlexButtonVariant;
   iconSide?: "left" | "right";
+  breakpoints?: Record<string, FlexButtonVariant>;
 }
 
 export default FlexButton;

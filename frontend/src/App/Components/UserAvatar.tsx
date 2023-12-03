@@ -17,9 +17,7 @@ interface UserAvatarProps extends Omit<AvatarProps, "src" | "name"> {
   user?: User | null;
 }
 
-export function CurrentUserAvatar(
-  props: Omit<UserAvatarProps, "user" | "onClick">
-) {
+export function CurrentUserAvatar(props: Omit<UserAvatarProps, "user">) {
   const [open, modal] = useModalState();
   const { data } = useCurrentUser();
 

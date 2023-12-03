@@ -33,6 +33,13 @@ const theme = extendTheme({
     },
     Modal: modalTheme,
   },
+  styles: {
+    global: {
+      body: {
+        fontFamily: "sans-serif",
+      },
+    },
+  },
 });
 
 export default theme;

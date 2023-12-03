@@ -99,11 +99,7 @@ export default function Register() {
               })}
             />
             {notices.map(([_, error]) => (
-              <Alert
-                key={error.message}
-                status="error"
-                sx={{ borderRadius: "0.3rem" }}
-              >
+              <Alert key={error.message} status="error" borderRadius="0.3rem">
                 <AlertIcon />
                 <AlertDescription>{error.message}</AlertDescription>
               </Alert>

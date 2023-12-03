@@ -52,7 +52,7 @@ export default function AssignWishlistModal(props: AssignWishlistModalProps) {
               What lists should other people in this party to be able to see?
             </Text>
             <Divider />
-            <List sx={{ width: "100%" }} spacing={2}>
+            <List width="100%" spacing={2}>
               {wishlists.length === 0 ? (
                 <ListItem>No lists found.</ListItem>
               ) : (

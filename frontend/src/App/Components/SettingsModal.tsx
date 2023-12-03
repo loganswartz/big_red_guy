@@ -1,37 +1,45 @@
 import {
   Button,
-  HStack,
   Modal,
-  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
-import DarkmodeToggle from "../../Components/DarkmodeToggle";
+import { useNavigate } from "react-router-dom";
+import useLogout from "../../Global/Api/Mutations/useLogout";
+import useCurrentUser from "../../Global/Api/Queries/useCurrentUser";
+import { CurrentUserAvatar } from "./UserAvatar";
 
 export function SettingsModal(props: SettingsModalProps) {
   const { open, setOpen } = props;
+  const { data: me } = useCurrentUser();
+  const logout = useLogout();
+  const navigate = useNavigate();
 
   return (
     <Modal isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Settings</ModalHeader>
-        <ModalBody>
-          <DarkmodeToggle />
-        </ModalBody>
+        <ModalHeader>
+          <VStack justifyContent="center">
+            <CurrentUserAvatar />
+            <Text>{me?.name}</Text>
+          </VStack>
+        </ModalHeader>
         <ModalFooter>
-          <HStack spacing={1}>
+          <VStack width="100%" justifyContent="center">
             <Button
-              colorScheme="blue"
               onClick={() => {
-                setOpen(false);
+                logout();
+                navigate("/login");
               }}
             >
-              Done
+              Log Out
             </Button>
-          </HStack>
+          </VStack>
         </ModalFooter>
       </ModalContent>
     </Modal>

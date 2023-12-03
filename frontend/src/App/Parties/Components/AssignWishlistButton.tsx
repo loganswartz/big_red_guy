@@ -1,4 +1,5 @@
-import { EditIcon } from "@chakra-ui/icons";
+import { Icon } from "@chakra-ui/react";
+import { RiFileList3Fill } from "react-icons/ri";
 import { Party } from "../../../Global/Api/Types/Api";
 import useModalState from "../../../Global/Helpers/ModalHelper";
 import FlexButton, { FlexButtonVariant } from "../../../Components/FlexButton";
@@ -12,8 +13,8 @@ export default function AssignWishlistButton(props: AssignWishlistButtonProps) {
   return (
     <>
       <FlexButton
-        title="Set your lists"
-        icon={<EditIcon />}
+        title="Assign Lists"
+        icon={<Icon as={RiFileList3Fill} />}
         onClick={modal.open}
         variant={variant}
       />
