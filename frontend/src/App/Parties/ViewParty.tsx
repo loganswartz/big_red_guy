@@ -64,9 +64,10 @@ export default function ViewParty() {
     <>
       <VStack
         minWidth="min(var(--chakra-sizes-xl), 100%)"
+        maxWidth="max(var(--chakra-sizes-xl), 90%)"
+        width="100%"
         justifyContent="flex-start"
         spacing={4}
-        flexGrow={1}
       >
         <VStack py={2} px={10} background={cardBg} borderRadius={8}>
           <Heading>{party.name}</Heading>
@@ -84,9 +85,14 @@ export default function ViewParty() {
               aria-label="Party settings"
               onClick={modal.open}
             />
+            <AssignPartyMembersModal
+              party={party}
+              open={open}
+              setOpen={modal.set}
+            />
           </HStack>
         </VStack>
-        <SimpleGrid minChildWidth="min(400px, 100%)" spacing={3}>
+        <SimpleGrid minChildWidth="min(400px, 100%)" width="100%" spacing={3}>
           {memberLists.map(([user, lists]) => (
             <Card variant="outline" background={cardBg} key={user.id}>
               <CardHeader>
@@ -114,7 +120,6 @@ export default function ViewParty() {
           ))}
         </SimpleGrid>
       </VStack>
-      <AssignPartyMembersModal party={party} open={open} setOpen={modal.set} />
     </>
   );
 }
