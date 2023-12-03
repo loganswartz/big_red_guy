@@ -8,6 +8,7 @@ import {
   CardHeader,
   Center,
   Container,
+  HStack,
   Input,
   VStack,
 } from "@chakra-ui/react";
@@ -70,13 +71,15 @@ export default function Login() {
             ) : null}
           </VStack>
         </CardBody>
-        <CardFooter justifyContent="space-evenly">
-          <Button as={ReactRouterLink} to="/forgot-password">
-            Forgot Password?
-          </Button>
-          <Button colorScheme="teal" type="submit" isLoading={isSubmitting}>
-            Login
-          </Button>
+        <CardFooter>
+          <HStack flexGrow={1} spacing={2} justifyContent="space-evenly">
+            <Button as={ReactRouterLink} to="/forgot-password">
+              Forgot Password?
+            </Button>
+            <Button colorScheme="teal" type="submit" isLoading={isSubmitting}>
+              Login
+            </Button>
+          </HStack>
         </CardFooter>
       </Card>
     </Container>

@@ -44,7 +44,7 @@ function NavBar(props: StackProps) {
   };
 
   const buttonBg = useColorModeValue("gray.200", "gray.700");
-  const buttonBorder = useColorModeValue("gray.400", "gray.600");
+  const buttonBorder = useColorModeValue("blackAlpha.300", "whiteAlpha.300");
 
   const commonProps: Partial<FlexButtonProps> = {
     background: buttonBg,
@@ -54,7 +54,11 @@ function NavBar(props: StackProps) {
   };
 
   return (
-    <HStack position="sticky" bottom={4} {...props}>
+    <HStack
+      position="sticky"
+      bottom="calc(env(safe-area-inset-bottom) + var(--chakra-space-5))"
+      {...props}
+    >
       <ButtonGroup
         isAttached
         borderRadius={8}

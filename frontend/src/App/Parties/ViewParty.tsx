@@ -70,7 +70,7 @@ export default function ViewParty() {
         spacing={4}
       >
         <VStack py={2} px={10} background={cardBg} borderRadius={8}>
-          <Heading>{party.name}</Heading>
+          <Heading textAlign="center">{party.name}</Heading>
           <HStack spacing={2}>
             <AssignWishlistButton party={party} variant="hybrid" />
             {party.owner_id === me?.id ? (

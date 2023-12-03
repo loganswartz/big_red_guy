@@ -4,9 +4,10 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
   Heading,
+  HStack,
   List,
+  Text,
 } from "@chakra-ui/react";
 import { User, WishlistWithItems } from "../../../Global/Api/Types/Api";
 import { GroupedFulfillments } from "../../../Global/Helpers/FulfillmentHelpers";
@@ -21,10 +22,13 @@ export function ListsAccordion(props: ListsAccordionProps) {
         <AccordionItem key={wishlist.id}>
           <Heading size="md">
             <AccordionButton>
-              <Box flex="1" textAlign="left">
-                {wishlist.name}
-              </Box>
-              <AccordionIcon />
+              <HStack flexGrow={1} justifyContent="space-between">
+                <Text>{wishlist.name}</Text>
+                <Text as="i" color="GrayText">
+                  {items.length} {items.length === 1 ? "item" : "items"}
+                </Text>
+                <AccordionIcon color="GrayText" />
+              </HStack>
             </AccordionButton>
           </Heading>
           <AccordionPanel pb={4}>
