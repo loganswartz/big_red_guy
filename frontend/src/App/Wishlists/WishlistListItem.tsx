@@ -147,7 +147,7 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               {!isFullyFulfilled && item.notes ? (
                 <Popover>
                   <PopoverTrigger>
-                    <FlexButton title="Notes" icon={<ChatIcon />} size="xs" />
+                    <FlexButton title="Notes" icon={<ChatIcon />} />
                   </PopoverTrigger>
                   <PopoverContent>
                     <PopoverArrow />
@@ -159,12 +159,11 @@ export default function WishlistListItem(props: WishlistListItemProps) {
               ) : null}
               {canEdit ? (
                 <>
-                  <EditButton onClick={editModel.open} size="xs" />
+                  <EditButton onClick={editModel.open} />
                   <IconButton
                     aria-label={`Delete ${item.name}`}
                     icon={<DeleteIcon />}
                     onClick={deleteModal.open}
-                    size="xs"
                   />
                 </>
               ) : !isFullyFulfilled ? (

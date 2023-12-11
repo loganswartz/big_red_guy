@@ -44,6 +44,7 @@ function NavBar(props: StackProps) {
   };
 
   const buttonBg = useColorModeValue("gray.200", "gray.700");
+  const buttonBgHover = useColorModeValue("gray.300", "gray.600");
   const buttonBorder = useColorModeValue("blackAlpha.300", "whiteAlpha.300");
 
   const commonProps: Partial<FlexButtonProps> = {
@@ -51,6 +52,7 @@ function NavBar(props: StackProps) {
     size: "lg",
     breakpoints,
     as: ReactRouterLink,
+    _hover: { background: buttonBgHover },
   };
 
   return (
