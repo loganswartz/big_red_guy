@@ -33,13 +33,16 @@ fn rocket() -> _ {
     let config = AppConfig::figment();
 
     // create an async task queue
-    let queue = TaskQueue::create();
+    let queue = TaskQueue::new();
 
     rocket::custom(config)
         .attach(AdHoc::config::<AppConfig>())
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
-        .manage(queue)
+        .manage(queue.clone())
+        .attach(AdHoc::on_liftoff("Start Queue", move |_| {
+            Box::pin(async move { TaskQueue::start(queue) })
+        }))
         .mount("/", routes![default::get, statics::get])
         .mount(
             "/public/uploads",

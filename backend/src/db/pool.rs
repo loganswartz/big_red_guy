@@ -27,4 +27,8 @@ impl rocket_db_pools::Pool for RocketDbPool {
     async fn get(&self) -> Result<Self::Connection, Self::Error> {
         Ok(self.conn.clone())
     }
+
+    async fn close(&self) {
+        // Nothing to do here
+    }
 }

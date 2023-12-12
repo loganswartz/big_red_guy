@@ -20,7 +20,7 @@ regex = "^1"
 rocket_db_pools = { version = "0.1.0-rc.2", features = ["sqlx_sqlite"] }
 rocket = { version = "0.5.0-rc.2", features = ["secrets", "json"] }
 rust-embed = "^8"
-sea-orm-rocket = "^0"
+sea-orm-rocket = "^0.5"
 serde = "^1"
 sha256 = "^1"
 tera = "1"
@@ -29,11 +29,10 @@ url = "^2"
 deadqueue = { version = "0.2.4", features = ["limited"] }
 
 [dependencies.sea-orm]
-version = "^0.11"
+version = "^0.12"
 features = [
     "sqlx-sqlite",
     "sqlx-mysql",
-    "sqlx-postgres",
     "runtime-tokio-native-tls",
     "macros",
 ]

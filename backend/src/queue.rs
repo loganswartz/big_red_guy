@@ -25,9 +25,14 @@ pub struct TaskQueue {}
 
 impl TaskQueue {
     /// Create a new task queue and spawn workers to process tasks.
-    pub fn create() -> Arc<Queue> {
-        let queue = Arc::new(Queue::new(TASK_COUNT));
+    pub fn new() -> Arc<Queue> {
+        Arc::new(Queue::new(TASK_COUNT))
+    }
 
+    /// Spawn workers to process tasks.
+    ///
+    /// Must be called after Rocket / Tokio has been initialized.
+    pub fn start(queue: Arc<Queue>) {
         for worker in 0..WORKER_COUNT {
             let queue = queue.clone();
             tokio::spawn(async move {
@@ -41,7 +46,5 @@ impl TaskQueue {
                 }
             });
         }
-
-        queue
     }
 }

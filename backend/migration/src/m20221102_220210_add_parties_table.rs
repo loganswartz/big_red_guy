@@ -155,7 +155,7 @@ impl MigrationTrait for Migration {
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum Parties {
     Table,
     Id,
@@ -163,7 +163,7 @@ pub enum Parties {
     OwnerId,
 }
 
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum PartyMemberships {
     Table,
     UserId,

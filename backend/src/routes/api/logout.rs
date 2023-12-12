@@ -9,6 +9,6 @@ use super::login::AuthResponse;
 
 #[post("/logout")]
 pub fn post(cookies: &CookieJar<'_>) -> Json<AuthResponse> {
-    cookies.remove_private(Cookie::named(users::Model::COOKIE_ID));
+    cookies.remove_private(Cookie::build(users::Model::COOKIE_ID));
     Json(AuthResponse { success: true })
 }

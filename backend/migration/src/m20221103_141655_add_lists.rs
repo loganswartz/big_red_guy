@@ -401,7 +401,7 @@ impl MigrationTrait for Migration {
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum Wishlists {
     Table,
     Id,
@@ -409,7 +409,7 @@ pub enum Wishlists {
     Name,
 }
 
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum WishlistItems {
     Table,
     Id,
@@ -420,14 +420,14 @@ pub enum WishlistItems {
     Quantity,
 }
 
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum WishlistItemListAssignments {
     Table,
     WishlistId,
     WishlistItemId,
 }
 
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum WishlistItemUserFulfillments {
     Table,
     Id,
@@ -436,7 +436,7 @@ pub enum WishlistItemUserFulfillments {
     Quantity,
 }
 
-#[derive(Iden)]
+#[derive(DeriveIden)]
 pub enum WishlistPartyAssignments {
     Table,
     WishlistId,

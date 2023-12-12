@@ -84,7 +84,7 @@ impl Linked for UserToParticipatingParties {
 impl ActiveModelBehavior for ActiveModel {}
 
 impl Model {
-    pub const COOKIE_ID: &str = "auth";
+    pub const COOKIE_ID: &'static str = "auth";
 
     pub async fn set_password(self, password: &str, db: &DatabaseConnection) -> Result<Model> {
         let mut active = self.into_active_model();
@@ -108,7 +108,7 @@ impl<'r> FromRequest<'r> for Model {
     type Error = String;
 
     async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
-        let denied = Outcome::Failure((
+        let denied = Outcome::Error((
             Status::Unauthorized,
             "No valid credentials found.".to_string(),
         ));
@@ -126,7 +126,7 @@ impl<'r> FromRequest<'r> for Model {
         let db = match req.rocket().state::<Db>() {
             Some(conn) => conn,
             _ => {
-                return Outcome::Failure((
+                return Outcome::Error((
                     Status::InternalServerError,
                     "Unable to contact DB.".to_string(),
                 ))

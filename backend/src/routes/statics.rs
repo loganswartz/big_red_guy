@@ -1,6 +1,9 @@
 use rocket::{
     get,
-    http::uri::{fmt::Path, Segments},
+    http::{
+        uri::{fmt::Path, Segments},
+        Status,
+    },
     request::{FromRequest, Outcome},
     Request,
 };
@@ -34,17 +37,17 @@ impl<'r> FromRequest<'r> for EmbeddedFrontendAsset {
 
         let path = match buf {
             Some(path) => path,
-            None => return Outcome::Forward(()),
+            None => return Outcome::Forward(Status::NotFound),
         };
         let stringified = match path.to_str() {
             Some(path) => path,
-            None => return Outcome::Forward(()),
+            None => return Outcome::Forward(Status::NotFound),
         };
 
         let asset = FrontendAsset::get(stringified);
         match asset {
             Some(file) => Outcome::Success(Self { path, file }),
-            None => Outcome::Forward(()),
+            None => Outcome::Forward(Status::NotFound),
         }
     }
 }
