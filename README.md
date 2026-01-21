@@ -115,24 +115,30 @@ To set up a dev environment:
 git clone git@github.com:loganswartz/big_red_guy.git && cd big_red_guy/backend
 
 # for live-reloading the backend. Not required, but without it you have to
-# restart your `yarn run dev-start` command every time you change the backend
-cargo install cargo-watch
+# restart your `yarn run watch` command every time you change the backend
+cargo install --locked bacon
 
 cd ../frontend && yarn install
 
-yarn run dev-start
+yarn run watch
 ```
 
-`yarn run dev-start` will run `cargo run` and `yarn run start` in parallel. The
+`yarn run watch` will run `cargo run` and `yarn run start` in parallel. The
 yarn dev server is set up with the `proxy` arg, so it will a) serve all the
 frontend files, and b) automatically forward any API requests to the backend
 without any manual intervention. This means that when developing, you need to
-run the frontend dev server with `yarn run dev-start` and connect to that,
+run the frontend dev server with `yarn run watch` and connect to that,
 rather than the backend.
 
 When using a production build, this process is reversed: the backend will a)
 handle all API requests sent to it, and b) serve all the compiled frontend
 assets when an unrecognized route is requested.
+
+### Developing with Nix
+
+On Nix environments, certain Rust libraries don't like to build easily. Run
+`nix-shell` in the root of the repo to start a dev shell that has all the
+necessary packages in it for development and compilation.
 
 ## Motivation
 
