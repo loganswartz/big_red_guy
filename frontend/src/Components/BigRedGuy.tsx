@@ -1,12 +1,17 @@
-import { Heading, HStack, StackProps, Image } from "@chakra-ui/react";
+import { Heading, HStack, Image } from "@chakra-ui/react";
+import React, { ComponentProps } from "react";
 
-export default function BigRedGuy(props: StackProps) {
-  return (
-    <HStack alignItems="center" {...props}>
-      <Image src="/android-chrome-512x512.png" boxSize="2rem" />
-      <Heading>
-        Big<span style={{ color: "red" }}>Red</span>Guy
-      </Heading>
-    </HStack>
-  );
-}
+const BigRedGuy = React.forwardRef(
+  (props: ComponentProps<typeof HStack>, ref) => {
+    return (
+      <HStack ref={ref} alignItems="center" {...props}>
+        <Image src="/android-chrome-512x512.png" boxSize="2rem" />
+        <Heading>
+          Big<span style={{ color: "red" }}>Red</span>Guy
+        </Heading>
+      </HStack>
+    );
+  },
+);
+
+export default BigRedGuy;

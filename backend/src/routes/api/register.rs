@@ -7,7 +7,8 @@ use sea_orm::ActiveValue;
 use serde::{Deserialize, Serialize};
 
 use crate::db::pool::Db;
-use crate::entities::users;
+use crate::entities::settings::SettingKey;
+use crate::entities::{settings, users};
 use crate::rocket_anyhow::Result as RocketResult;
 use crate::utils::password;
 
@@ -18,6 +19,7 @@ pub struct RegistrationForm<'r> {
     pub name: &'r str,
     pub email: &'r str,
     pub password: &'r str,
+    pub invite_code: Option<&'r str>,
 }
 
 #[derive(Debug, Serialize)]
@@ -37,7 +39,25 @@ pub enum RegistrationOutcome<'a> {
 pub async fn post(
     db: Connection<Db>,
     values: Json<RegistrationForm<'_>>,
-) -> RocketResult<RegistrationOutcome> {
+) -> RocketResult<RegistrationOutcome<'_>> {
+    if let Some(invite_code) = settings::Entity::find()
+        .filter(settings::Column::Key.eq(SettingKey::InviteCode))
+        .one(&*db)
+        .await?
+    {
+        let Some(provided) = values.invite_code else {
+            return Ok(RegistrationOutcome::Error(Json(ErrorMessage {
+                message: "A valid invite code is required.",
+            })));
+        };
+
+        if provided != invite_code.value {
+            return Ok(RegistrationOutcome::Error(Json(ErrorMessage {
+                message: "A valid invite code is required.",
+            })));
+        }
+    }
+
     let result = users::Entity::find()
         .filter(users::Column::Email.contains(values.email))
         .one(&*db)

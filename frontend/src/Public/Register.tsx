@@ -15,7 +15,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import BigRedGuy from "../Components/BigRedGuy";
 import useRegister, {
   RegisterInput,
@@ -40,9 +40,15 @@ export default function Register() {
           name: values.name,
           email: values.email,
           password: values.password,
+          invite_code: values.invite_code,
         },
       });
-      navigate("/app");
+      toast({
+        title: "Registration successful!",
+        description: "Please log in with your new account.",
+      });
+
+      navigate("/login");
     } catch (e: any) {
       toast({
         status: "error",
@@ -64,7 +70,7 @@ export default function Register() {
       <Card maxWidth="sm" as="form" onSubmit={handleSubmit(onSubmit)}>
         <CardHeader>
           <Center>
-            <BigRedGuy />
+            <BigRedGuy as={ReactRouterLink} to="/" />
           </Center>
         </CardHeader>
         <CardBody>
@@ -97,6 +103,11 @@ export default function Register() {
                 validate: (value) =>
                   value === watch("password") || "Passwords do not match",
               })}
+            />
+            <Input
+              type="invite_code"
+              placeholder="Invite Code"
+              {...register("invite_code")}
             />
             {notices.map(([_, error]) => (
               <Alert key={error.message} status="error" borderRadius="0.3rem">

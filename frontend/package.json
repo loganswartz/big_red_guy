@@ -30,8 +30,8 @@
   },
   "scripts": {
     "start": "vite --port 3000",
-    "dev-start": "concurrently --kill-others \"npm:watch-backend\" \"npm:start\"",
-    "watch-backend": "bash -c \"cd ../backend && cargo watch -x run || cargo run\"",
+    "watch": "concurrently --kill-others \"npm:watch-backend\" \"npm:start\"",
+    "watch-backend": "bash -c \"cd ../backend && bacon --headless || cargo run\"",
     "build": "vite build",
     "build-release": "yarn install && vite build",
     "test": "vite test"

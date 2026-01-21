@@ -49,7 +49,7 @@ export default function Login() {
       <Card as="form" onSubmit={handleSubmit(onSubmit)} maxWidth="md">
         <CardHeader>
           <Center>
-            <BigRedGuy />
+            <BigRedGuy as={ReactRouterLink} to="/" />
           </Center>
         </CardHeader>
         <CardBody>
